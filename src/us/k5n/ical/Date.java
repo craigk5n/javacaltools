@@ -158,7 +158,7 @@ public class Date extends Property
             throw new BogusDataException ( "Invalid time in date string '" +
               inDate + "'", inDate );
           }
-          if ( inDate.length() >= 15 ) {
+          if ( inDate.length() > 15 ) {
             isUTC = inDate.charAt ( 15 ) == 'Z';
           }
         } catch ( NumberFormatException nef ) {
