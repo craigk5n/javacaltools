@@ -1,0 +1,4 @@
+Version 0.?.? (?? ??? 2006)
+  - Patch 1464212: Date parsing problem (exception parsing UTC dates)
+Version 0.1.0 (02 Feb 2006)
+  - Initial public release
