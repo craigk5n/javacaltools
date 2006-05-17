@@ -16,79 +16,71 @@
  * distribution in the file COPYING.LIB. If you did not receive this copy,
  * write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
  * Boston, MA 02111-1307 USA.
-*/
+ */
 
 package us.k5n.ical;
 
-
-import java.util.Calendar;
-
-
 /**
-  * iCal Summary class -
-  * This object represents a summary and
-  * corresponds to the SUMMARY iCal property.
-  * @version $Id$
-  * @author Craig Knudsen, craig@k5n.us
-  */
-public class Summary extends Property
-{
+ * iCal Summary class - This object represents a summary and corresponds to the
+ * SUMMARY iCal property.
+ * 
+ * @version $Id$
+ * @author Craig Knudsen, craig@k5n.us
+ */
+public class Summary extends Property {
   /** Alternate representation URI */
   public String altrep = null;
   /** Language specification */
   public String language = null;
 
   /**
-    * Constructor
-    */
-  public Summary ()
-  {
+   * Constructor
+   */
+  public Summary () {
     super ( "SUMMARY", "" );
   }
 
   /**
-    * Constructor
-    * @param icalStr	One or more lines of iCal that specifies
-    *			an event/todo summary
-    */
-  public Summary ( String icalStr )
-    throws ParseException
-  {
+   * Constructor
+   * 
+   * @param icalStr
+   *          One or more lines of iCal that specifies an event/todo summary
+   */
+  public Summary ( String icalStr ) throws ParseException {
     this ( icalStr, PARSE_LOOSE );
   }
 
-
   /**
-    * Constructor
-    * @param icalStr	One or more lines of iCal that specifies
-    *			an event/todo summary
-    * @param parseMode	PARSE_STRICT or PARSE_LOOSE
-    */
-  public Summary ( String icalStr, int parseMode )
-    throws ParseException
-  {
+   * Constructor
+   * 
+   * @param icalStr
+   *          One or more lines of iCal that specifies an event/todo summary
+   * @param parseMode
+   *          PARSE_STRICT or PARSE_LOOSE
+   */
+  public Summary ( String icalStr, int parseMode ) throws ParseException {
     super ( icalStr, parseMode );
 
-    for ( int i = 0; i < attributeList.size(); i++ ) {
+    for (int i = 0; i < attributeList.size (); i++) {
       Attribute a = attributeAt ( i );
-      String aval = a.value.toUpperCase();
-      if ( a.name.equals ( "ALTREP" ) ) {
+      String aval = a.value.toUpperCase ();
+      if (aval.equals ( "ALTREP" )) {
         // Can only have one of these
-        if ( altrep != null && parseMode == PARSE_STRICT ) {
+        if (altrep != null && parseMode == PARSE_STRICT) {
           throw new ParseException ( "More than one ALTREP found", icalStr );
         }
         altrep = a.value;
-      } else if ( a.name.equals ( "LANGUAGE" ) ) {
+      } else if (aval.equals ( "LANGUAGE" )) {
         // Can only have one of these
-        if ( language != null && parseMode == PARSE_STRICT ) {
+        if (language != null && parseMode == PARSE_STRICT) {
           throw new ParseException ( "More than one LANGUAGE found", icalStr );
         }
         language = a.value;
       } else {
         // Only generate exception if strict parsing
-        if ( parseMode == PARSE_STRICT ) {
-          throw new ParseException ( "Invalid SUMMARY attribute '" +
-            a.name + "'", icalStr );
+        if (parseMode == PARSE_STRICT) {
+          throw new ParseException ( "Invalid SUMMARY attribute '" + a.name
+              + "'", icalStr );
         }
       }
     }
@@ -98,14 +90,13 @@ public class Summary extends Property
   // into ical format.
   // Usage: java Summary "SUMMARY;LANGUAGE=EN:This is\\na test."
   //   
-  public static void main ( String args[] )
-  {
-    for ( int i = 0; i < args.length; i++ ) {
+  public static void main ( String args[] ) {
+    for (int i = 0; i < args.length; i++) {
       try {
         java.io.File f = new java.io.File ( args[i] );
         Summary a = null;
         String input = null;
-        if ( f.exists () ) {
+        if (f.exists ()) {
           try {
             input = Utils.getFileContents ( f );
           } catch ( Exception e ) {
