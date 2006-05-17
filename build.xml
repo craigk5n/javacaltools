@@ -1,15 +1,18 @@
 <!-- ant build.xml file for k5n ical lib -->
 <!-- $Id$ -->
 
-<project name="MyProject" default="dist" basedir=".">
-  <description>Top-level build file for k5n ical</description>
+<project name="javacaltools" default="dist" basedir=".">
+  <description>Top-level build file for k5n javacaltools</description>
 
   <!-- set global properties for this build -->
   <property name="src" location="src"/>
   <property name="build" location="build"/>
   <property name="dist"  location="dist"/>
 
-  <property name="version"  value="0.1.0"/>
+  <property name="test" location="test"/>
+  <property name="testbuild" location="testbuild"/>
+
+  <property name="version"  value="0.1.1"/>
 
   <target name="init">
     <!-- Create the time stamp -->
@@ -38,5 +41,32 @@
     <!-- Delete the ${build} and ${dist} directory trees -->
     <delete dir="${build}"/>
     <delete dir="${dist}"/>
+  </target>
+
+  <!-- Build the JUnit test classes -->
+  <target name="compile-test" depends="init"
+        description="compile the test source" >
+    <mkdir dir="${testbuild}"/>
+    <!-- Compile the java code from ${src} into ${build} -->
+    <javac srcdir="${test}" destdir="${testbuild}">
+      <classpath>
+        <pathelement path="${dist}/lib/k5n-ical-${version}.jar" />
+      </classpath>
+    </javac>
+  </target>
+
+  <!-- Run the JUnit test classes -->
+  <target name="test" depends="compile-test">
+    <junit fork="yes" haltonfailure="yes">
+      <formatter type="plain" usefile="false" />
+      <classpath>
+        <pathelement location="${testbuild}" />
+        <pathelement location="${testbuild}/data" />
+        <pathelement path="${dist}/lib/k5n-ical-${version}.jar" />
+      </classpath>
+      <batchtest>
+        <fileset dir='${testbuild}' includes='**/*Test.class'/>
+      </batchtest>
+    </junit>
   </target>
 </project>
