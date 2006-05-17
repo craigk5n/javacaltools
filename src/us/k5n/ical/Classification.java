@@ -48,7 +48,7 @@ package us.k5n.ical;
  * @author Craig Knudsen, craig@k5n.us
  */
 public class Classification extends Property implements Constants {
-  int classification;
+  int classification = PUBLIC;
 
   /**
    * Generate an iCal classification based on an iCal line of text.
@@ -104,7 +104,7 @@ public class Classification extends Property implements Constants {
 
     if (value == null || value.length () == 0)
       throw new ParseException ( "No valid classification found", icalStr );
-    String aval = value.toUpperCase ();
+    String aval = value.toUpperCase ().trim();
     if (aval.equals ( "PUBLIC" )) {
       this.classification = PUBLIC;
     } else if (aval.equals ( "CONFIDENTIAL" )) {

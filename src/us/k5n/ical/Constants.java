@@ -57,7 +57,7 @@ interface Constants
   /** iCal minor version */
   static public final int ICAL_VERSION_MINOR = 0;
   
-  /** iCal PUBLIC class */
+  /** iCal PUBLIC class (default) */
   static public final int PUBLIC = 0;
   /** iCal PRIVATE class */
   static public final int PRIVATE = 1;
