@@ -116,4 +116,23 @@ public class Classification extends Property implements Constants {
     }
   }
 
+  /**
+   * Get the classification (PUBLIC, PRIVATE, CONFIDENTIAL)
+   * 
+   * @return Returns the classification
+   */
+  public int getClassification () {
+    return classification;
+  }
+
+  /**
+   * Set the classification (PUBLIC, PRIVATE, CONFIDENTIAL)
+   * 
+   * @param classification
+   *          The classification to set. PUBLIC, PRIVATE, CONFIDENTIAL)
+   */
+  public void setClassification ( int classification ) {
+    this.classification = classification;
+  }
+
 }
