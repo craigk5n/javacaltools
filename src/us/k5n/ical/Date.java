@@ -16,59 +16,57 @@
  * distribution in the file COPYING.LIB. If you did not receive this copy,
  * write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
  * Boston, MA 02111-1307 USA.
-*/
+ */
 
 package us.k5n.ical;
 
-
-import java.util.Calendar;
-
-
 /**
-  * Base class for use with a variety of date-related iCal fields
-  * including LAST-MODIFIED, DTSTAMP, DTSTART, etc.
-  * This can represent both a date and a date-time.
-  * @version $Id$
-  * @author Craig Knudsen, craig@k5n.us
-  */
-public class Date extends Property
-  implements Constants
-{
+ * Base class for use with a variety of date-related iCal fields including
+ * LAST-MODIFIED, DTSTAMP, DTSTART, etc. This can represent both a date and a
+ * date-time.
+ * 
+ * @version $Id$
+ * @author Craig Knudsen, craig@k5n.us
+ */
+public class Date extends Property implements Constants {
   int year, month, day;
   int hour, minute, second;
   boolean isUTC = false;
   boolean dateOnly = false; // is date only (rather than date-time)?
 
   /**
-    * Constructor
-    * @param icalStr	One or more lines of iCal that specifies
-    *			a date.  Dates must be of one of the following
-    *			formats: <ul>
-    *			<li>  19991231 (date only, no time) </li>
-    *			<li>  19991231T115900 (date with local time) </li>
-    *			<li>  19991231T115900Z (date and time UTC) </li>
-    *			</ul>
-    *			(This format is a based on the ISO 8601 standard.)
-    */
-  public Date ( String icalStr )
-    throws ParseException, BogusDataException
-  {
+   * Constructor
+   * 
+   * @param icalStr
+   *          One or more lines of iCal that specifies a date. Dates must be of
+   *          one of the following formats:
+   *          <ul>
+   *          <li> 19991231 (date only, no time) </li>
+   *          <li> 19991231T115900 (date with local time) </li>
+   *          <li> 19991231T115900Z (date and time UTC) </li>
+   *          </ul>
+   *          (This format is a based on the ISO 8601 standard.)
+   */
+  public Date ( String icalStr ) throws ParseException, BogusDataException {
     this ( icalStr, PARSE_LOOSE );
   }
 
-
   /**
-    * Constructor: create a date based on the specified year, month and day.
-    * @param dateType	Type of date; this should be an ical property name
-    *			like DTSTART, DTEND or DTSTAMP.
-    * @param year	The 4-digit year
-    * @param month	The month (1-12)
-    * @param day	The day of the month (1-31)
-    */
-    
+   * Constructor: create a date based on the specified year, month and day.
+   * 
+   * @param dateType
+   *          Type of date; this should be an ical property name like DTSTART,
+   *          DTEND or DTSTAMP.
+   * @param year
+   *          The 4-digit year
+   * @param month
+   *          The month (1-12)
+   * @param day
+   *          The day of the month (1-31)
+   */
+
   public Date ( String dateType, int year, int month, int day )
-    throws ParseException, BogusDataException
-  {
+      throws ParseException, BogusDataException {
     super ( dateType, "" );
 
     this.year = year;
@@ -82,11 +80,11 @@ public class Date extends Property
     yearStr = "" + year;
     monthStr = "" + month;
     dayStr = "" + day;
-    while ( yearStr.length() < 4 )
+    while ( yearStr.length () < 4 )
       yearStr = '0' + yearStr;
-    if ( monthStr.length() < 2 )
+    if (monthStr.length () < 2)
       monthStr = '0' + monthStr;
-    if ( dayStr.length() < 2 )
+    if (dayStr.length () < 2)
       dayStr = '0' + dayStr;
     value = yearStr + monthStr + dayStr;
 
@@ -94,37 +92,37 @@ public class Date extends Property
     addAttribute ( "VALUE", "DATE" );
   }
 
-
   /**
-    * Constructor
-    * @param icalStr	One or more lines of iCal that specifies
-    *			a date
-    * @param parseMode	PARSE_STRICT or PARSE_LOOSE
-    */
-  public Date ( String icalStr, int parseMode )
-    throws ParseException, BogusDataException
-  {
+   * Constructor
+   * 
+   * @param icalStr
+   *          One or more lines of iCal that specifies a date
+   * @param parseMode
+   *          PARSE_STRICT or PARSE_LOOSE
+   */
+  public Date ( String icalStr, int parseMode ) throws ParseException,
+      BogusDataException {
     super ( icalStr, parseMode );
 
     year = month = day = 0;
     hour = minute = second = 0;
 
-    for ( int i = 0; i < attributeList.size(); i++ ) {
+    for (int i = 0; i < attributeList.size (); i++) {
       Attribute a = attributeAt ( i );
-      String aname = a.name.toUpperCase();
-      String aval = a.value.toUpperCase();
+      String aname = a.name.toUpperCase ();
+      String aval = a.value.toUpperCase ();
       // TODO: not sure if any attributes are allowed here...
       // Look for VALUE=DATE or VALUE=DATE-TIME
       // DATE means untimed for the event
-      if ( aname.equals ( "VALUE" ) ) {
-        if ( aval.equals ( "DATE" ) ) {
+      if (aname.equals ( "VALUE" )) {
+        if (aval.equals ( "DATE" )) {
           dateOnly = true;
-        } else if ( aval.equals ( "DATE-TIME" ) ) {
+        } else if (aval.equals ( "DATE-TIME" )) {
           dateOnly = false;
         } else {
-          if ( parseMode == PARSE_STRICT ) {
+          if (parseMode == PARSE_STRICT) {
             throw new ParseException ( "Unknown date VALUE '" + a.value + "'",
-              icalStr );
+                icalStr );
           }
         }
       } else {
@@ -134,41 +132,40 @@ public class Date extends Property
 
     String inDate = value;
 
-    if ( inDate.length() < 8 ) {
+    if (inDate.length () < 8) {
       // Invalid format
-      throw new ParseException ( "Invalid date format '" + inDate + "'",
-        inDate );
+      throw new ParseException ( "Invalid date format '" + inDate + "'", inDate );
     }
 
     year = Integer.parseInt ( inDate.substring ( 0, 4 ) );
     month = Integer.parseInt ( inDate.substring ( 4, 6 ) );
     day = Integer.parseInt ( inDate.substring ( 6, 8 ) );
     // TODO: validate for each month and leap years, too
-    if ( day < 1 || day > 31 || month < 1 || month > 12 )
+    if (day < 1 || day > 31 || month < 1 || month > 12)
       throw new BogusDataException ( "Invalid date '" + inDate + "'", inDate );
     // TODO: parse time, handle localtime, handle timezone
-    if ( inDate.length() > 8 ) {
+    if (inDate.length () > 8) {
       // TODO make sure dateOnly == false
-      if ( inDate.charAt ( 8 ) == 'T' ) {
+      if (inDate.charAt ( 8 ) == 'T') {
         try {
           hour = Integer.parseInt ( inDate.substring ( 9, 11 ) );
           minute = Integer.parseInt ( inDate.substring ( 11, 13 ) );
           second = Integer.parseInt ( inDate.substring ( 13, 15 ) );
-          if ( hour > 23 || minute > 59 || second > 59 ) {
-            throw new BogusDataException ( "Invalid time in date string '" +
-              inDate + "'", inDate );
+          if (hour > 23 || minute > 59 || second > 59) {
+            throw new BogusDataException ( "Invalid time in date string '"
+                + inDate + "'", inDate );
           }
-          if ( inDate.length() > 15 ) {
+          if (inDate.length () > 15) {
             isUTC = inDate.charAt ( 15 ) == 'Z';
           }
         } catch ( NumberFormatException nef ) {
-          throw new BogusDataException ( "Invalid time in date string '" +
-            inDate + "' - " + nef, inDate );
+          throw new BogusDataException ( "Invalid time in date string '"
+              + inDate + "' - " + nef, inDate );
         }
       } else {
         // Invalid format
         throw new ParseException ( "Invalid date format '" + inDate + "'",
-          inDate );
+            inDate );
       }
     } else {
       // Just date, no time
@@ -176,41 +173,39 @@ public class Date extends Property
   }
 
   /**
-    * Does the date contain a time components?
-    * @return	true if the Date contains a time components
-    */
-  public boolean hasTime ()
-  {
-    return ( ! dateOnly );
+   * Does the date contain a time components?
+   * 
+   * @return true if the Date contains a time components
+   */
+  public boolean hasTime () {
+    return ( !dateOnly );
   }
 
-
   /**
-    * Generate the iCal string for this Date.
-    */
-  public String toIcal ()
-  {
+   * Generate the iCal string for this Date.
+   */
+  public String toIcal () {
     StringBuffer sb = new StringBuffer ( dateOnly ? 8 : 15 );
     sb.append ( year );
-    if ( month < 10 )
+    if (month < 10)
       sb.append ( '0' );
     sb.append ( month );
-    if ( day < 10 )
+    if (day < 10)
       sb.append ( '0' );
     sb.append ( day );
 
-    if ( ! dateOnly ) {
+    if (!dateOnly) {
       sb.append ( 'T' );
-      if ( hour < 10 )
+      if (hour < 10)
         sb.append ( '0' );
       sb.append ( hour );
-      if ( minute < 10 )
+      if (minute < 10)
         sb.append ( '0' );
       sb.append ( minute );
-      if ( second < 10 )
+      if (second < 10)
         sb.append ( '0' );
       sb.append ( second );
-      if ( isUTC )
+      if (isUTC)
         sb.append ( 'Z' );
     }
     value = sb.toString ();
@@ -221,14 +216,13 @@ public class Date extends Property
   // into ical format.
   // Usage: java Date "DTSTAMP;20030701T000000Z"
   //   
-  public static void main ( String args[] )
-  {
-    for ( int i = 0; i < args.length; i++ ) {
+  public static void main ( String args[] ) {
+    for (int i = 0; i < args.length; i++) {
       try {
         java.io.File f = new java.io.File ( args[i] );
         Date a = null;
         String input = null;
-        if ( f.exists () ) {
+        if (f.exists ()) {
           try {
             input = Utils.getFileContents ( f );
           } catch ( Exception e ) {

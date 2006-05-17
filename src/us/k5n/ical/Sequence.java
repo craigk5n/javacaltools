@@ -16,89 +16,81 @@
  * distribution in the file COPYING.LIB. If you did not receive this copy,
  * write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
  * Boston, MA 02111-1307 USA.
-*/
+ */
 
 package us.k5n.ical;
 
-
-import java.util.Calendar;
-
-
 /**
-  * iCal Sequence class -
-  * This object represents a uid and
-  * corresponds to the SEQUENCE iCal property.
-  * @version $Id$
-  * @author Craig Knudsen, craig@k5n.us
-  */
-public class Sequence extends Property
-{
+ * iCal Sequence class - This object represents a uid and corresponds to the
+ * SEQUENCE iCal property.
+ * 
+ * @version $Id$
+ * @author Craig Knudsen, craig@k5n.us
+ */
+public class Sequence extends Property {
   int num = 0;
 
   /**
-    * Constructor
-    */
-  public Sequence ()
-  {
+   * Constructor
+   */
+  public Sequence () {
     super ( "SEQUENCE", "" );
   }
 
   /**
-    * Constructor
-    * @param	num	Initial sequence number (typically 0)
-    */
-  public Sequence ( int num )
-  {
+   * Constructor
+   * 
+   * @param num
+   *          Initial sequence number (typically 0)
+   */
+  public Sequence ( int num ) {
     super ( "SEQUENCE", "" );
     this.num = num;
     this.value = "" + num;
   }
 
   /**
-    * Constructor
-    * @param icalStr	One or more lines of iCal that specifies
-    *			an event/todo uid
-    */
-  public Sequence ( String icalStr )
-    throws ParseException
-  {
+   * Constructor
+   * 
+   * @param icalStr
+   *          One or more lines of iCal that specifies an event/todo uid
+   */
+  public Sequence ( String icalStr ) throws ParseException {
     this ( icalStr, PARSE_LOOSE );
   }
 
-
   /**
-    * Constructor
-    * @param icalStr	One or more lines of iCal that specifies
-    *			the unique identifier
-    * @param parseMode	PARSE_STRICT or PARSE_LOOSE
-    */
-  public Sequence ( String icalStr, int parseMode )
-    throws ParseException
-  {
+   * Constructor
+   * 
+   * @param icalStr
+   *          One or more lines of iCal that specifies the unique identifier
+   * @param parseMode
+   *          PARSE_STRICT or PARSE_LOOSE
+   */
+  public Sequence ( String icalStr, int parseMode ) throws ParseException {
     super ( icalStr, parseMode );
 
     // SEQUENCE cannot have any attributes
-    for ( int i = 0; i < attributeList.size(); i++ ) {
+    for (int i = 0; i < attributeList.size (); i++) {
       Attribute a = attributeAt ( i );
       // Only generate exception if strict parsing
-      if ( parseMode == PARSE_STRICT ) {
-        throw new ParseException ( "Invalid SEQUENCE attribute '" +
-          a.name + "'", icalStr );
+      if (parseMode == PARSE_STRICT) {
+        throw new ParseException ( "Invalid SEQUENCE attribute '" + a.name
+            + "'", icalStr );
       }
     }
     try {
       num = Integer.parseInt ( value );
     } catch ( NumberFormatException e ) {
       throw new ParseException ( "Invalid SEQUENCE value '" + value + "'",
-        icalStr );
+          icalStr );
     }
   }
 
   /**
-    * Increment the sequence number.
-    */
-  public void increment ()
-  {
+   * Increment the sequence number.
+   */
+  public void increment () {
     num++;
     value = "" + num;
   }
@@ -107,14 +99,13 @@ public class Sequence extends Property
   // into ical format.
   // Usage: java Sequence "SEQUENCE:1"
   //   
-  public static void main ( String args[] )
-  {
-    for ( int i = 0; i < args.length; i++ ) {
+  public static void main ( String args[] ) {
+    for (int i = 0; i < args.length; i++) {
       try {
         java.io.File f = new java.io.File ( args[i] );
         Sequence a = null;
         String input = null;
-        if ( f.exists () ) {
+        if (f.exists ()) {
           try {
             input = Utils.getFileContents ( f );
           } catch ( Exception e ) {
