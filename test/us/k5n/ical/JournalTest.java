@@ -18,8 +18,8 @@ public class JournalTest extends TestCase implements Constants {
   IcalParser parser;
   DataStore ds;
   String header = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//FOO//BAR//EN\n"
-      + "METHOD:PUBLISH\n";
-  String trailer = "END:VCALENDAR\n";
+      + "METHOD:PUBLISH\nBEGIN:VJOURNAL\n";
+  String trailer = "END:VJOURNAL\nEND:VCALENDAR\n";
 
   public void setUp () {
     parser = new IcalParser ( PARSE_STRICT );
@@ -28,8 +28,8 @@ public class JournalTest extends TestCase implements Constants {
 
   public void testOne () {
     String x = header
-        + "SUMMARY: Test Journal Entry\nDESCRIPTION: This is the description\n"
-        + "DTSTAMP: 20060501\nUID:journaltest1@k5n.us\n" + trailer;
+        + "SUMMARY:Test Journal Entry\nDESCRIPTION:This is the description\n"
+        + "DTSTAMP:20060501\nUID:journaltest1@k5n.us\n" + trailer;
     StringReader reader = new StringReader ( x );
     try {
       boolean ret = parser.parse ( reader );
@@ -50,24 +50,11 @@ public class JournalTest extends TestCase implements Constants {
       assertTrue ( "Incorrect description", j.description
           .equals ( "This is the description" ) );
     } catch ( Exception e ) {
-      fail ( "Failed: " + e.toString () );
-    }
-    try {
-      Classification c = new Classification ( "CLASS: public" );
-      assertTrue ( "public != " + c.getClassification (), c
-          .getClassification () == PUBLIC );
-    } catch ( Exception e ) {
-      fail ( "Failed: " + e.toString () );
-    }
-    try {
-      Classification c = new Classification ( PUBLIC );
-      assertTrue ( "public != " + c.getClassification (), c
-          .getClassification () == PUBLIC );
-    } catch ( Exception e ) {
+      e.printStackTrace ();
       fail ( "Failed: " + e.toString () );
     }
   }
-
+  
   public static Test suite () {
     return new TestSuite ( JournalTest.class );
   }
