@@ -16,31 +16,27 @@
  * distribution in the file COPYING.LIB. If you did not receive this copy,
  * write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
  * Boston, MA 02111-1307 USA.
-*/
+ */
 
 package us.k5n.ical;
 
-
 import java.util.Vector;
 
-
 /**
-  * A simple implementation of the DataStore interface.  This is the default
-  * implementation used by the IcalParser class.
-  * @version $Id$
-  * @author Craig Knudsen, craig@k5n.us
-  * @see IcalParser
-  */
-public class DefaultDataStore
-  implements DataStore
-{
+ * A simple implementation of the DataStore interface. This is the default
+ * implementation used by the IcalParser class.
+ * 
+ * @version $Id$
+ * @author Craig Knudsen, craig@k5n.us
+ * @see IcalParser
+ */
+public class DefaultDataStore implements DataStore {
   Vector timezones, events, todos, journals, freebusys;
 
   /**
-    * Constructor
-    */
-  public DefaultDataStore ()
-  {
+   * Constructor
+   */
+  public DefaultDataStore () {
     timezones = new Vector ();
     events = new Vector ();
     todos = new Vector ();
@@ -49,52 +45,54 @@ public class DefaultDataStore
   }
 
   /**
-    * This method will be called the parser finds a VTIMEZONE object.
-    */
-  public void storeTimezone ( Timezone timezone )
-  {
+   * This method will be called the parser finds a VTIMEZONE object.
+   */
+  public void storeTimezone ( Timezone timezone ) {
     timezones.addElement ( timezone );
   }
 
   /**
-    * This method will be called the parser finds a VEVENT object.
-    */
-  public void storeEvent ( Event event )
-  {
+   * This method will be called the parser finds a VEVENT object.
+   */
+  public void storeEvent ( Event event ) {
     events.addElement ( event );
   }
 
   /**
-    * This method will be called the parser finds a VTODO object.
-    */
-  public void storeTodo ( Todo todo )
-  {
+   * This method will be called the parser finds a VTODO object.
+   */
+  public void storeTodo ( Todo todo ) {
     todos.addElement ( todo );
   }
 
   /**
-    * This method will be called the parser finds a VJOURNAL object.
-    */
-  public void storeJournal ( Journal journal )
-  {
+   * This method will be called the parser finds a VJOURNAL object.
+   */
+  public void storeJournal ( Journal journal ) {
     journals.addElement ( journal );
   }
 
   /**
-    * This method will be called the parser finds a VFREEBUSY object.
-    */
-  public void storeFreebusy ( Freebusy freebusy )
-  {
+   * This method will be called the parser finds a VFREEBUSY object.
+   */
+  public void storeFreebusy ( Freebusy freebusy ) {
     freebusys.addElement ( freebusy );
   }
 
   /**
-    * Get a Vector of all Event objects
-    */
-  public Vector getAllEvents ()
-  {
+   * Get a Vector of all Event objects
+   */
+  public Vector getAllEvents () {
     return events;
   }
 
-}
+  /**
+   * Get all Journal objects.
+   * 
+   * @return A Vector of Journal objects
+   */
+  public java.util.Vector getAllJournals () {
+    return journals;
+  }
 
+}

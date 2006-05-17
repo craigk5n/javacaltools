@@ -514,6 +514,12 @@ System.out.println ( "ERROR: Invalid VEVENT found" );
       Event ev = (Event) events.elementAt ( i );
       ret.append ( ev.toIcal () );
     }
+    //  Include journal entries
+    Vector journals = ((DataStore) getDataStoreAt ( 0 )).getAllJournals ();
+    for ( int i = 0; i < journals.size(); i++ ) {
+      Journal j = (Journal) journals.elementAt ( i );
+      ret.append ( j.toIcal () );
+    }
 
     ret.append ( "END:VCALENDAR" );
     ret.append ( CRLF );
