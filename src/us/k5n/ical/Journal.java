@@ -136,7 +136,7 @@ public class Journal implements Constants {
   public void parseLine ( String icalStr, int parseMethod )
       throws ParseException, BogusDataException {
     String up = icalStr.toUpperCase ();
-    if (up.equals ( "BEGIN:VEVENT" ) || up.equals ( "END:VEVENT" )) {
+    if (up.equals ( "BEGIN:VJOURNAL" ) || up.equals ( "END:VJOURNAL" )) {
       // ignore
     } else if (up.trim ().length () == 0) {
       // ignore empty lines
