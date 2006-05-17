@@ -16,23 +16,18 @@
  * distribution in the file COPYING.LIB. If you did not receive this copy,
  * write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
  * Boston, MA 02111-1307 USA.
-*/
+ */
 
 package us.k5n.ical;
 
-
-import java.util.Calendar;
-
-
 /**
-  * iCal Todo class
-  * @version $Id$
-  * @author Craig Knudsen, craig@k5n.us
-  */
-public class Todo
-{
-  public Todo ()
-  {
+ * iCal Todo class
+ * 
+ * @version $Id$
+ * @author Craig Knudsen, craig@k5n.us
+ */
+public class Todo {
+  public Todo () {
     // TODO
   }
 

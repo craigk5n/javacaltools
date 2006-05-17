@@ -16,61 +16,53 @@
  * distribution in the file COPYING.LIB. If you did not receive this copy,
  * write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
  * Boston, MA 02111-1307 USA.
-*/
+ */
 
 package us.k5n.ical;
 
-
-import java.util.Calendar;
-
-
 /**
-  * iCal Uid class -
-  * This object represents a uid and
-  * corresponds to the UID iCal property.
-  * @version $Id$
-  * @author Craig Knudsen, craig@k5n.us
-  */
-public class Uid extends Property
-{
+ * iCal Uid class - This object represents a uid and corresponds to the UID iCal
+ * property.
+ * 
+ * @version $Id$
+ * @author Craig Knudsen, craig@k5n.us
+ */
+public class Uid extends Property {
   /**
-    * Constructor
-    */
-  public Uid ()
-  {
+   * Constructor
+   */
+  public Uid () {
     super ( "UID", "" );
   }
 
   /**
-    * Constructor
-    * @param icalStr	One or more lines of iCal that specifies
-    *			an event/todo uid
-    */
-  public Uid ( String icalStr )
-    throws ParseException
-  {
+   * Constructor
+   * 
+   * @param icalStr
+   *          One or more lines of iCal that specifies an event/todo uid
+   */
+  public Uid ( String icalStr ) throws ParseException {
     this ( icalStr, PARSE_LOOSE );
   }
 
-
   /**
-    * Constructor
-    * @param icalStr	One or more lines of iCal that specifies
-    *			the unique identifier
-    * @param parseMode	PARSE_STRICT or PARSE_LOOSE
-    */
-  public Uid ( String icalStr, int parseMode )
-    throws ParseException
-  {
+   * Constructor
+   * 
+   * @param icalStr
+   *          One or more lines of iCal that specifies the unique identifier
+   * @param parseMode
+   *          PARSE_STRICT or PARSE_LOOSE
+   */
+  public Uid ( String icalStr, int parseMode ) throws ParseException {
     super ( icalStr, parseMode );
 
     // UID cannot have any attributes
-    for ( int i = 0; i < attributeList.size(); i++ ) {
+    for (int i = 0; i < attributeList.size (); i++) {
       Attribute a = attributeAt ( i );
       // Only generate exception if strict parsing
-      if ( parseMode == PARSE_STRICT ) {
-        throw new ParseException ( "Invalid UID attribute '" +
-          a.name + "'", icalStr );
+      if (parseMode == PARSE_STRICT) {
+        throw new ParseException ( "Invalid UID attribute '" + a.name + "'",
+            icalStr );
       }
     }
   }
@@ -79,14 +71,13 @@ public class Uid extends Property
   // into ical format.
   // Usage: java Uid "UID;SFSDFSDFSDF-SDFDFSDFSD@xxx.com"
   //   
-  public static void main ( String args[] )
-  {
-    for ( int i = 0; i < args.length; i++ ) {
+  public static void main ( String args[] ) {
+    for (int i = 0; i < args.length; i++) {
       try {
         java.io.File f = new java.io.File ( args[i] );
         Uid a = null;
         String input = null;
-        if ( f.exists () ) {
+        if (f.exists ()) {
           try {
             input = Utils.getFileContents ( f );
           } catch ( Exception e ) {
