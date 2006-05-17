@@ -43,6 +43,8 @@ public class Event
   public Summary summary = null;
   /** Full description */
   public Description description = null;
+  /** Classification (PUBLIC, CONFIDENTIAL, PRIVATE) */
+  public Classification classification = null;
   /** List of categories (comma-separated) */
   public Categories categories = null;
   /** Primary start date */
@@ -167,6 +169,8 @@ public class Event
       dtstamp = new Date ( icalStr );
     } else if ( up.startsWith ( "LAST-MODIFIED" ) ) {
       lastModified = new Date ( icalStr );
+    } else if (up.startsWith ( "CLASS" )) {
+      classification = new Classification ( icalStr );
     } else if ( up.startsWith ( "CATEGORIES" ) ) {
       categories = new Categories ( icalStr );
     } else if ( up.startsWith ( "UID" ) ) {
@@ -226,6 +230,10 @@ System.out.println ( "Ignoring: " + icalStr );
       ret.append ( dtstamp.toIcal () );
     if ( lastModified != null )
       ret.append ( lastModified.toIcal () );
+    if ( classification != null )
+      ret.append ( classification.toIcal () );
+    if ( categories != null )
+      ret.append ( categories.toIcal () );
  
     ret.append ( "END:VEVENT" );
     ret.append ( CRLF );

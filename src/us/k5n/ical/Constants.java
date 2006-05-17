@@ -56,6 +56,13 @@ interface Constants
   static public final int ICAL_VERSION_MAJOR = 2;
   /** iCal minor version */
   static public final int ICAL_VERSION_MINOR = 0;
+  
+  /** iCal PUBLIC class */
+  static public final int PUBLIC = 0;
+  /** iCal PRIVATE class */
+  static public final int PRIVATE = 1;
+  /** iCal CONFIDENTIAL class */
+  static public final int CONFIDENTIAL = 2;
 
   /* iCal version (in N.N String format) */
   static public final String ICAL_VERSION =

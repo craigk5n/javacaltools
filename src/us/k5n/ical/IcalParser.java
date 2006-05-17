@@ -416,16 +416,13 @@ public class IcalParser
           if ( lineUp.startsWith ( "END:VJOURNAL" ) ) {
             state = STATE_VCALENDAR;
             // Send the Journal object to all DataStore objects
-            /*** TODO - not yet implemented
-                 Uncomment this when Journal.java is implemented
             Journal journal = new Journal ( this, startLineNo, textLines );
             if ( journal.isValid() ) {
               for ( int i = 0; i < dataStores.size(); i++ ) {
                 DataStore ds = (DataStore) dataStores.elementAt ( i );
-                ds.storeJournal ( event );
+                ds.storeJournal ( journal );
               }
             }
-            ***/
             textLines.removeAllElements (); // truncate Vector
           }
           break;

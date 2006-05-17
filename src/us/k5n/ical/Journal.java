@@ -23,7 +23,11 @@ package us.k5n.ical;
 import java.util.Vector;
 
 /**
- * iCal Journal class
+ * iCal Journal class: VJOURNAL components describe a journal entry. They simply
+ * attach descriptive text notes with a particular calendar date, and might be
+ * used to record a daily record of activities or accomplishments. A "VJOURNAL"
+ * calendar component does not take up time on, so it has no affect on free or
+ * busy time (just like TRANSPARENT entries).
  * 
  * @version $Id$
  * @author Craig Knudsen, craig@k5n.us
@@ -39,6 +43,8 @@ public class Journal implements Constants {
   public Summary summary = null;
   /** Full description */
   public Description description = null;
+  /** Classification (PUBLIC, CONFIDENTIAL, PRIVATE) */
+  public Classification classification = null;
   /** List of categories (comma-separated) */
   public Categories categories = null;
   /** Primary start date */
@@ -47,8 +53,6 @@ public class Journal implements Constants {
   public Date dtstamp = null;
   /** Time last modified */
   public Date lastModified = null;
-  /** Contact for the entry */
-  // public Individual contact;
   /** Participants for the journal entry (Vector of Attendee) */
   public Vector attendees = null;
   /** Recurrence rule (RRULE) */
@@ -146,6 +150,8 @@ public class Journal implements Constants {
       dtstamp = new Date ( icalStr );
     } else if (up.startsWith ( "LAST-MODIFIED" )) {
       lastModified = new Date ( icalStr );
+    } else if (up.startsWith ( "CLASS" )) {
+      classification = new Classification ( icalStr );
     } else if (up.startsWith ( "CATEGORIES" )) {
       categories = new Categories ( icalStr );
     } else if (up.startsWith ( "UID" )) {
@@ -200,6 +206,11 @@ public class Journal implements Constants {
       ret.append ( dtstamp.toIcal () );
     if (lastModified != null)
       ret.append ( lastModified.toIcal () );
+    if ( classification != null )
+      ret.append ( classification.toIcal () );
+    if ( categories != null )
+      ret.append ( categories.toIcal () );
+ 
 
     ret.append ( "END:VJOURNAL" );
     ret.append ( CRLF );
