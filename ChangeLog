@@ -1,4 +1,7 @@
 Version 0.?.? (?? ??? 2006)
+  - Added support for "CLASS" in Event object
+  - Added implementation of Journal object (VJOURNAL)
+  - Added a few unit tests based on JUnit
   - Patch 1464212: Date parsing problem (exception parsing UTC dates)
 Version 0.1.0 (02 Feb 2006)
   - Initial public release
