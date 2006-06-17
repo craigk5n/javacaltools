@@ -36,7 +36,7 @@ package us.k5n.ical;
  * @author Craig Knudsen, craig@k5n.us
  * @see IcalParser
  */
-interface DataStore {
+public interface DataStore {
 
   /**
    * This method will be called the parser finds a VTIMEZONE object.
