@@ -169,6 +169,7 @@ public class Date extends Property implements Constants {
       }
     } else {
       // Just date, no time
+    	dateOnly = true;
     }
   }
 
@@ -178,7 +179,7 @@ public class Date extends Property implements Constants {
    * @return true if the Date contains a time components
    */
   public boolean hasTime () {
-    return ( !dateOnly );
+  	return ( dateOnly == false );
   }
 
   /**
