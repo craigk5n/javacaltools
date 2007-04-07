@@ -44,10 +44,10 @@ public class JournalTest extends TestCase implements Constants {
       assertTrue ( "Incorrect month", d.month == 5 );
       assertTrue ( "Incorrect day", d.day == 1 );
       assertTrue ( "Null summary", j.summary != null );
-      assertTrue ( "Incorrect summary", j.summary
+      assertTrue ( "Incorrect summary", j.summary.value
           .equals ( "Test Journal Entry" ) );
       assertTrue ( "Null description", j.description != null );
-      assertTrue ( "Incorrect description", j.description
+      assertTrue ( "Incorrect description", j.description.value
           .equals ( "This is the description" ) );
     } catch ( Exception e ) {
       e.printStackTrace ();
