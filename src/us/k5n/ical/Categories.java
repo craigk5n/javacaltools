@@ -21,8 +21,8 @@
 package us.k5n.ical;
 
 /**
- * iCal Categories class - This object represents a category list and
- * corresponds to the CATEGORIES iCal property.
+ * iCalendar Categories class - This object represents a category list and
+ * corresponds to the CATEGORIES iCalendar property.
  * 
  * @version $Id$
  * @author Craig Knudsen, craig@k5n.us
@@ -45,7 +45,7 @@ public class Categories extends Property {
    * Constructor
    * 
    * @param icalStr
-   *          One or more lines of iCal that specifies an event/todo description
+   *          One or more lines of iCalendar that specifies an event/todo description
    */
   public Categories ( String icalStr ) throws ParseException {
     this ( icalStr, PARSE_LOOSE );
@@ -55,7 +55,7 @@ public class Categories extends Property {
    * Constructor
    * 
    * @param icalStr
-   *          One or more lines of iCal that specifies a category list (comma
+   *          One or more lines of iCalendar that specifies a category list (comma
    *          separated)
    * @param parseMode
    *          PARSE_STRICT or PARSE_LOOSE
@@ -107,7 +107,7 @@ public class Categories extends Property {
         System.out.println ( "\nCategories text:\n" + a.value );
         System.out.println ( "\nCategories output:\n  " + a.toIcal () );
       } catch ( ParseException e ) {
-        System.err.println ( "iCal Parse Exception: " + e );
+        System.err.println ( "iCalendar Parse Exception: " + e );
       }
     }
   }

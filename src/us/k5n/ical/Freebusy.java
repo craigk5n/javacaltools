@@ -21,14 +21,14 @@
 package us.k5n.ical;
 
 /**
- * iCal Freebusy class
+ * iCalendar Freebusy class
  * 
  * @version $Id$
  * @author Craig Knudsen, craig@k5n.us
  */
 public class Freebusy {
-  public Freebusy () {
-    // TODO
-  }
+	public Freebusy() {
+		// TODO
+	}
 
 }

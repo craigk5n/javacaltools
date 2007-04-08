@@ -22,7 +22,7 @@ package us.k5n.ical;
 
 
 /**
-  * iCal invalid data exception
+  * iCalendar invalid data exception
   * @version $Id$
   * @author Craig Knudsen, craig@k5n.us
   */
@@ -41,7 +41,7 @@ public class BogusDataException extends Exception
   public String toString ()
   {
     String ret = super.toString ();
-    ret += "\nInput iCal data: '" + icalText + "'\n";
+    ret += "\nInput iCalendar data: '" + icalText + "'\n";
     return ret;
   }
 

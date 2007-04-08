@@ -22,7 +22,7 @@ package us.k5n.ical;
 
 
 /**
-  * Base class for use with a variety of duration-related iCal fields.
+  * Base class for use with a variety of duration-related iCalendar fields.
   * <br/>From RFC 2445:<blockquote>
   * Formal Definition: The value type is defined by the following
   * notation: <ul>
@@ -64,7 +64,7 @@ public class Duration extends Property
 
   /**
     * Constructor
-    * @param icalStr	One or more lines of iCal that specifies
+    * @param icalStr	One or more lines of iCalendar that specifies
     *			a duration.  Durations should follow the ISO 8601
     *			format.
     */
@@ -88,7 +88,7 @@ public class Duration extends Property
 
   /**
     * Constructor
-    * @param icalStr	One or more lines of iCal that specifies
+    * @param icalStr	One or more lines of iCalendar that specifies
     *			a duration
     * @param parseMode	PARSE_STRICT or PARSE_LOOSE
     */
@@ -210,9 +210,9 @@ public class Duration extends Property
         System.out.println ( "\nDuration output:\n  " + a.toIcal () );
         System.out.println ( "\nNumber of seconds: " + a.duration );
       } catch ( ParseException e ) {
-        System.err.println ( "iCal Parse Exception: " + e );
+        System.err.println ( "iCalendar Parse Exception: " + e );
       } catch ( BogusDataException e2 ) {
-        System.err.println ( "iCal Data Exception: " + e2 );
+        System.err.println ( "iCalendar Data Exception: " + e2 );
       }
     }
   }

@@ -21,7 +21,7 @@
 package us.k5n.ical;
 
 /**
- * The DataStore interface defines how parsed iCal data (VTIMEZONE, VEVENT,
+ * The DataStore interface defines how parsed iCalendar data (VTIMEZONE, VEVENT,
  * VTODO, VJOURNAL, VFREEBUSY) will be stored. By default, all objects will be
  * stored internally. However, you can specify that:
  * <ul>
@@ -38,43 +38,43 @@ package us.k5n.ical;
  */
 public interface DataStore {
 
-  /**
-   * This method will be called the parser finds a VTIMEZONE object.
-   */
-  public void storeTimezone ( Timezone timezone );
+	/**
+	 * This method will be called the parser finds a VTIMEZONE object.
+	 */
+	public void storeTimezone ( Timezone timezone );
 
-  /**
-   * This method will be called the parser finds a VEVENT object.
-   */
-  public void storeEvent ( Event event );
+	/**
+	 * This method will be called the parser finds a VEVENT object.
+	 */
+	public void storeEvent ( Event event );
 
-  /**
-   * This method will be called the parser finds a VTODO object.
-   */
-  public void storeTodo ( Todo todo );
+	/**
+	 * This method will be called the parser finds a VTODO object.
+	 */
+	public void storeTodo ( Todo todo );
 
-  /**
-   * This method will be called the parser finds a VJOURNAL object.
-   */
-  public void storeJournal ( Journal journal );
+	/**
+	 * This method will be called the parser finds a VJOURNAL object.
+	 */
+	public void storeJournal ( Journal journal );
 
-  /**
-   * This method will be called the parser finds a VFREEBUSY object.
-   */
-  public void storeFreebusy ( Freebusy freebusy );
+	/**
+	 * This method will be called the parser finds a VFREEBUSY object.
+	 */
+	public void storeFreebusy ( Freebusy freebusy );
 
-  /**
-   * Get all Event objects.
-   * 
-   * @return A Vector if Event objects
-   */
-  public java.util.Vector getAllEvents ();
+	/**
+	 * Get all Event objects.
+	 * 
+	 * @return A Vector if Event objects
+	 */
+	public java.util.Vector getAllEvents ();
 
-  /**
-   * Get all Journal objects.
-   * 
-   * @return A Vector of Journal objects
-   */
-  public java.util.Vector getAllJournals ();
+	/**
+	 * Get all Journal objects.
+	 * 
+	 * @return A Vector of Journal objects
+	 */
+	public java.util.Vector getAllJournals ();
 
 }

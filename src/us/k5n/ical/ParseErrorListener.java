@@ -16,23 +16,21 @@
  * distribution in the file COPYING.LIB. If you did not receive this copy,
  * write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
  * Boston, MA 02111-1307 USA.
-*/
+ */
 
 package us.k5n.ical;
 
-
 /**
-  * Defines an interface for receive parse errors.
-  * @version $Id$
-  * @author Craig Knudsen, craig@k5n.us
-  */
-interface ParseErrorListener
-{
+ * Defines an interface for receive parse errors.
+ * 
+ * @version $Id$
+ * @author Craig Knudsen, craig@k5n.us
+ */
+interface ParseErrorListener {
 
-  /**
-    * This method will be called when a iCal parse error is encountered.
-    */
-  public void reportParseError ( ParseError error );
+	/**
+	 * This method will be called when a iCalendar parse error is encountered.
+	 */
+	public void reportParseError ( ParseError error );
 
 }
-

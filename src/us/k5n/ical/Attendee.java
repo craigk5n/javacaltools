@@ -21,8 +21,8 @@
 package us.k5n.ical;
 
 /**
- * iCal Attendee class - This object represents either an individual or a
- * resource and corresponds to the ATTENDEE iCal property.
+ * iCalendar Attendee class - This object represents either an individual or a
+ * resource and corresponds to the ATTENDEE iCalendar property.
  * 
  * @version $Id$
  * @author Craig Knudsen, craig@k5n.us
@@ -80,7 +80,7 @@ public class Attendee extends Property {
    * Constructor
    * 
    * @param icalStr
-   *          One or more lines of iCal that specifies an event attendee
+   *          One or more lines of iCalendar that specifies an event attendee
    */
   public Attendee ( String icalStr ) throws ParseException {
     this ( icalStr, PARSE_LOOSE );
@@ -90,7 +90,7 @@ public class Attendee extends Property {
    * Constructor
    * 
    * @param icalStr
-   *          One or more lines of iCal that specifies an event attendee
+   *          One or more lines of iCalendar that specifies an event attendee
    * @param parseMode
    *          PARSE_STRICT or PARSE_LOOSE
    */
@@ -202,7 +202,7 @@ public class Attendee extends Property {
         System.out.println ( "Attendee input:\n  " + args[i] );
         System.out.println ( "Attendee output:\n  " + a.toIcal () );
       } catch ( ParseException e ) {
-        System.err.println ( "iCal Parse Exception: " + e );
+        System.err.println ( "iCalendar Parse Exception: " + e );
       }
     }
   }

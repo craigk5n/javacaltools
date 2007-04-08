@@ -21,8 +21,8 @@
 package us.k5n.ical;
 
 /**
- * The Classification class represents the iCal Classification for Event, Todo
- * and Journal objects.
+ * The Classification class represents the iCalendar Classification for Event,
+ * Todo and Journal objects.
  * 
  * <br/>From section 4.8.1.3 RFC 2445:<blockquote> This property defines the
  * access classification for a calendar component. <br/><br/> Property
@@ -48,91 +48,91 @@ package us.k5n.ical;
  * @author Craig Knudsen, craig@k5n.us
  */
 public class Classification extends Property implements Constants {
-  int classification = PUBLIC;
+	int classification = PUBLIC;
 
-  /**
-   * Generate an iCal classification based on an iCal line of text.
-   * 
-   * @param icalStr
-   *          One or more lines of iCal that specifies a duration. Durations
-   *          should follow the ISO 8601 format.
-   */
-  public Classification ( String icalStr ) throws ParseException,
-      BogusDataException {
-    this ( icalStr, PARSE_LOOSE );
-  }
+	/**
+	 * Generate an iCalendar classification based on an iCalendar line of text.
+	 * 
+	 * @param icalStr
+	 *          One or more lines of iCalendar that specifies a duration.
+	 *          Durations should follow the ISO 8601 format.
+	 */
+	public Classification(String icalStr) throws ParseException,
+	    BogusDataException {
+		this ( icalStr, PARSE_LOOSE );
+	}
 
-  /**
-   * Constructor
-   * 
-   * @param classification
-   *          The type of classification (PUBLIC, PRIVATE, CONFIDENTIAL)
-   */
-  public Classification ( int classification ) {
-    super ( "CLASS", "" );
-    this.classification = classification;
-    switch ( classification ) {
-      case PUBLIC:
-        this.value = "PUBLIC";
-        break;
-      case CONFIDENTIAL:
-        this.value = "CONFIDENTIAL";
-        break;
-      case PRIVATE:
-        this.value = "PRIVATE";
-        break;
-    }
-  }
+	/**
+	 * Constructor
+	 * 
+	 * @param classification
+	 *          The type of classification (PUBLIC, PRIVATE, CONFIDENTIAL)
+	 */
+	public Classification(int classification) {
+		super ( "CLASS", "" );
+		this.classification = classification;
+		switch ( classification ) {
+			case PUBLIC:
+				this.value = "PUBLIC";
+				break;
+			case CONFIDENTIAL:
+				this.value = "CONFIDENTIAL";
+				break;
+			case PRIVATE:
+				this.value = "PRIVATE";
+				break;
+		}
+	}
 
-  /**
-   * Constructor
-   * 
-   * @param icalStr
-   *          One or more lines of iCal that specifies a duration
-   * @param parseMode
-   *          PARSE_STRICT or PARSE_LOOSE
-   */
-  public Classification ( String icalStr, int parseMode )
-      throws ParseException, BogusDataException {
-    super ( icalStr, parseMode );
+	/**
+	 * Constructor
+	 * 
+	 * @param icalStr
+	 *          One or more lines of iCalendar that specifies a duration
+	 * @param parseMode
+	 *          PARSE_STRICT or PARSE_LOOSE
+	 */
+	public Classification(String icalStr, int parseMode) throws ParseException,
+	    BogusDataException {
+		super ( icalStr, parseMode );
 
-    for (int i = 0; i < attributeList.size (); i++) {
-      Attribute a = attributeAt ( i );
-      String aval = a.value.toUpperCase ();
-      // TODO: not sure if any attributes are allowed here...
-    }
+		for ( int i = 0; i < attributeList.size (); i++ ) {
+			Attribute a = attributeAt ( i );
+			String aval = a.value.toUpperCase ();
+			// TODO: not sure if any attributes are allowed here...
+		}
 
-    if (value == null || value.length () == 0)
-      throw new ParseException ( "No valid classification found", icalStr );
-    String aval = value.toUpperCase ().trim();
-    if (aval.equals ( "PUBLIC" )) {
-      this.classification = PUBLIC;
-    } else if (aval.equals ( "CONFIDENTIAL" )) {
-      this.classification = CONFIDENTIAL;
-    } else if (aval.equals ( "PRIVATE" )) {
-      this.classification = PRIVATE;
-    } else {
-      // Allowed to have other values here...
-    }
-  }
+		if ( value == null || value.length () == 0 )
+			throw new ParseException ( "No valid classification found", icalStr );
+		String aval = value.toUpperCase ().trim ();
+		if ( aval.equals ( "PUBLIC" ) ) {
+			this.classification = PUBLIC;
+		} else if ( aval.equals ( "CONFIDENTIAL" ) ) {
+			this.classification = CONFIDENTIAL;
+		} else if ( aval.equals ( "PRIVATE" ) ) {
+			this.classification = PRIVATE;
+		} else {
+			// Allowed to have other values here...
+		}
+	}
 
-  /**
-   * Get the classification (PUBLIC, PRIVATE, CONFIDENTIAL)
-   * 
-   * @return Returns the classification
-   */
-  public int getClassification () {
-    return classification;
-  }
+	/**
+	 * Get the classification (PUBLIC, PRIVATE, CONFIDENTIAL)
+	 * 
+	 * @return Returns the classification
+	 */
+	public int getClassification () {
+		return classification;
+	}
 
-  /**
-   * Set the classification (PUBLIC, PRIVATE, CONFIDENTIAL)
-   * 
-   * @param classification
-   *          The classification to set. PUBLIC, PRIVATE, CONFIDENTIAL)
-   */
-  public void setClassification ( int classification ) {
-    this.classification = classification;
-  }
+	/**
+	 * Set the classification (PUBLIC, PRIVATE, CONFIDENTIAL)
+	 * 
+	 * @param classification
+	 *          The classification to set. PUBLIC, PRIVATE, CONFIDENTIAL)
+	 */
+	public void setClassification ( int classification ) {
+		this.classification = classification;
+	}
 
 }

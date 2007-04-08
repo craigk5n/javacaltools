@@ -24,7 +24,7 @@ package us.k5n.ical;
 
 
 /**
-  * iCal Attribute class.  Can be used to store an attribute such as
+  * iCalendar Attribute class.  Can be used to store an attribute such as
   * LANGUAGE as in: <br/>
   * <tt>LOCATION;LANGUAGE=en:Germany</tt>
   * @version $Id$

@@ -16,33 +16,30 @@
  * distribution in the file COPYING.LIB. If you did not receive this copy,
  * write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
  * Boston, MA 02111-1307 USA.
-*/
+ */
 
 package us.k5n.ical;
 
-
 /**
-  * iCal Parsing Exception.
-  * @version $Id$
-  * @author Craig Knudsen, craig@k5n.us
-  */
-public class ParseException extends Exception
-{
-  public String error;
-  public String icalText;
+ * iCalendar Parsing Exception.
+ * 
+ * @version $Id$
+ * @author Craig Knudsen, craig@k5n.us
+ */
+public class ParseException extends Exception {
+	public String error;
+	public String icalText;
 
-  public ParseException ( String error, String icalText) 
-  {
-    super ( error );
-    this.error = error;
-    this.icalText = icalText;
-  }
+	public ParseException(String error, String icalText) {
+		super ( error );
+		this.error = error;
+		this.icalText = icalText;
+	}
 
-  public String toString ()
-  {
-    String ret = super.toString ();
-    ret += "\nInput iCal data: '" + icalText + "'\n";
-    return ret;
-  }
+	public String toString () {
+		String ret = super.toString ();
+		ret += "\nInput iCalendar data: '" + icalText + "'\n";
+		return ret;
+	}
 
 }

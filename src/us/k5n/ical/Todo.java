@@ -21,7 +21,7 @@
 package us.k5n.ical;
 
 /**
- * iCal Todo class
+ * iCalendar Todo class
  * 
  * @version $Id$
  * @author Craig Knudsen, craig@k5n.us

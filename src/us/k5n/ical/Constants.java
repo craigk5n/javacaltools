@@ -16,55 +16,57 @@
  * distribution in the file COPYING.LIB. If you did not receive this copy,
  * write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
  * Boston, MA 02111-1307 USA.
-*/
+ */
 
 package us.k5n.ical;
 
-
 /**
-  * iCal constants
-  * @version $Id$
-  * @author Craig Knudsen, craig@k5n.us
-  */
-interface Constants
-{
-  /** Parse iCal data strictly.  ParseException errors will be generated
-    * for all errors.  This would typically be used to validate an iCal
-    * data file rather than by an application intersted in loading iCal data. */
-  static public final int PARSE_STRICT = 1;
-  /** Don't parse iCal data strictly.  (This is the default in most cases.)
-    * Attempt to parse and derive as much from the iCal data as possible.
-    */
-  static public final int PARSE_LOOSE = 2;
+ * iCalendar constants
+ * 
+ * @version $Id$
+ * @author Craig Knudsen, craig@k5n.us
+ */
+interface Constants {
+	/**
+	 * Parse iCalendar data strictly. ParseException errors will be generated for
+	 * all errors. This would typically be used to validate an iCalendar data file
+	 * rather than by an application intersted in loading iCalendar data.
+	 */
+	static public final int PARSE_STRICT = 1;
+	/**
+	 * Don't parse iCalendar data strictly. (This is the default in most cases.)
+	 * Attempt to parse and derive as much from the iCalendar data as possible.
+	 */
+	static public final int PARSE_LOOSE = 2;
 
-  /** Line termination string. */
-  static public final String CRLF = "\r\n";
+	/** Line termination string. */
+	static public final String CRLF = "\r\n";
 
-  /** Carriage return character */
-  static public final int CR = 13;
-  /** Line feed character */
-  static public final int LF = 10;
-  /** Tab character */
-  static public final int TAB = 9;
-  /** Space character */
-  static public final int SPACE = 32;
+	/** Carriage return character */
+	static public final int CR = 13;
+	/** Line feed character */
+	static public final int LF = 10;
+	/** Tab character */
+	static public final int TAB = 9;
+	/** Space character */
+	static public final int SPACE = 32;
 
-  /** Maximum line length acceptable in iCal (excluding CRLF) */
-  static public final int MAX_LINE_LENGTH = 75;
+	/** Maximum line length acceptable in iCalendar (excluding CRLF) */
+	static public final int MAX_LINE_LENGTH = 75;
 
-  /** iCal major version */
-  static public final int ICAL_VERSION_MAJOR = 2;
-  /** iCal minor version */
-  static public final int ICAL_VERSION_MINOR = 0;
-  
-  /** iCal PUBLIC class (default) */
-  static public final int PUBLIC = 0;
-  /** iCal PRIVATE class */
-  static public final int PRIVATE = 1;
-  /** iCal CONFIDENTIAL class */
-  static public final int CONFIDENTIAL = 2;
+	/** iCalendar major version */
+	static public final int ICAL_VERSION_MAJOR = 2;
+	/** iCalendar minor version */
+	static public final int ICAL_VERSION_MINOR = 0;
 
-  /* iCal version (in N.N String format) */
-  static public final String ICAL_VERSION =
-    ICAL_VERSION_MAJOR + "." + ICAL_VERSION_MINOR;
+	/** iCalendar PUBLIC class (default) */
+	static public final int PUBLIC = 0;
+	/** iCalendar PRIVATE class */
+	static public final int PRIVATE = 1;
+	/** iCalendar CONFIDENTIAL class */
+	static public final int CONFIDENTIAL = 2;
+
+	/* iCalendar version (in N.N String format) */
+	static public final String ICAL_VERSION = ICAL_VERSION_MAJOR + "."
+	    + ICAL_VERSION_MINOR;
 }

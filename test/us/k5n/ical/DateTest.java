@@ -1,8 +1,5 @@
 package us.k5n.ical;
 
-import java.io.StringReader;
-import java.util.Vector;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
