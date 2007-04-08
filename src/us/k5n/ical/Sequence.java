@@ -119,7 +119,7 @@ public class Sequence extends Property {
 				a = new Sequence ( input, PARSE_STRICT );
 				System.out.println ( "Sequence input:\n  " + args[i] );
 				System.out.println ( "\nSequence text:\n" + a.value );
-				System.out.println ( "\nSequence output:\n  " + a.toIcal () );
+				System.out.println ( "\nSequence output:\n  " + a.toICalendar () );
 			} catch ( ParseException e ) {
 				System.err.println ( "iCalendar Parse Exception: " + e );
 			}

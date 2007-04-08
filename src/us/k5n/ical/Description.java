@@ -109,7 +109,7 @@ public class Description extends Property {
 				a = new Description ( input, PARSE_STRICT );
 				System.out.println ( "Description input:\n  " + args[i] );
 				System.out.println ( "\nDescription text:\n" + a.value );
-				System.out.println ( "\nDescription output:\n  " + a.toIcal () );
+				System.out.println ( "\nDescription output:\n  " + a.toICalendar () );
 			} catch ( ParseException e ) {
 				System.err.println ( " Parse Exception: " + e );
 			}

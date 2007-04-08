@@ -142,7 +142,7 @@ public class Property implements Constants {
 	/**
 	 * Export to a properly folded iCalendar line.
 	 */
-	public String toIcal () {
+	public String toICalendar () {
 		StringBuffer ret = new StringBuffer ( 40 );
 		ret.append ( name );
 		if ( attributeList.size () > 0 ) {

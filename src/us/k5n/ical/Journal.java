@@ -187,29 +187,29 @@ public class Journal implements Constants {
 	/**
 	 * Convert this Journal into iCalendar text
 	 */
-	public String toIcal () {
+	public String toICalendar () {
 		StringBuffer ret = new StringBuffer ( 128 );
 		ret.append ( "BEGIN:VJOURNAL" );
 		ret.append ( CRLF );
 
 		if ( uid != null )
-			ret.append ( uid.toIcal () );
+			ret.append ( uid.toICalendar () );
 		if ( sequence != null )
-			ret.append ( sequence.toIcal () );
+			ret.append ( sequence.toICalendar () );
 		if ( summary != null )
-			ret.append ( summary.toIcal () );
+			ret.append ( summary.toICalendar () );
 		if ( description != null )
-			ret.append ( description.toIcal () );
+			ret.append ( description.toICalendar () );
 		if ( startDate != null )
-			ret.append ( startDate.toIcal () );
+			ret.append ( startDate.toICalendar () );
 		if ( dtstamp != null )
-			ret.append ( dtstamp.toIcal () );
+			ret.append ( dtstamp.toICalendar () );
 		if ( lastModified != null )
-			ret.append ( lastModified.toIcal () );
+			ret.append ( lastModified.toICalendar () );
 		if ( classification != null )
-			ret.append ( classification.toIcal () );
+			ret.append ( classification.toICalendar () );
 		if ( categories != null )
-			ret.append ( categories.toIcal () );
+			ret.append ( categories.toICalendar () );
 
 		ret.append ( "END:VJOURNAL" );
 		ret.append ( CRLF );

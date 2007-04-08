@@ -193,7 +193,7 @@ public class Date extends Property implements Constants {
 	/**
 	 * Generate the iCalendar string for this Date.
 	 */
-	public String toIcal () {
+	public String toICalendar () {
 		StringBuffer sb = new StringBuffer ( dateOnly ? 8 : 15 );
 		sb.append ( year );
 		if ( month < 10 )
@@ -218,7 +218,7 @@ public class Date extends Property implements Constants {
 				sb.append ( 'Z' );
 		}
 		value = sb.toString ();
-		return super.toIcal ();
+		return super.toICalendar ();
 	}
 
 	// Test routine - will parse input string and then export back
@@ -244,7 +244,7 @@ public class Date extends Property implements Constants {
 				a = new Date ( input, PARSE_STRICT );
 				System.out.println ( "Date input:\n  " + args[i] );
 				System.out.println ( "\nDate text:\n" + a.value );
-				System.out.println ( "\nDate output:\n  " + a.toIcal () );
+				System.out.println ( "\nDate output:\n  " + a.toICalendar () );
 			} catch ( ParseException e ) {
 				System.err.println ( "iCalendar Parse Exception: " + e );
 			} catch ( BogusDataException e2 ) {

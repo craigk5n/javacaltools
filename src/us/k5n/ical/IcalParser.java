@@ -487,13 +487,13 @@ public class IcalParser implements Constants {
 		return noErrors;
 	}
 
-	public String toIcal () {
+	public String toICalendar () {
 		StringBuffer ret = new StringBuffer ( 1024 );
 		ret.append ( "BEGIN:VCALENDAR" );
 		ret.append ( CRLF );
 		ret.append ( "VERSION:2.0" );
 		ret.append ( CRLF );
-		// Should we use the PRODID we parsed on input. Since we are generating
+		// Should we use the PRODID we parsed on input? Since we are generating
 		// output, I think we will use ours.
 		// TODO: add version number in the following
 		ret.append ( "PRODID:-//k5n.us//Java Calendar Tools//EN" );
@@ -503,13 +503,13 @@ public class IcalParser implements Constants {
 		Vector events = ( (DataStore) getDataStoreAt ( 0 ) ).getAllEvents ();
 		for ( int i = 0; i < events.size (); i++ ) {
 			Event ev = (Event) events.elementAt ( i );
-			ret.append ( ev.toIcal () );
+			ret.append ( ev.toICalendar () );
 		}
 		// Include journal entries
 		Vector journals = ( (DataStore) getDataStoreAt ( 0 ) ).getAllJournals ();
 		for ( int i = 0; i < journals.size (); i++ ) {
 			Journal j = (Journal) journals.elementAt ( i );
-			ret.append ( j.toIcal () );
+			ret.append ( j.toICalendar () );
 		}
 
 		ret.append ( "END:VCALENDAR" );
@@ -539,7 +539,7 @@ public class IcalParser implements Constants {
 				System.exit ( 1 );
 			}
 			System.out.println ( "Filename:\n  " + args[i] );
-			// System.out.println ( "\nFormatted output:\n\n" + a.toIcal () );
+			// System.out.println ( "\nFormatted output:\n\n" + a.toICalendar () );
 			Vector errors = a.getAllErrors ();
 			for ( int j = 0; j < errors.size (); j++ ) {
 				ParseError err = (ParseError) errors.elementAt ( j );

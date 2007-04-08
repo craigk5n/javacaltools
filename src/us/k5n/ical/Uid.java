@@ -91,7 +91,7 @@ public class Uid extends Property {
 				a = new Uid ( input, PARSE_STRICT );
 				System.out.println ( "Uid input:\n  " + args[i] );
 				System.out.println ( "\nUid text:\n" + a.value );
-				System.out.println ( "\nUid output:\n  " + a.toIcal () );
+				System.out.println ( "\nUid output:\n  " + a.toICalendar () );
 			} catch ( ParseException e ) {
 				System.err.println ( "iCalendar Parse Exception: " + e );
 			}

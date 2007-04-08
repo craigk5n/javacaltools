@@ -111,7 +111,7 @@ public class Summary extends Property {
 				a = new Summary ( input, PARSE_STRICT );
 				System.out.println ( "Summary input:\n  " + args[i] );
 				System.out.println ( "\nSummary text:\n" + a.value );
-				System.out.println ( "\nSummary output:\n  " + a.toIcal () );
+				System.out.println ( "\nSummary output:\n  " + a.toICalendar () );
 			} catch ( ParseException e ) {
 				System.err.println ( "iCalendar Parse Exception: " + e );
 			}

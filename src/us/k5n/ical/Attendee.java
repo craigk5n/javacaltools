@@ -200,7 +200,7 @@ public class Attendee extends Property {
         }
         a = new Attendee ( input, PARSE_STRICT );
         System.out.println ( "Attendee input:\n  " + args[i] );
-        System.out.println ( "Attendee output:\n  " + a.toIcal () );
+        System.out.println ( "Attendee output:\n  " + a.toICalendar () );
       } catch ( ParseException e ) {
         System.err.println ( "iCalendar Parse Exception: " + e );
       }

@@ -43,8 +43,8 @@ public class ClassificationTest extends TestCase implements Constants {
 	public void testTwo () {
 		try {
 			Classification c = new Classification ( "CLASS: PRIVATE" );
-			assertTrue ( "PRIVATE != " + c.getClassification () + ", " + c.toIcal (),
-			    c.getClassification () == PRIVATE );
+			assertTrue ( "PRIVATE != " + c.getClassification () + ", "
+			    + c.toICalendar (), c.getClassification () == PRIVATE );
 		} catch ( Exception e ) {
 			fail ( "Failed: " + e.toString () );
 		}

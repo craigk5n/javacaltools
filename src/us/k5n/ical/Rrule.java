@@ -61,7 +61,7 @@ class RruleByday {
 			valid = true;
 	}
 
-	public String toIcal () {
+	public String toICalendar () {
 		StringBuffer ret = new StringBuffer ();
 		if ( !positive )
 			ret.append ( '-' );
@@ -330,7 +330,7 @@ public class Rrule extends Property implements Constants {
 	/**
 	 * Convert to a RRULE iCalendar line
 	 */
-	public String toIcal () {
+	public String toICalendar () {
 		StringBuffer ret = new StringBuffer ();
 		ret.append ( "RRULE:" );
 		// regenerate value in case anything was updated and so we can validate
@@ -408,7 +408,7 @@ public class Rrule extends Property implements Constants {
 			for ( int i = 0; i < byday.length; i++ ) {
 				if ( i > 0 )
 					ret.append ( ',' );
-				ret.append ( byday[i].toIcal () );
+				ret.append ( byday[i].toICalendar () );
 			}
 		}
 		if ( bymonth != null ) {
@@ -422,7 +422,7 @@ public class Rrule extends Property implements Constants {
 
 		value = ret.toString ();
 
-		return super.toIcal ();
+		return super.toICalendar ();
 	}
 
 	// Test routine - will parse input string and then export back
@@ -448,7 +448,7 @@ public class Rrule extends Property implements Constants {
 				a = new Rrule ( input, PARSE_STRICT );
 				System.out.println ( "input:\n  " + args[i] );
 				System.out.println ( "\ntext:\n" + a.value );
-				System.out.println ( "\noutput:\n  " + a.toIcal () );
+				System.out.println ( "\noutput:\n  " + a.toICalendar () );
 			} catch ( ParseException e ) {
 				System.err.println ( "iCalendar Parse Exception: " + e );
 			} catch ( BogusDataException e2 ) {
