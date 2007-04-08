@@ -137,6 +137,13 @@ public class Date extends Property implements Constants {
       throw new ParseException ( "Invalid date format '" + inDate + "'", inDate );
     }
 
+    // Make sure all parts of the year are numeric.
+    for ( int i = 0; i < 8; i++ ) {
+      char ch = inDate.charAt ( i );
+      if ( ch < '0' || ch > '9' ) {
+      	throw new ParseException ( "Invalid date format '" + inDate + "'", inDate );
+      }
+    }
     year = Integer.parseInt ( inDate.substring ( 0, 4 ) );
     month = Integer.parseInt ( inDate.substring ( 4, 6 ) );
     day = Integer.parseInt ( inDate.substring ( 6, 8 ) );
