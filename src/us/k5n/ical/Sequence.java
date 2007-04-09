@@ -96,34 +96,4 @@ public class Sequence extends Property {
 		value = "" + num;
 	}
 
-	// Test routine - will parse input string and then export back
-	// into ical format.
-	// Usage: java Sequence "SEQUENCE:1"
-	//   
-	public static void main ( String args[] ) {
-		for ( int i = 0; i < args.length; i++ ) {
-			try {
-				java.io.File f = new java.io.File ( args[i] );
-				Sequence a = null;
-				String input = null;
-				if ( f.exists () ) {
-					try {
-						input = Utils.getFileContents ( f );
-					} catch ( Exception e ) {
-						System.err.println ( "Error opening " + f + ": " + e );
-						System.exit ( 1 );
-					}
-				} else {
-					input = args[i];
-				}
-				a = new Sequence ( input, PARSE_STRICT );
-				System.out.println ( "Sequence input:\n  " + args[i] );
-				System.out.println ( "\nSequence text:\n" + a.value );
-				System.out.println ( "\nSequence output:\n  " + a.toICalendar () );
-			} catch ( ParseException e ) {
-				System.err.println ( "iCalendar Parse Exception: " + e );
-			}
-		}
-	}
-
 }

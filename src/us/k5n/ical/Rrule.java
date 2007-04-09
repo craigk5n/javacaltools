@@ -425,35 +425,4 @@ public class Rrule extends Property implements Constants {
 		return super.toICalendar ();
 	}
 
-	// Test routine - will parse input string and then export back
-	// into ical format.
-	// Usage: java Rrule "RRULE:FREQ=MONTHLY;BYMONTH=10;BYDAY=2MO"
-	//   
-	public static void main ( String args[] ) {
-		for ( int i = 0; i < args.length; i++ ) {
-			try {
-				java.io.File f = new java.io.File ( args[i] );
-				Rrule a = null;
-				String input = null;
-				if ( f.exists () ) {
-					try {
-						input = Utils.getFileContents ( f );
-					} catch ( Exception e ) {
-						System.err.println ( "Error opening " + f + ": " + e );
-						System.exit ( 1 );
-					}
-				} else {
-					input = args[i];
-				}
-				a = new Rrule ( input, PARSE_STRICT );
-				System.out.println ( "input:\n  " + args[i] );
-				System.out.println ( "\ntext:\n" + a.value );
-				System.out.println ( "\noutput:\n  " + a.toICalendar () );
-			} catch ( ParseException e ) {
-				System.err.println ( "iCalendar Parse Exception: " + e );
-			} catch ( BogusDataException e2 ) {
-				System.err.println ( "iCalendar Data Exception: " + e2 );
-			}
-		}
-	}
 }
