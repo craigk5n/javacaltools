@@ -91,7 +91,7 @@ public class DefaultDataStore implements DataStore {
 	 * 
 	 * @return A Vector of Journal objects
 	 */
-	public java.util.Vector getAllJournals () {
+	public Vector getAllJournals () {
 		return journals;
 	}
 
