@@ -15,14 +15,14 @@ import junit.framework.TestSuite;
  * 
  */
 public class JournalTest extends TestCase implements Constants {
-	IcalParser parser;
+	ICalendarParser parser;
 	DataStore ds;
 	String header = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//FOO//BAR//EN\n"
 	    + "METHOD:PUBLISH\nBEGIN:VJOURNAL\n";
 	String trailer = "END:VJOURNAL\nEND:VCALENDAR\n";
 
 	public void setUp () {
-		parser = new IcalParser ( PARSE_STRICT );
+		parser = new ICalendarParser ( PARSE_STRICT );
 		ds = parser.getDataStoreAt ( 0 );
 	}
 

@@ -78,7 +78,7 @@ public class Event implements Constants {
 	 * @Param textLines
 	 *          Vector of iCalendar text lines
 	 */
-	public Event(IcalParser parser, int initialLine, Vector textLines) {
+	public Event(ICalendarParser parser, int initialLine, Vector textLines) {
 		for ( int i = 0; i < textLines.size (); i++ ) {
 			String line = (String) textLines.elementAt ( i );
 			try {
