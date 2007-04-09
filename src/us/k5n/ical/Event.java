@@ -133,17 +133,19 @@ public class Event implements Constants {
 		this.summary.value = summary;
 		this.description = new Description ();
 		this.description.value = description;
+		this.startDate = startDate;
 		this.duration = new Duration ( duration );
 		// TODO: calculate endDate from duration
 	}
 
 	/**
-	 * Was enough information parsed for this Event to be valid?
+	 * Was enough information parsed for this Event to be valid? Note: if an event
+	 * is parsed by ICalendarParser and it is found to have an invalid date, no
+	 * Event object will be created for it.
 	 */
 	public boolean isValid () {
 		// Must have at least a start date and a summary
-		// return ( startDate != null && summary != null );
-		return true;
+		return ( startDate != null && summary != null && uid != null );
 	}
 
 	/**
