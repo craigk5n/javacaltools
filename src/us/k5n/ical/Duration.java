@@ -50,7 +50,8 @@ package us.k5n.ical;
  * @author Craig Knudsen, craig@k5n.us
  */
 public class Duration extends Property implements Constants {
-	int duration = 0; // duration in seconds
+	/** duration in seconds */
+	int duration = 0;
 
 	/**
 	 * Constructor
@@ -168,39 +169,6 @@ public class Duration extends Property implements Constants {
 			}
 		}
 		return ( isNeg ? 0 - numSecs : numSecs );
-	}
-
-	// Test routine - will parse input string and then export back
-	// into ical format.
-	// Usage: java Duration "DTSTAMP;20030701T000000Z"
-	//   
-	public static void main ( String args[] ) {
-		for ( int i = 0; i < args.length; i++ ) {
-			try {
-				java.io.File f = new java.io.File ( args[i] );
-				Duration a = null;
-				String input = null;
-				if ( f.exists () ) {
-					try {
-						input = Utils.getFileContents ( f );
-					} catch ( Exception e ) {
-						System.err.println ( "Error opening " + f + ": " + e );
-						System.exit ( 1 );
-					}
-				} else {
-					input = args[i];
-				}
-				a = new Duration ( input, PARSE_STRICT );
-				System.out.println ( "Duration input:\n  " + args[i] );
-				System.out.println ( "\nDuration text:\n" + a.value );
-				System.out.println ( "\nDuration output:\n  " + a.toICalendar () );
-				System.out.println ( "\nNumber of seconds: " + a.duration );
-			} catch ( ParseException e ) {
-				System.err.println ( "iCalendar Parse Exception: " + e );
-			} catch ( BogusDataException e2 ) {
-				System.err.println ( "iCalendar Data Exception: " + e2 );
-			}
-		}
 	}
 
 }
