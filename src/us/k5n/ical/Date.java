@@ -33,6 +33,8 @@ public class Date extends Property implements Constants {
 	int hour, minute, second;
 	boolean isUTC = false;
 	boolean dateOnly = false; // is date only (rather than date-time)?
+	static int[] monthDays = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+	static int[] leapMonthDays = { 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 
 	/**
 	 * Constructor
@@ -148,9 +150,21 @@ public class Date extends Property implements Constants {
 		year = Integer.parseInt ( inDate.substring ( 0, 4 ) );
 		month = Integer.parseInt ( inDate.substring ( 4, 6 ) );
 		day = Integer.parseInt ( inDate.substring ( 6, 8 ) );
-		// TODO: validate for each month and leap years, too
 		if ( day < 1 || day > 31 || month < 1 || month > 12 )
 			throw new BogusDataException ( "Invalid date '" + inDate + "'", inDate );
+		// Make sure day of month is valid for specified month
+		if ( year % 4 == 0 ) {
+			// leap year
+			if ( day > leapMonthDays[month - 1] ) {
+				throw new BogusDataException ( "Invalid day of month '" + inDate + "'",
+				    inDate );
+			}
+		} else {
+			if ( day > monthDays[month - 1] ) {
+				throw new BogusDataException ( "Invalid day of month '" + inDate + "'",
+				    inDate );
+			}
+		}
 		// TODO: parse time, handle localtime, handle timezone
 		if ( inDate.length () > 8 ) {
 			// TODO make sure dateOnly == false

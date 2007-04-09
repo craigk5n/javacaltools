@@ -32,7 +32,7 @@ public class DateTest extends TestCase implements Constants {
 			fail ( "Failed: " + e.toString () );
 		}
 	}
-	
+
 	/**
 	 * Test valid detection with time specified.
 	 */
@@ -54,13 +54,14 @@ public class DateTest extends TestCase implements Constants {
 	}
 
 	/**
-	 * Make sure invalid dates are caught.
-	 * TODO: add support for leap year checking once error-checking
-	 * is added to Date.
+	 * Make sure invalid dates are caught. TODO: add support for leap year
+	 * checking once error-checking is added to Date.
 	 */
 	public void testThree () {
-		String[] badDates = { "20011301", "20010132", "19990012",
-				"19991200"};
+		String[] badDates = { "20011301", "20010132", "19990012", "19991200",
+		    "19990132", "19990229", "20010230", "20010332", "20010431", "20010532",
+		    "20010631", "20010732", "20010832", "20010931", "20021032", "20021131",
+		    "20021232" };
 		for ( int i = 0; i < badDates.length; i++ ) {
 			String dStr = badDates[i];
 			try {
