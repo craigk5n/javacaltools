@@ -65,14 +65,14 @@ public class Summary extends Property {
 
 		for ( int i = 0; i < attributeList.size (); i++ ) {
 			Attribute a = attributeAt ( i );
-			String aval = a.value.toUpperCase ();
-			if ( aval.equals ( "ALTREP" ) ) {
+			String aname = a.name.toUpperCase ();
+			if ( aname.equals ( "ALTREP" ) ) {
 				// Can only have one of these
 				if ( altrep != null && parseMode == PARSE_STRICT ) {
 					throw new ParseException ( "More than one ALTREP found", icalStr );
 				}
 				altrep = a.value;
-			} else if ( aval.equals ( "LANGUAGE" ) ) {
+			} else if ( aname.equals ( "LANGUAGE" ) ) {
 				// Can only have one of these
 				if ( language != null && parseMode == PARSE_STRICT ) {
 					throw new ParseException ( "More than one LANGUAGE found", icalStr );
