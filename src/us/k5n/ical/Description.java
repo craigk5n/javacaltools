@@ -63,7 +63,7 @@ public class Description extends Property {
 
 		for ( int i = 0; i < attributeList.size (); i++ ) {
 			Attribute a = attributeAt ( i );
-			String aval = a.value.toUpperCase ();
+			String aval = a.name.toUpperCase ();
 			if ( aval.equals ( "ALTREP" ) ) {
 				// Can only have one of these
 				if ( altrep != null && parseMode == PARSE_STRICT ) {
@@ -82,36 +82,6 @@ public class Description extends Property {
 					throw new ParseException ( "Invalid DESCRIPTION attribute '" + a.name
 					    + "'", icalStr );
 				}
-			}
-		}
-	}
-
-	// Test routine - will parse input string and then export back
-	// into ical format.
-	// Usage: java Description "DESCRIPTION;LANGUAGE=EN:This is\\na test."
-	//   
-	public static void main ( String args[] ) {
-		for ( int i = 0; i < args.length; i++ ) {
-			try {
-				java.io.File f = new java.io.File ( args[i] );
-				Description a = null;
-				String input = null;
-				if ( f.exists () ) {
-					try {
-						input = Utils.getFileContents ( f );
-					} catch ( Exception e ) {
-						System.err.println ( "Error opening " + f + ": " + e );
-						System.exit ( 1 );
-					}
-				} else {
-					input = args[i];
-				}
-				a = new Description ( input, PARSE_STRICT );
-				System.out.println ( "Description input:\n  " + args[i] );
-				System.out.println ( "\nDescription text:\n" + a.value );
-				System.out.println ( "\nDescription output:\n  " + a.toICalendar () );
-			} catch ( ParseException e ) {
-				System.err.println ( " Parse Exception: " + e );
 			}
 		}
 	}
