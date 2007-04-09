@@ -31,7 +31,7 @@ import java.io.IOException;
  * <br/> Example usage: <blockquote>
  * 
  * <pre>
- * IcalParser parser = new IcalParser ();
+ * ICalendarParser parser = new ICalendarParser ();
  * File f = new File ( &quot;/tmp/test.ics&quot; );
  * try {
  * 	BufferedReader r = new BufferedReader ( new FileReader ( f ) );
@@ -51,42 +51,26 @@ import java.io.IOException;
  */
 public class ICalendarParser implements Constants {
 	int parseMethod; // PARSE_STRICT or PARSE_LOOSE
-
 	Vector errorListeners;
-
 	Vector errors;
-
 	Property icalVersion = null;
-
 	Property prodId = null;
-
 	Property method = null;
-
 	Property calscale = null;
-
 	String language = "EN"; // default language setting
-
 	Vector dataStores; // DataStore objects in a Vector
-
 	static final int STATE_NONE = 0;
-
 	static final int STATE_VCALENDAR = 1;
-
 	static final int STATE_VEVENT = 2;
-
 	static final int STATE_VTODO = 3;
-
 	static final int STATE_VJOURNAL = 4;
-
 	static final int STATE_VTIMEZONE = 5;
-
 	static final int STATE_VFREEBUSY = 6;
-
 	static final int STATE_DONE = 7;
 
 	/**
-	 * Create an IcalParser object. By default, this will also setup the default
-	 * DataStore object. To remove the default DataStore, you can call
+	 * Create an ICalendarParser object. By default, this will also setup the
+	 * default DataStore object. To remove the default DataStore, you can call
 	 * removeDataStoreAt(0).
 	 * 
 	 * @param parseMethod
@@ -101,8 +85,8 @@ public class ICalendarParser implements Constants {
 	}
 
 	/**
-	 * Create an IcalParser object. By default, this will also setup the default
-	 * DataStore object. To remove the default DataStore, you can call
+	 * Create an ICalendarParser object. By default, this will also setup the
+	 * default DataStore object. To remove the default DataStore, you can call
 	 * removeDataStoreAt(0).
 	 * 
 	 * @param parseMethod
@@ -531,38 +515,5 @@ public class ICalendarParser implements Constants {
 		ret.append ( "END:VCALENDAR" );
 		ret.append ( CRLF );
 		return ret.toString ();
-	}
-
-	// Test routine - will parse input string and then export back
-	// into ical format.
-	// Usage: java us.k5n.ical.IcalParser testfile.ics
-	//   
-	public static void main ( String args[] ) {
-		for ( int i = 0; i < args.length; i++ ) {
-			java.io.File f = new java.io.File ( args[i] );
-			ICalendarParser a = new ICalendarParser ( PARSE_STRICT );
-			java.io.BufferedReader reader = null;
-			if ( f.exists () ) {
-				try {
-					reader = new java.io.BufferedReader ( new java.io.FileReader ( f ) );
-					a.parse ( reader );
-				} catch ( IOException e ) {
-					System.err.println ( "Error opening " + f + ": " + e );
-					System.exit ( 1 );
-				}
-			} else {
-				System.err.println ( "Usage: java IcalParser filename.ics" );
-				System.exit ( 1 );
-			}
-			System.out.println ( "Filename:\n  " + args[i] );
-			// System.out.println ( "\nFormatted output:\n\n" + a.toICalendar ()
-			// );
-			Vector errors = a.getAllErrors ();
-			for ( int j = 0; j < errors.size (); j++ ) {
-				ParseError err = (ParseError) errors.elementAt ( j );
-				System.out
-				    .println ( "Error # " + ( j + 1 ) + ":\n" + err.toString ( 2 ) );
-			}
-		}
 	}
 }
