@@ -52,7 +52,7 @@ public class ICalendarParserTest extends TestCase implements Constants {
 		}
 	}
 
-	public void testOne () {
+	public void testBadDate1 () {
 		parseIcsFile ( new File ( "test/data/BadDate1.ics" ) );
 		Vector errors = parser.getAllErrors ();
 		assertTrue ( "Did not find bad date", errors.size () > 0 );
@@ -60,7 +60,7 @@ public class ICalendarParserTest extends TestCase implements Constants {
 		assertTrue ( "Loaded bad event", events.size () == 0 );
 	}
 
-	public void testTwo () {
+	public void testSimpleDate1 () {
 		parseIcsFile ( new File ( "test/data/SimpleDate1.ics" ) );
 		Vector errors = parser.getAllErrors ();
 		Vector events = ds.getAllEvents ();
