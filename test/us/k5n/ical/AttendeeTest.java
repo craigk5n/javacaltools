@@ -16,9 +16,6 @@ public class AttendeeTest extends TestCase implements Constants {
 	public void setUp () {
 	}
 
-	/**
-	 * Test valid detection of no time specified.
-	 */
 	public void testOne () {
 		String attendeeStr = "ATTENDEE;ROLE=CHAIR;CN=Joe Smith:MAILTO:joe@xxx.com";
 		try {
