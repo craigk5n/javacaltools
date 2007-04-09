@@ -1,7 +1,12 @@
-Version 0.?.? (?? ??? 2006)
+Version 0.?.? (?? ??? 2007)
+  - Fixed handling of "LANGUANGE=..." in description and summary
+  - Added error-checking for day of months (including leap year)
   - Added support for "CLASS" in Event object
   - Added implementation of Journal object (VJOURNAL)
-  - Added a few unit tests based on JUnit
+  - Added unit tests based on JUnit.  Moved existing tests into
+    new test directory
   - Patch 1464212: Date parsing problem (exception parsing UTC dates)
+  - Renamed most methods and classes with "Ical" in them to
+    "ICalendar" instead.
 Version 0.1.0 (02 Feb 2006)
   - Initial public release
