@@ -1,0 +1,21 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//innerjoin.org/NONSGML Innerjoin iCal Test Case Gen 20050301//EN
+
+BEGIN:VEVENT
+UID:20050301-96605-innerjoin-org
+DTSTART;VALUE=DATE:20050232
+DTSTAMP:20050301
+SUMMARY:
+ Event on 20050232
+DESCRIPTION:
+ Event on 20050232\n
+ - Option:  Starting on 20050232\n
+ - Default: No timezone specified\, using local time\n
+ - Default: No status given\, not necessarily confirmed\n
+ - Default: No class given\, treat event details as publicly accessible\n
+ - Default: Event treated as transparent (just a single date given)\n
+ \n
+ Consider this describing an event on the day where the time is not known
+END:VEVENT
+END:VCALENDAR
