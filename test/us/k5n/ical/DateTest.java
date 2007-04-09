@@ -76,20 +76,6 @@ public class DateTest extends TestCase implements Constants {
 		}
 	}
 
-	private static String CalendarToString ( Calendar c ) {
-		StringBuffer ret = new StringBuffer ( 8 );
-		ret.append ( c.get ( Calendar.YEAR ) );
-		int m = c.get ( Calendar.MONTH );
-		if ( m < 9 )
-			ret.append ( '0' );
-		ret.append ( m + 1 );
-		int d = c.get ( Calendar.DAY_OF_MONTH );
-		if ( d < 10 )
-			ret.append ( '0' );
-		ret.append ( d );
-		return ret.toString ();
-	}
-
 	/**
 	 * Make sure all valid dates are allowed.
 	 */
@@ -104,7 +90,7 @@ public class DateTest extends TestCase implements Constants {
 		for ( int i = 1; i <= 365; i++ ) {
 			c.set ( Calendar.DAY_OF_YEAR, i );
 			c.getTimeInMillis ();
-			String str = "DATE:" + CalendarToString ( c );
+			String str = "DATE:" + Utils.CalendarToYYYYMMDD ( c );
 			// System.out.println ( str );
 			try {
 				Date d = new Date ( str );
@@ -124,7 +110,7 @@ public class DateTest extends TestCase implements Constants {
 		for ( int i = 1; i <= 366; i++ ) {
 			c.set ( Calendar.DAY_OF_YEAR, i );
 			c.getTimeInMillis ();
-			String str = "DATE:" + CalendarToString ( c );
+			String str = "DATE:" + Utils.CalendarToYYYYMMDD ( c );
 			// System.out.println ( str );
 			try {
 				Date d = new Date ( str );
