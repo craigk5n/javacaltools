@@ -1,5 +1,7 @@
 package us.k5n.ical;
 
+import java.util.Calendar;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -54,8 +56,7 @@ public class DateTest extends TestCase implements Constants {
 	}
 
 	/**
-	 * Make sure invalid dates are caught. TODO: add support for leap year
-	 * checking once error-checking is added to Date.
+	 * Make sure invalid dates are caught.
 	 */
 	public void testThree () {
 		String[] badDates = { "20011301", "20010132", "19990012", "19991200",
@@ -68,6 +69,68 @@ public class DateTest extends TestCase implements Constants {
 				Date d = new Date ( "DATE:" + dStr );
 				fail ( "Did not catch invalid date '" + dStr + "'" );
 			} catch ( BogusDataException e ) {
+				// passed!
+			} catch ( Exception e2 ) {
+				fail ( "Caught exception: " + e2.getMessage () );
+			}
+		}
+	}
+
+	private static String CalendarToString ( Calendar c ) {
+		StringBuffer ret = new StringBuffer ( 8 );
+		ret.append ( c.get ( Calendar.YEAR ) );
+		int m = c.get ( Calendar.MONTH );
+		if ( m < 9 )
+			ret.append ( '0' );
+		ret.append ( m + 1 );
+		int d = c.get ( Calendar.DAY_OF_MONTH );
+		if ( d < 10 )
+			ret.append ( '0' );
+		ret.append ( d );
+		return ret.toString ();
+	}
+
+	/**
+	 * Make sure all valid dates are allowed.
+	 */
+	public void testFour () {
+		Calendar c = Calendar.getInstance ();
+
+		c.set ( Calendar.YEAR, 2000 );
+		c.set ( Calendar.MONTH, 1 );
+		c.set ( Calendar.DAY_OF_MONTH, 1 );
+
+		// leap year
+		for ( int i = 1; i <= 365; i++ ) {
+			c.set ( Calendar.DAY_OF_YEAR, i );
+			c.getTimeInMillis ();
+			String str = "DATE:" + CalendarToString ( c );
+			// System.out.println ( str );
+			try {
+				Date d = new Date ( str );
+				// passed
+			} catch ( BogusDataException e ) {
+				fail ( "Did not allow valid date '" + str + "'" );
+				// passed!
+			} catch ( Exception e2 ) {
+				fail ( "Caught exception: " + e2.getMessage () );
+			}
+		}
+
+		// non-leap year
+		c.set ( Calendar.YEAR, 2001 );
+		c.set ( Calendar.MONTH, 1 );
+		c.set ( Calendar.DAY_OF_MONTH, 1 );
+		for ( int i = 1; i <= 366; i++ ) {
+			c.set ( Calendar.DAY_OF_YEAR, i );
+			c.getTimeInMillis ();
+			String str = "DATE:" + CalendarToString ( c );
+			// System.out.println ( str );
+			try {
+				Date d = new Date ( str );
+				// passed
+			} catch ( BogusDataException e ) {
+				fail ( "Did not allow valid date '" + str + "'" );
 				// passed!
 			} catch ( Exception e2 ) {
 				fail ( "Caught exception: " + e2.getMessage () );
