@@ -20,6 +20,8 @@
 
 package us.k5n.ical;
 
+import java.util.Vector;
+
 /**
  * The DataStore interface defines how parsed iCalendar data (VTIMEZONE, VEVENT,
  * VTODO, VJOURNAL, VFREEBUSY) will be stored. By default, all objects will be
@@ -68,13 +70,13 @@ public interface DataStore {
 	 * 
 	 * @return A Vector if Event objects
 	 */
-	public java.util.Vector getAllEvents();
+	public Vector getAllEvents();
 
 	/**
 	 * Get all Journal objects.
 	 * 
 	 * @return A Vector of Journal objects
 	 */
-	public java.util.Vector getAllJournals();
+	public Vector getAllJournals();
 
 }
