@@ -30,7 +30,7 @@ import java.util.Calendar;
  * @version $Id$
  * @author Craig Knudsen, craig@k5n.us
  */
-public class Date extends Property implements Constants {
+public class Date extends Property implements Constants, Comparable {
 	int year, month, day;
 	int hour, minute, second;
 	boolean isUTC = false;
@@ -296,6 +296,7 @@ public class Date extends Property implements Constants {
 	}
 
 	public int compareTo ( Object anotherDate ) throws ClassCastException {
+		System.out.println ( "anotherDate " + anotherDate + " - " + anotherDate.getClass ().getName ());
 		Date d2 = (Date) anotherDate;
 		if ( this.year < d2.year )
 			return -1;
