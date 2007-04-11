@@ -26,7 +26,7 @@ package us.k5n.ical;
  * @version $Id$
  * @author Craig Knudsen, craig@k5n.us
  */
-interface Constants {
+public interface Constants {
 	/**
 	 * Parse iCalendar data strictly. ParseException errors will be generated for
 	 * all errors. This would typically be used to validate an iCalendar data file
