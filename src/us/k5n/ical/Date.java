@@ -20,6 +20,8 @@
 
 package us.k5n.ical;
 
+import java.util.Calendar;
+
 /**
  * Base class for use with a variety of date-related iCalendar fields including
  * LAST-MODIFIED, DTSTAMP, DTSTART, etc. This can represent both a date and a
@@ -202,6 +204,17 @@ public class Date extends Property implements Constants {
 	 */
 	public boolean hasTime () {
 		return ( dateOnly == false );
+	}
+
+	public Calendar toCalendar () {
+		Calendar c = Calendar.getInstance ();
+		c.set ( Calendar.YEAR, year );
+		c.set ( Calendar.MONTH, month - 1 );
+		c.set ( Calendar.DAY_OF_MONTH, day );
+		c.set ( Calendar.HOUR_OF_DAY, hour );
+		c.set ( Calendar.MINUTE, minute );
+		c.set ( Calendar.SECOND, second );
+		return c;
 	}
 
 	/**
