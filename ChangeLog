@@ -8,5 +8,8 @@ Version 0.?.? (?? ??? 2007)
   - Patch 1464212: Date parsing problem (exception parsing UTC dates)
   - Renamed most methods and classes with "Ical" in them to
     "ICalendar" instead.
+  - Changed Date.hasTime to Date.isDateOnly
+  - Added new getter/setter methods to Date
+  - Added new Utils.DateToYYYYMMDD method
 Version 0.1.0 (02 Feb 2006)
   - Initial public release
