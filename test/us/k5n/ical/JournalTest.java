@@ -39,7 +39,7 @@ public class JournalTest extends TestCase implements Constants {
 			Journal j = (Journal) journals.elementAt ( 0 );
 			assertTrue ( "Journal entry not valid", j.isValid () );
 			Date d = j.dtstamp;
-			assertFalse ( "Journal has time", d.hasTime () );
+			assertTrue ( "Journal has time", d.isDateOnly () );
 			assertTrue ( "Incorrect year", d.year == 2006 );
 			assertTrue ( "Incorrect month", d.month == 5 );
 			assertTrue ( "Incorrect day", d.day == 1 );

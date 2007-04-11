@@ -33,7 +33,7 @@ import java.util.Calendar;
  * @version $Id$
  * @author Craig Knudsen, craig@k5n.us
  */
-class Utils implements Constants {
+public class Utils implements Constants {
 
 	static public String getFileContents ( File f ) throws IOException,
 	    FileNotFoundException {
@@ -67,6 +67,25 @@ class Utils implements Constants {
 		if ( inDate.get ( Calendar.DAY_OF_MONTH ) < 10 )
 			ret.append ( '0' );
 		ret.append ( inDate.get ( Calendar.DAY_OF_MONTH ) );
+		return ret.toString ();
+	}
+
+	/**
+	 * Convert a Date object to a YYYYMMDD String.
+	 * 
+	 * @param inDate
+	 *          Date to convert
+	 * @return The Date as a String in YYYYMMDD format
+	 */
+	public static String DateToYYYYMMDD ( Date inDate ) {
+		StringBuffer ret = new StringBuffer ( 8 );
+		ret.append ( inDate.year );
+		if ( inDate.month < 10 )
+			ret.append ( '0' );
+		ret.append ( inDate.month );
+		if ( inDate.day < 10 )
+			ret.append ( '0' );
+		ret.append ( inDate.day );
 		return ret.toString ();
 	}
 

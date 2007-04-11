@@ -75,8 +75,7 @@ public class ICalendarParserTest extends TestCase implements Constants {
 		assertTrue ( "Wrong event month: " + e.startDate.month,
 		    e.startDate.month == 4 );
 		assertTrue ( "Wrong event day: " + e.startDate.day, e.startDate.day == 1 );
-		assertTrue ( "Did not set date-only correctly",
-		    e.startDate.hasTime () == false );
+		assertTrue ( "Did not set date-only correctly", e.startDate.isDateOnly () );
 	}
 
 	public static Test suite () {

@@ -25,7 +25,7 @@ public class DateTest extends TestCase implements Constants {
 		String dateStr = "DATE:20070131";
 		try {
 			Date d = new Date ( dateStr, PARSE_STRICT );
-			assertFalse ( "Date has time", d.hasTime () );
+			assertTrue ( "Date has time", d.isDateOnly () );
 			assertTrue ( "Incorrect year", d.year == 2007 );
 			assertTrue ( "Incorrect month", d.month == 1 );
 			assertTrue ( "Incorrect day", d.day == 31 );
@@ -42,7 +42,7 @@ public class DateTest extends TestCase implements Constants {
 		String dateStr = "DATE:20070131T132047";
 		try {
 			Date d = new Date ( dateStr, PARSE_STRICT );
-			assertTrue ( "Date has no time", d.hasTime () );
+			assertFalse ( "Date has no time", d.isDateOnly () );
 			assertTrue ( "Incorrect year", d.year == 2007 );
 			assertTrue ( "Incorrect month", d.month == 1 );
 			assertTrue ( "Incorrect day", d.day == 31 );

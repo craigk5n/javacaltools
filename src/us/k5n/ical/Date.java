@@ -197,15 +197,6 @@ public class Date extends Property implements Constants {
 		}
 	}
 
-	/**
-	 * Does the date contain a time components?
-	 * 
-	 * @return true if the Date contains a time components
-	 */
-	public boolean hasTime () {
-		return ( dateOnly == false );
-	}
-
 	public Calendar toCalendar () {
 		Calendar c = Calendar.getInstance ();
 		c.set ( Calendar.YEAR, year );
@@ -248,36 +239,90 @@ public class Date extends Property implements Constants {
 		return super.toICalendar ();
 	}
 
-	// Test routine - will parse input string and then export back
-	// into ical format.
-	// Usage: java Date "DTSTAMP;20030701T000000Z"
-	//   
-	public static void main ( String args[] ) {
-		for ( int i = 0; i < args.length; i++ ) {
-			try {
-				java.io.File f = new java.io.File ( args[i] );
-				Date a = null;
-				String input = null;
-				if ( f.exists () ) {
-					try {
-						input = Utils.getFileContents ( f );
-					} catch ( Exception e ) {
-						System.err.println ( "Error opening " + f + ": " + e );
-						System.exit ( 1 );
-					}
-				} else {
-					input = args[i];
-				}
-				a = new Date ( input, PARSE_STRICT );
-				System.out.println ( "Date input:\n  " + args[i] );
-				System.out.println ( "\nDate text:\n" + a.value );
-				System.out.println ( "\nDate output:\n  " + a.toICalendar () );
-			} catch ( ParseException e ) {
-				System.err.println ( "iCalendar Parse Exception: " + e );
-			} catch ( BogusDataException e2 ) {
-				System.err.println ( "iCalendar Data Exception: " + e2 );
-			}
-		}
+	public boolean isDateOnly () {
+		return dateOnly;
+	}
+
+	public void setDateOnly ( boolean dateOnly ) {
+		this.dateOnly = dateOnly;
+	}
+
+	public int getDay () {
+		return day;
+	}
+
+	public void setDay ( int day ) {
+		this.day = day;
+	}
+
+	public int getHour () {
+		return hour;
+	}
+
+	public void setHour ( int hour ) {
+		this.hour = hour;
+	}
+
+	public int getMinute () {
+		return minute;
+	}
+
+	public void setMinute ( int minute ) {
+		this.minute = minute;
+	}
+
+	public int getMonth () {
+		return month;
+	}
+
+	public void setMonth ( int month ) {
+		this.month = month;
+	}
+
+	public int getSecond () {
+		return second;
+	}
+
+	public void setSecond ( int second ) {
+		this.second = second;
+	}
+
+	public int getYear () {
+		return year;
+	}
+
+	public void setYear ( int year ) {
+		this.year = year;
+	}
+
+	public int compareTo ( Object anotherDate ) throws ClassCastException {
+		Date d2 = (Date) anotherDate;
+		if ( this.year < d2.year )
+			return -1;
+		if ( this.year > d2.year )
+			return 1;
+		if ( this.month < d2.month )
+			return -1;
+		if ( this.month > d2.month )
+			return 1;
+		if ( this.day < d2.day )
+			return -1;
+		if ( this.day > d2.day )
+			return 1;
+		if ( this.hour < d2.hour )
+			return -1;
+		if ( this.hour > d2.hour )
+			return 1;
+		if ( this.minute < d2.minute )
+			return -1;
+		if ( this.minute > d2.minute )
+			return 1;
+		if ( this.second < d2.second )
+			return -1;
+		if ( this.second > d2.second )
+			return 1;
+		return 0;
+
 	}
 
 }
