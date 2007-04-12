@@ -57,13 +57,14 @@ public class Journal implements Constants {
 	public Vector attendees = null;
 	/** Recurrence rule (RRULE) */
 	public Rrule rrule = null;
+	/** URL */
+	public URL url = null;
 
 	// TODO: multiple summaries, descriptions with different LANGUAGE values
 	// TODO: alarms/triggers
 	// TODO: RDATE - recurrance dates
 	// TODO: EXDATE - exception dates
 	// TODO: EXRULE - exception rule
-	// TODO: URL
 	// TODO: RELATED-TO
 
 	/**
@@ -160,6 +161,8 @@ public class Journal implements Constants {
 			sequence = new Sequence ( icalStr );
 		} else if ( up.startsWith ( "RRULE" ) ) {
 			rrule = new Rrule ( icalStr, parseMethod );
+		} else if ( up.startsWith ( "URL" ) ) {
+			url = new URL ( icalStr, parseMethod );
 		} else {
 			System.out.println ( "Ignoring: " + icalStr );
 		}
