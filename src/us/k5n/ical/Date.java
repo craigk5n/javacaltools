@@ -296,7 +296,6 @@ public class Date extends Property implements Constants, Comparable {
 	}
 
 	public int compareTo ( Object anotherDate ) throws ClassCastException {
-		System.out.println ( "anotherDate " + anotherDate + " - " + anotherDate.getClass ().getName ());
 		Date d2 = (Date) anotherDate;
 		if ( this.year < d2.year )
 			return -1;
