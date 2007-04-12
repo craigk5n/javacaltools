@@ -3,6 +3,7 @@ package us.k5n.journal;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Frame;
+import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -23,12 +24,17 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTable;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
 import us.k5n.ical.Constants;
+import us.k5n.ical.Journal;
+import us.k5n.ical.Summary;
 
 /**
  * Main class for k5njournal application.
@@ -41,10 +47,14 @@ public class Main extends JFrame implements Constants {
 	public static final String DEFAULT_DIR_NAME = "k5njournal";
 	Frame parent;
 	JLabel messageArea;
-	Repository repo;
+	Repository dataRepository;
 	JTree dateTree;
-	DefaultMutableTreeNode dateTop;
-	Vector entries;
+	DefaultMutableTreeNode dateTreeTopNode;
+	ReadOnlyTable journalListTable;
+	ReadOnlyTabelModel journalListTableModel;
+	JournalViewPanel journalView;
+	Vector filteredJournalEntries;
+	final static String[] journalListTableHeader = { "Date", "Subject" };
 	final static String[] monthNames = { "", "January", "February", "March",
 	    "April", "May", "June", "July", "August", "September", "October",
 	    "November", "December" };
@@ -79,6 +89,9 @@ public class Main extends JFrame implements Constants {
 		setDefaultCloseOperation ( EXIT_ON_CLOSE );
 		Container contentPane = getContentPane ();
 
+		// Load data
+		dataRepository = new Repository ( getDataDirectory (), false );
+
 		// Create a menu bar
 		setJMenuBar ( createMenu () );
 
@@ -90,20 +103,22 @@ public class Main extends JFrame implements Constants {
 
 		// TODO: add JToolbar at top for buttons (save, open, etc.)
 
-		JPanel navArea = createFileSelection ();
-		JPanel viewArea = createViewArea ();
+		JPanel navArea = createJournalSelectionPanel ();
+		journalView = new JournalViewPanel ();
 		JSplitPane splitPane = new JSplitPane ( JSplitPane.VERTICAL_SPLIT, navArea,
-		    viewArea );
+		    journalView );
 		splitPane.setOneTouchExpandable ( true );
 		splitPane.setResizeWeight ( 0.5 );
+		// TODO: get this value from last session
+		splitPane.setDividerLocation ( 200 );
 		contentPane.add ( splitPane, BorderLayout.CENTER );
 
-		// Load data
-		repo = new Repository ( getDataDirectory (), false );
 		// Populate Date JTree
 		updateDateTree ();
+		handleDateFilterSelection ( 0, null );
+		// filteredJournalEntries = dataRepository.getAllEntries ();
+		// updateFilteredJournalList ();
 
-		// this.pack ();
 		this.setVisible ( true );
 	}
 
@@ -166,13 +181,13 @@ public class Main extends JFrame implements Constants {
 	}
 
 	/**
-	 * Create the file selection area on the left side of the window. This will
-	 * include a split pane where the top will allow navigation and selection of
-	 * dates and the bottom will allow the selection of a date.
+	 * Create the file selection area on the top side of the window. This will
+	 * include a split pane where the left will allow navigation and selection of
+	 * dates and the right will allow the selection of a specific entry.
 	 * 
 	 * @return
 	 */
-	protected JPanel createFileSelection () {
+	protected JPanel createJournalSelectionPanel () {
 		JPanel topPanel = new JPanel ();
 		topPanel.setLayout ( new BorderLayout () );
 
@@ -181,8 +196,8 @@ public class Main extends JFrame implements Constants {
 		JPanel byDate = new JPanel ();
 		byDate.setLayout ( new BorderLayout () );
 		tabbedPane.addTab ( "Date", byDate );
-		dateTop = new DefaultMutableTreeNode ( "All" );
-		dateTree = new JTree ( dateTop );
+		dateTreeTopNode = new DefaultMutableTreeNode ( "All" );
+		dateTree = new JTree ( dateTreeTopNode );
 
 		MouseListener ml = new MouseAdapter () {
 			public void mousePressed ( MouseEvent e ) {
@@ -190,7 +205,7 @@ public class Main extends JFrame implements Constants {
 				TreePath selPath = dateTree.getPathForLocation ( e.getX (), e.getY () );
 				if ( selRow != -1 ) {
 					if ( e.getClickCount () == 1 ) {
-						dateSelected ( selRow, selPath );
+						handleDateFilterSelection ( selRow, selPath );
 					} else if ( e.getClickCount () == 2 ) {
 						// Do something for double-click???
 					}
@@ -202,26 +217,72 @@ public class Main extends JFrame implements Constants {
 		JScrollPane scrollPane = new JScrollPane ( dateTree );
 		byDate.add ( scrollPane, BorderLayout.CENTER );
 
-		JPanel byCategory = new JPanel ();
-		tabbedPane.addTab ( "Category", byCategory );
+		// TODO: add category tab filter
+		// JPanel byCategory = new JPanel ();
+		// tabbedPane.addTab ( "Category", byCategory );
 
-		JPanel bottomPane = new JPanel ();
+		JPanel journalListPane = new JPanel ();
+		journalListPane.setLayout ( new BorderLayout () );
+
+		journalListTableModel = new ReadOnlyTabelModel ( journalListTableHeader, 0,
+		    2 );
+		TableSorter sorter = new TableSorter ( journalListTableModel );
+		journalListTable = new ReadOnlyTable ( sorter );
+		sorter.setTableHeader ( journalListTable.getTableHeader () );
+		// journalListTable.setAutoResizeMode ( JTable.AUTO_RESIZE_OFF );
+		journalListTable.setRowSelectionAllowed ( true );
+
+		// Add selection listener to table
+		journalListTable.getSelectionModel ().addListSelectionListener (
+		    new ListSelectionListener () {
+			    public void valueChanged ( ListSelectionEvent event ) {
+				    int ind = journalListTable.getSelectedRow ();
+				    int numSel = journalListTable.getSelectedRowCount ();
+				    if ( numSel == 0 ) {
+					    journalView.clear ();
+				    } else if ( !event.getValueIsAdjusting () && ind >= 0
+				        && ind < filteredJournalEntries.size () ) {
+					    int[] selRows = journalListTable.getSelectedRows ();
+					    System.out
+					        .println ( "Row: " + journalListTable.getSelectedRow () );
+					    System.out.println ( "ind: " + ind );
+					    System.out.println ( "Event: " + event );
+					    // The call below might actually belong in ReadOnlyTable.
+					    // However, we would need to add a MouseListener to ReadOnlyTable
+					    // and make sure that one got called before this one.
+					    journalListTable.setHighlightedRows ( selRows );
+					    if ( selRows != null && selRows.length == 1 ) {
+						    Journal journal = (Journal) filteredJournalEntries
+						        .elementAt ( ind );
+						    journalView.setJournal ( journal );
+					    } else {
+						    // more than one selected
+						    journalView.clear ();
+					    }
+				    } else {
+					    journalListTable.setHighlightedRow ( -1 );
+				    }
+			    }
+		    } );
+
+		JScrollPane journalListTableScroll = new JScrollPane ( journalListTable );
+		journalListPane.add ( journalListTableScroll, BorderLayout.CENTER );
 
 		JSplitPane splitPane = new JSplitPane ( JSplitPane.HORIZONTAL_SPLIT,
-		    tabbedPane, bottomPane );
+		    tabbedPane, journalListPane );
 		splitPane.setOneTouchExpandable ( true );
-		splitPane.setResizeWeight ( 0.5 );
-		// splitPane.setDividerLocation ( -1 );
+		// splitPane.setResizeWeight ( 0.5 );
+		splitPane.setDividerLocation ( 250 );
 
 		topPanel.add ( splitPane, BorderLayout.CENTER );
 
 		return topPanel;
 	}
 
-	void dateSelected ( int row, TreePath path ) {
+	void handleDateFilterSelection ( int row, TreePath path ) {
 		int year = -1;
 		int month = -1;
-		if ( path.getPathCount () < 2 ) {
+		if ( path == null || path.getPathCount () < 2 ) {
 			// "All"
 		} else {
 			DateFilterTreeNode dateFilter = (DateFilterTreeNode) path
@@ -233,35 +294,52 @@ public class Main extends JFrame implements Constants {
 				month = dateFilter.month;
 		}
 		if ( year < 0 ) {
-			entries = repo.getAllEntries ();
+			filteredJournalEntries = dataRepository.getAllEntries ();
 		} else if ( month < 0 ) {
-			entries = repo.getEntriesByYear ( year );
+			filteredJournalEntries = dataRepository.getEntriesByYear ( year );
 		} else {
-			entries = repo.getEntriesByMonth ( year, month );
+			filteredJournalEntries = dataRepository.getEntriesByMonth ( year, month );
 		}
-	}
-
-	protected JPanel createViewArea () {
-		// TODO
-		return new JPanel ();
+		this.updateFilteredJournalList ();
 	}
 
 	void updateDateTree () {
 		// Remove all old entries
-		dateTop.removeAllChildren ();
+		dateTreeTopNode.removeAllChildren ();
 		// Get entries, starting with years
-		int[] years = repo.getYears ();
+		int[] years = dataRepository.getYears ();
 		for ( int i = 0; years != null && i < years.length; i++ ) {
 			DateFilterTreeNode yearNode = new DateFilterTreeNode ( "" + years[i],
 			    years[i], 0, 0 );
-			dateTop.add ( yearNode );
-			int[] months = repo.getMonthsForYear ( years[i] );
+			dateTreeTopNode.add ( yearNode );
+			int[] months = dataRepository.getMonthsForYear ( years[i] );
 			for ( int j = 0; months != null && j < months.length; j++ ) {
 				DateFilterTreeNode monthNode = new DateFilterTreeNode (
 				    monthNames[months[j]], years[i], months[j], 0 );
 				yearNode.add ( monthNode );
 			}
 		}
+		dateTree.expandRow ( 0 );
+		// Select "All" by default
+		dateTree.setSelectionRow ( 0 );
+	}
+
+	/**
+	 * Update the JTable of Journal entries based on the Journal objects in the
+	 * filteredJournalEntries Vector.
+	 */
+	void updateFilteredJournalList () {
+		journalListTableModel.setRowCount ( filteredJournalEntries.size () );
+		for ( int i = 0; i < filteredJournalEntries.size (); i++ ) {
+			Journal entry = (Journal) filteredJournalEntries.elementAt ( i );
+			journalListTable.setValueAt ( new DisplayDate ( entry.startDate ), i, 0 );
+			Summary summary = entry.getSummary ();
+			journalListTable
+			    .setValueAt ( summary == null ? "-" : summary.value, i, 1 );
+		}
+		System.out.println ( "Displaying " + filteredJournalEntries.size ()
+		    + " entries" );
+		journalListTable.repaint ();
 	}
 
 	/**
