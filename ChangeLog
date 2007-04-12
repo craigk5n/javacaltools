@@ -2,6 +2,7 @@ Version 0.2.0 (?? ??? 2007)
   - Fixed handling of "LANGUANGE=..." in description and summary
   - Added error-checking for day of months (including leap year)
   - Added support for "CLASS" in Event object
+  - Added support for "URL" in Event
   - Added implementation of Journal object (VJOURNAL)
   - Added unit tests based on JUnit.  Moved existing tests into
     new test directory
