@@ -11,6 +11,9 @@ import us.k5n.ical.Utils;
 
 /**
  * The Repository class manages all loading and saving of data files.
+ * All methods are intended to work with just Journal objects.  However,
+ * if an iCalendar file is loaded with Event objects, they should be
+ * preserved in the data if it is written back out.
  * 
  * @author Craig Knudsen, craig@k5n.us
  * @version $Id$
@@ -116,6 +119,47 @@ public class Repository {
 		return ret;
 	}
 
+	/**
+	 * Get all Journal objects for the specified year.
+	 * 
+	 * @param year
+	 *          The 4-digit year
+	 * @return
+	 */
+	public Vector getEntriesByYear ( int year ) {
+		if ( listOfDates == null )
+			return null;
+		Vector ret = new Vector ();
+		for ( int i = 0; i < dataFiles.size (); i++ ) {
+			DataFile df = (DataFile) dataFiles.elementAt ( i );
+			for ( int j = 0; j < df.getJournalCount (); j++ ) {
+				Journal journal = df.journalEntryAt ( j );
+				if ( journal.startDate.getYear () == year )
+					ret.addElement ( journal );
+			}
+		}
+		return ret;
+	}
+
+	/**
+	 * Get all Journal objects.
+	 * 
+	 * @return
+	 */
+	public Vector getAllEntries () {
+		if ( listOfDates == null )
+			return null;
+		Vector ret = new Vector ();
+		for ( int i = 0; i < dataFiles.size (); i++ ) {
+			DataFile df = (DataFile) dataFiles.elementAt ( i );
+			for ( int j = 0; j < df.getJournalCount (); j++ ) {
+				Journal journal = df.journalEntryAt ( j );
+				ret.addElement ( journal );
+			}
+		}
+		return ret;
+	}
+
 	public void updateDateList () {
 		Vector dates = new Vector ();
 		HashMap h = new HashMap ();
@@ -128,7 +172,7 @@ public class Repository {
 					if ( !h.containsKey ( YMD ) ) {
 						h.put ( YMD, YMD );
 						dates.addElement ( journal.startDate );
-						System.out.println ( "Added date: " + journal.startDate);
+						// System.out.println ( "Added date: " + journal.startDate);
 					}
 				}
 			}
@@ -137,9 +181,10 @@ public class Repository {
 			Collections.sort ( dates );
 			listOfDates = new Date[dates.size ()];
 			for ( int i = 0; i < dates.size (); i++ ) {
-				listOfDates[i] = (Date)dates.elementAt ( i );
+				listOfDates[i] = (Date) dates.elementAt ( i );
+				System.out.println ( "Found date: " + listOfDates[i] );
 			}
-			//listOfDates = (Date[]) dates.toArray ();
+			// listOfDates = (Date[]) dates.toArray ();
 		} else {
 			listOfDates = null;
 		}
