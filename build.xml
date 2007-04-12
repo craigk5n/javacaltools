@@ -12,7 +12,7 @@
   <property name="test" location="test"/>
   <property name="testbuild" location="testbuild"/>
 
-  <property name="version"  value="0.1.1"/>
+  <property name="version"  value="0.2.0"/>
 
   <target name="init">
     <!-- Create the time stamp -->
