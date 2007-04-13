@@ -257,216 +257,221 @@ public class ICalendarParser implements Constants {
 		// last line number of the text will be reported.
 		textLines = new Vector ();
 		nextLine = r.readLine ();
-		while ( !done ) {
-			line = nextLine;
-			ln++;
-			if ( nextLine != null ) {
-				nextLine = r.readLine ();
-				// if nextLine is null, don't set done to true yet since we
-				// still
-				// need another iteration through the while loop for the text
-				// to get processed.
-			}
-			// Check to see if next line is a continuation of the current
-			// line. If it is, then append the contents of the next line
-			// onto the current line.
-			if ( nextLine != null && nextLine.length () > 0
-			    && ( nextLine.charAt ( 0 ) == SPACE || nextLine.charAt ( 0 ) == TAB ) ) {
-				// Line folding found. Add to previous line and continue.
-				nextLine = line + CRLF + nextLine;
-				continue; // skip back to start of while loop
-			}
-			data.append ( line );
-			String lineUp = line.toUpperCase ();
+		if ( nextLine == null ) {
+			// empty file
+		} else {
+			while ( !done ) {
+				line = nextLine;
+				ln++;
+				if ( nextLine != null ) {
+					nextLine = r.readLine ();
+					// if nextLine is null, don't set done to true yet since we
+					// still
+					// need another iteration through the while loop for the text
+					// to get processed.
+				}
+				// Check to see if next line is a continuation of the current
+				// line. If it is, then append the contents of the next line
+				// onto the current line.
+				if ( nextLine != null
+				    && nextLine.length () > 0
+				    && ( nextLine.charAt ( 0 ) == SPACE || nextLine.charAt ( 0 ) == TAB ) ) {
+					// Line folding found. Add to previous line and continue.
+					nextLine = line + CRLF + nextLine;
+					continue; // skip back to start of while loop
+				}
+				data.append ( line );
+				String lineUp = line.toUpperCase ();
 
-			// System.out.println ( "[DATA:" + state + "]" + line );
-			switch ( state ) {
+				// System.out.println ( "[DATA:" + state + "]" + line );
+				switch ( state ) {
 
-				case STATE_NONE:
-					if ( lineUp.startsWith ( "BEGIN:VCALENDAR" ) )
-						state = STATE_VCALENDAR;
-					else if ( lineUp.length () == 0 ) {
-						// ignore leading blank lines
-					} else {
-						// Hmmm... should always start with this.
-						if ( isParseStrict () ) {
-							reportParseError ( new ParseError ( ln,
-							    "Data found outside VCALENDAR block", line ) );
-						}
-					}
-					break;
-
-				case STATE_VCALENDAR:
-					if ( lineUp.startsWith ( "BEGIN:VTIMEZONE" ) ) {
-						state = STATE_VTIMEZONE;
-						startLineNo = ln; // mark starting line number
-						textLines.removeAllElements ();
-						textLines.addElement ( line );
-					} else if ( lineUp.startsWith ( "BEGIN:VEVENT" ) ) {
-						state = STATE_VEVENT;
-						startLineNo = ln; // mark starting line number
-						textLines.removeAllElements ();
-						textLines.addElement ( line );
-					} else if ( lineUp.startsWith ( "BEGIN:VTODO" ) ) {
-						state = STATE_VTODO;
-						startLineNo = ln; // mark starting line number
-						textLines.removeAllElements ();
-						textLines.addElement ( line );
-					} else if ( lineUp.startsWith ( "BEGIN:VJOURNAL" ) ) {
-						state = STATE_VJOURNAL;
-						startLineNo = ln; // mark starting line number
-						textLines.removeAllElements ();
-						textLines.addElement ( line );
-					} else if ( lineUp.startsWith ( "BEGIN:VFREEBUSY" ) ) {
-						state = STATE_VFREEBUSY;
-						startLineNo = ln; // mark starting line number
-						textLines.removeAllElements ();
-						textLines.addElement ( line );
-					} else if ( lineUp.startsWith ( "END:VCALENDAR" ) ) {
-						state = STATE_DONE;
-					} else if ( lineUp.startsWith ( "VERSION" ) ) {
-						if ( icalVersion != null && isParseStrict () ) {
-							// only one of these allowed
-							reportParseError ( new ParseError ( ln,
-							    "Only one VERSION token allowed", line ) );
+					case STATE_NONE:
+						if ( lineUp.startsWith ( "BEGIN:VCALENDAR" ) )
+							state = STATE_VCALENDAR;
+						else if ( lineUp.length () == 0 ) {
+							// ignore leading blank lines
 						} else {
-							try {
-								icalVersion = new Property ( line, getParseMethod () );
-							} catch ( ParseException e ) {
+							// Hmmm... should always start with this.
+							if ( isParseStrict () ) {
 								reportParseError ( new ParseError ( ln,
-								    "Parse error in VERSION: " + e.toString (), line ) );
+								    "Data found outside VCALENDAR block", line ) );
 							}
 						}
-					} else if ( lineUp.startsWith ( "PRODID" ) ) {
-						if ( prodId != null && isParseStrict () ) {
-							// only one of these allowed
-							reportParseError ( new ParseError ( ln,
-							    "Only one PRODID token allowed", line ) );
-						} else {
+						break;
+
+					case STATE_VCALENDAR:
+						if ( lineUp.startsWith ( "BEGIN:VTIMEZONE" ) ) {
+							state = STATE_VTIMEZONE;
+							startLineNo = ln; // mark starting line number
+							textLines.removeAllElements ();
+							textLines.addElement ( line );
+						} else if ( lineUp.startsWith ( "BEGIN:VEVENT" ) ) {
+							state = STATE_VEVENT;
+							startLineNo = ln; // mark starting line number
+							textLines.removeAllElements ();
+							textLines.addElement ( line );
+						} else if ( lineUp.startsWith ( "BEGIN:VTODO" ) ) {
+							state = STATE_VTODO;
+							startLineNo = ln; // mark starting line number
+							textLines.removeAllElements ();
+							textLines.addElement ( line );
+						} else if ( lineUp.startsWith ( "BEGIN:VJOURNAL" ) ) {
+							state = STATE_VJOURNAL;
+							startLineNo = ln; // mark starting line number
+							textLines.removeAllElements ();
+							textLines.addElement ( line );
+						} else if ( lineUp.startsWith ( "BEGIN:VFREEBUSY" ) ) {
+							state = STATE_VFREEBUSY;
+							startLineNo = ln; // mark starting line number
+							textLines.removeAllElements ();
+							textLines.addElement ( line );
+						} else if ( lineUp.startsWith ( "END:VCALENDAR" ) ) {
+							state = STATE_DONE;
+						} else if ( lineUp.startsWith ( "VERSION" ) ) {
+							if ( icalVersion != null && isParseStrict () ) {
+								// only one of these allowed
+								reportParseError ( new ParseError ( ln,
+								    "Only one VERSION token allowed", line ) );
+							} else {
+								try {
+									icalVersion = new Property ( line, getParseMethod () );
+								} catch ( ParseException e ) {
+									reportParseError ( new ParseError ( ln,
+									    "Parse error in VERSION: " + e.toString (), line ) );
+								}
+							}
+						} else if ( lineUp.startsWith ( "PRODID" ) ) {
+							if ( prodId != null && isParseStrict () ) {
+								// only one of these allowed
+								reportParseError ( new ParseError ( ln,
+								    "Only one PRODID token allowed", line ) );
+							} else {
+								try {
+									prodId = new Property ( line, getParseMethod () );
+								} catch ( ParseException e ) {
+									reportParseError ( new ParseError ( ln,
+									    "Parse error in PRODID: " + e.toString (), line ) );
+								}
+							}
+						} else if ( lineUp.startsWith ( "CALSCALE" ) ) {
 							try {
-								prodId = new Property ( line, getParseMethod () );
+								calscale = new Property ( line, getParseMethod () );
 							} catch ( ParseException e ) {
 								reportParseError ( new ParseError ( ln,
-								    "Parse error in PRODID: " + e.toString (), line ) );
+								    "Parse error in CALSCALE: " + e.toString (), line ) );
+							}
+						} else if ( lineUp.startsWith ( "METHOD" ) ) {
+							try {
+								method = new Property ( line, getParseMethod () );
+							} catch ( ParseException e ) {
+								reportParseError ( new ParseError ( ln,
+								    "Parse error in CALSCALE: " + e.toString (), line ) );
+							}
+						} else {
+							// what else could this be???
+							if ( lineUp.trim ().length () == 0 ) {
+								// ignore blank lines
+							} else if ( isParseStrict () ) {
+								reportParseError ( new ParseError ( ln,
+								    "Unrecognized data found in VCALENDAR block", line ) );
 							}
 						}
-					} else if ( lineUp.startsWith ( "CALSCALE" ) ) {
-						try {
-							calscale = new Property ( line, getParseMethod () );
-						} catch ( ParseException e ) {
-							reportParseError ( new ParseError ( ln,
-							    "Parse error in CALSCALE: " + e.toString (), line ) );
+						break;
+
+					case STATE_VTIMEZONE:
+						textLines.addElement ( line );
+						if ( lineUp.startsWith ( "END:VTIMEZONE" ) ) {
+							state = STATE_VCALENDAR;
+							Timezone timezone = new Timezone ( this, startLineNo, textLines );
+							if ( timezone.isValid () ) {
+								for ( int i = 0; i < dataStores.size (); i++ ) {
+									DataStore ds = (DataStore) dataStores.elementAt ( i );
+									ds.storeTimezone ( timezone );
+								}
+							}
+							textLines.removeAllElements (); // truncate Vector
 						}
-					} else if ( lineUp.startsWith ( "METHOD" ) ) {
-						try {
-							method = new Property ( line, getParseMethod () );
-						} catch ( ParseException e ) {
-							reportParseError ( new ParseError ( ln,
-							    "Parse error in CALSCALE: " + e.toString (), line ) );
+						break;
+
+					case STATE_VTODO:
+						textLines.addElement ( line );
+						if ( lineUp.startsWith ( "END:VTODO" ) ) {
+							state = STATE_VCALENDAR;
+							// Send the Todo object to all DataStore objects
+							/*****************************************************************
+							 * * TODO - not yet implemented Uncomment this when Todo.java is
+							 * implemented Todo todo = new Todo ( this, startLineNo, textLines );
+							 * if ( todo.isValid() ) { for ( int i = 0; i < dataStores.size();
+							 * i++ ) { DataStore ds = (DataStore) dataStores.elementAt ( i );
+							 * ds.storeTodo ( todo ); } }
+							 ****************************************************************/
+							textLines.removeAllElements (); // truncate Vector
 						}
-					} else {
-						// what else could this be???
+						break;
+
+					case STATE_VJOURNAL:
+						textLines.addElement ( line );
+						if ( lineUp.startsWith ( "END:VJOURNAL" ) ) {
+							state = STATE_VCALENDAR;
+							// Send the Journal object to all DataStore objects
+							Journal journal = new Journal ( this, startLineNo, textLines );
+							if ( journal.isValid () ) {
+								for ( int i = 0; i < dataStores.size (); i++ ) {
+									DataStore ds = (DataStore) dataStores.elementAt ( i );
+									ds.storeJournal ( journal );
+								}
+							}
+							textLines.removeAllElements (); // truncate Vector
+						}
+						break;
+
+					case STATE_VEVENT:
+						textLines.addElement ( line );
+						if ( lineUp.startsWith ( "END:VEVENT" ) ) {
+							state = STATE_VCALENDAR;
+							Event event = new Event ( this, startLineNo, textLines );
+							if ( event.isValid () ) {
+								for ( int i = 0; i < dataStores.size (); i++ ) {
+									DataStore ds = (DataStore) dataStores.elementAt ( i );
+									ds.storeEvent ( event );
+								}
+							} else {
+								System.out.println ( "ERROR: Invalid VEVENT found" );
+							}
+							textLines.removeAllElements (); // truncate Vector
+						}
+						break;
+
+					case STATE_VFREEBUSY:
+						textLines.addElement ( line );
+						if ( lineUp.startsWith ( "END:VFREEBUSY" ) ) {
+							state = STATE_VCALENDAR;
+							// Send the Freebusy object to all DataStore objects
+							/*****************************************************************
+							 * * TODO - not yet implemented Uncomment this when Freebusy.java
+							 * is implemented Freebusy fb = new Freebusy ( this, startLineNo,
+							 * textLines ); if ( fb.isValid() ) { for ( int i = 0; i <
+							 * dataStores.size(); i++ ) { DataStore ds = (DataStore)
+							 * dataStores.elementAt ( i ); ds.storeFreebusy ( event ); } }
+							 ****************************************************************/
+							textLines.removeAllElements (); // truncate Vector
+						}
+						break;
+
+					case STATE_DONE:
+						// should be nothing else after "END:VCALENDAR"
 						if ( lineUp.trim ().length () == 0 ) {
-							// ignore blank lines
+							// ignore blank lines at end of file
 						} else if ( isParseStrict () ) {
 							reportParseError ( new ParseError ( ln,
-							    "Unrecognized data found in VCALENDAR block", line ) );
+							    "Data found after END:VCALENDAR", line ) );
 						}
-					}
-					break;
-
-				case STATE_VTIMEZONE:
-					textLines.addElement ( line );
-					if ( lineUp.startsWith ( "END:VTIMEZONE" ) ) {
-						state = STATE_VCALENDAR;
-						Timezone timezone = new Timezone ( this, startLineNo, textLines );
-						if ( timezone.isValid () ) {
-							for ( int i = 0; i < dataStores.size (); i++ ) {
-								DataStore ds = (DataStore) dataStores.elementAt ( i );
-								ds.storeTimezone ( timezone );
-							}
-						}
-						textLines.removeAllElements (); // truncate Vector
-					}
-					break;
-
-				case STATE_VTODO:
-					textLines.addElement ( line );
-					if ( lineUp.startsWith ( "END:VTODO" ) ) {
-						state = STATE_VCALENDAR;
-						// Send the Todo object to all DataStore objects
-						/*******************************************************************
-						 * * TODO - not yet implemented Uncomment this when Todo.java is
-						 * implemented Todo todo = new Todo ( this, startLineNo, textLines );
-						 * if ( todo.isValid() ) { for ( int i = 0; i < dataStores.size();
-						 * i++ ) { DataStore ds = (DataStore) dataStores.elementAt ( i );
-						 * ds.storeTodo ( todo ); } }
-						 ******************************************************************/
-						textLines.removeAllElements (); // truncate Vector
-					}
-					break;
-
-				case STATE_VJOURNAL:
-					textLines.addElement ( line );
-					if ( lineUp.startsWith ( "END:VJOURNAL" ) ) {
-						state = STATE_VCALENDAR;
-						// Send the Journal object to all DataStore objects
-						Journal journal = new Journal ( this, startLineNo, textLines );
-						if ( journal.isValid () ) {
-							for ( int i = 0; i < dataStores.size (); i++ ) {
-								DataStore ds = (DataStore) dataStores.elementAt ( i );
-								ds.storeJournal ( journal );
-							}
-						}
-						textLines.removeAllElements (); // truncate Vector
-					}
-					break;
-
-				case STATE_VEVENT:
-					textLines.addElement ( line );
-					if ( lineUp.startsWith ( "END:VEVENT" ) ) {
-						state = STATE_VCALENDAR;
-						Event event = new Event ( this, startLineNo, textLines );
-						if ( event.isValid () ) {
-							for ( int i = 0; i < dataStores.size (); i++ ) {
-								DataStore ds = (DataStore) dataStores.elementAt ( i );
-								ds.storeEvent ( event );
-							}
-						} else {
-							System.out.println ( "ERROR: Invalid VEVENT found" );
-						}
-						textLines.removeAllElements (); // truncate Vector
-					}
-					break;
-
-				case STATE_VFREEBUSY:
-					textLines.addElement ( line );
-					if ( lineUp.startsWith ( "END:VFREEBUSY" ) ) {
-						state = STATE_VCALENDAR;
-						// Send the Freebusy object to all DataStore objects
-						/*******************************************************************
-						 * * TODO - not yet implemented Uncomment this when Freebusy.java is
-						 * implemented Freebusy fb = new Freebusy ( this, startLineNo,
-						 * textLines ); if ( fb.isValid() ) { for ( int i = 0; i <
-						 * dataStores.size(); i++ ) { DataStore ds = (DataStore)
-						 * dataStores.elementAt ( i ); ds.storeFreebusy ( event ); } }
-						 ******************************************************************/
-						textLines.removeAllElements (); // truncate Vector
-					}
-					break;
-
-				case STATE_DONE:
-					// should be nothing else after "END:VCALENDAR"
-					if ( lineUp.trim ().length () == 0 ) {
-						// ignore blank lines at end of file
-					} else if ( isParseStrict () ) {
-						reportParseError ( new ParseError ( ln,
-						    "Data found after END:VCALENDAR", line ) );
-					}
-					break;
+						break;
+				}
+				if ( nextLine == null )
+					done = true;
 			}
-			if ( nextLine == null )
-				done = true;
 		}
 		r.close ();
 
