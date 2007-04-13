@@ -32,12 +32,12 @@ import java.util.Vector;
  */
 public class Property implements Constants {
 	/** Property name (DTSTART, SUMMARY, etc.) This is always uppercase */
-	public String name;
+	protected String name;
 	/**
 	 * Value of property (unfolded). This may contain multiple values separated by
 	 * commas.
 	 */
-	public String value;
+	protected String value;
 	protected Vector attributeList;
 
 	public Property(String name, String value) {
@@ -137,6 +137,33 @@ public class Property implements Constants {
 
 	public Attribute attributeAt ( int i ) {
 		return (Attribute) attributeList.elementAt ( i );
+	}
+
+	/**
+	 * Get the Property name (DTSTART, SUMMARY, etc.) This is always uppercase
+	 * 
+	 * @return
+	 */
+	public String getName () {
+		return name;
+	}
+
+	/**
+	 * Set the Property name (DTSTART, SUMMARY, etc.) This is always uppercase
+	 * 
+	 * @param name
+	 *          new Property name
+	 */
+	public void setName ( String name ) {
+		this.name = name;
+	}
+
+	public String getValue () {
+		return value;
+	}
+
+	public void setValue ( String value ) {
+		this.value = value;
 	}
 
 	/**

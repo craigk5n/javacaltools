@@ -197,6 +197,63 @@ public class Date extends Property implements Constants, Comparable {
 		}
 	}
 
+	/**
+	 * Get a Data object that represents the current date and has no time
+	 * information.
+	 * 
+	 * @param dateType
+	 *          Type of date; this should be an ical property name like DTSTART,
+	 *          DTEND or DTSTAMP.
+	 * @return A Date object set to the current date
+	 */
+	public static Date getCurrentDate ( String dateType ) {
+		Date d = null;
+		Calendar c = Calendar.getInstance ();
+		try {
+			d = new Date ( dateType, c.get ( Calendar.YEAR ),
+			    c.get ( Calendar.MONTH ) + 1, c.get ( Calendar.DAY_OF_MONTH ) );
+		} catch ( ParseException e1 ) {
+			// This should never happen since we're setting the m/d/y
+			System.err.println ( e1.toString () );
+			e1.printStackTrace ();
+		} catch ( BogusDataException e2 ) {
+			// This should never happen since we're setting the m/d/y
+			System.err.println ( e2.toString () );
+			e2.printStackTrace ();
+		}
+		return d;
+	}
+
+	/**
+	 * Get a Data object that represents the current date and time information.
+	 * 
+	 * @param dateType
+	 *          Type of date; this should be an ical property name like DTSTART,
+	 *          DTEND or DTSTAMP.
+	 * @return A Date object set to the current date
+	 */
+	public static Date getCurrentDateTime ( String dateType ) {
+		Date d = null;
+		Calendar c = Calendar.getInstance ();
+		try {
+			d = new Date ( dateType, c.get ( Calendar.YEAR ),
+			    c.get ( Calendar.MONTH ) + 1, c.get ( Calendar.DAY_OF_MONTH ) );
+			d.setHour ( c.get ( Calendar.HOUR_OF_DAY ) );
+			d.setMinute ( c.get ( Calendar.MINUTE ) );
+			d.setSecond ( c.get ( Calendar.SECOND ) );
+			d.setDateOnly ( false );
+		} catch ( ParseException e1 ) {
+			// This should never happen since we're setting the m/d/y
+			System.err.println ( e1.toString () );
+			e1.printStackTrace ();
+		} catch ( BogusDataException e2 ) {
+			// This should never happen since we're setting the m/d/y
+			System.err.println ( e2.toString () );
+			e2.printStackTrace ();
+		}
+		return d;
+	}
+
 	public Calendar toCalendar () {
 		Calendar c = Calendar.getInstance ();
 		c.set ( Calendar.YEAR, year );

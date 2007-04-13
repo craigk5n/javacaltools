@@ -36,29 +36,31 @@ public class Journal implements Constants {
 	// TODO: handle multiple instances of summary/description since
 	// there can be more than one if LANGUAGE attribute is specified
 	/** Unique Id */
-	public Uid uid = null;
+	protected Uid uid = null;
 	/** Sequence number (0 is first version) */
-	public Sequence sequence = null;
+	protected Sequence sequence = null;
 	/** Brief summary */
-	public Summary summary = null;
+	protected Summary summary = null;
 	/** Full description */
-	public Description description = null;
+	protected Description description = null;
 	/** Classification (PUBLIC, CONFIDENTIAL, PRIVATE) */
-	public Classification classification = null;
+	protected Classification classification = null;
 	/** List of categories (comma-separated) */
-	public Categories categories = null;
+	protected Categories categories = null;
 	/** Primary start date */
-	public Date startDate = null;
+	protected Date startDate = null;
 	/** Time created */
-	public Date dtstamp = null;
+	protected Date dtstamp = null;
 	/** Time last modified */
-	public Date lastModified = null;
+	protected Date lastModified = null;
 	/** Participants for the journal entry (Vector of Attendee) */
-	public Vector attendees = null;
+	protected Vector attendees = null;
 	/** Recurrence rule (RRULE) */
-	public Rrule rrule = null;
+	protected Rrule rrule = null;
 	/** URL */
-	public URL url = null;
+	protected URL url = null;
+	/** Private user object for caller to set/get */
+	private Object userData = null;
 
 	// TODO: multiple summaries, descriptions with different LANGUAGE values
 	// TODO: alarms/triggers
@@ -115,6 +117,12 @@ public class Journal implements Constants {
 		this.summary.value = summary;
 		this.description = new Description ();
 		this.description.value = description;
+		this.startDate = startDate;
+		// create a sequence if not specified
+		if ( sequence == null )
+			sequence = new Sequence ( 0 );
+		// Set DTSTAMP, which is the original creation date
+		this.dtstamp = Date.getCurrentDateTime ( "DTSTAMP" );
 	}
 
 	/**
@@ -219,4 +227,105 @@ public class Journal implements Constants {
 
 		return ret.toString ();
 	}
+
+	public Vector getAttendees () {
+		return attendees;
+	}
+
+	public void setAttendees ( Vector attendees ) {
+		this.attendees = attendees;
+	}
+
+	public Categories getCategories () {
+		return categories;
+	}
+
+	public void setCategories ( Categories categories ) {
+		this.categories = categories;
+	}
+
+	public Classification getClassification () {
+		return classification;
+	}
+
+	public void setClassification ( Classification classification ) {
+		this.classification = classification;
+	}
+
+	public Description getDescription () {
+		return description;
+	}
+
+	public void setDescription ( Description description ) {
+		this.description = description;
+	}
+
+	public Date getDtstamp () {
+		return dtstamp;
+	}
+
+	public void setDtstamp ( Date dtstamp ) {
+		this.dtstamp = dtstamp;
+	}
+
+	public Date getLastModified () {
+		return lastModified;
+	}
+
+	public void setLastModified ( Date lastModified ) {
+		this.lastModified = lastModified;
+	}
+
+	public Rrule getRrule () {
+		return rrule;
+	}
+
+	public void setRrule ( Rrule rrule ) {
+		this.rrule = rrule;
+	}
+
+	public Sequence getSequence () {
+		return sequence;
+	}
+
+	public void setSequence ( Sequence sequence ) {
+		this.sequence = sequence;
+	}
+
+	public Date getStartDate () {
+		return startDate;
+	}
+
+	public void setStartDate ( Date startDate ) {
+		this.startDate = startDate;
+	}
+
+	public void setSummary ( Summary summary ) {
+		this.summary = summary;
+	}
+
+	public Uid getUid () {
+		return uid;
+	}
+
+	public void setUid ( Uid uid ) {
+		this.uid = uid;
+	}
+
+	public URL getUrl () {
+		return url;
+	}
+
+	public void setUrl ( URL url ) {
+		this.url = url;
+	}
+
+	public Object getUserData () {
+		return userData;
+	}
+
+	public void setUserData ( Object userData ) {
+		this.userData = userData;
+	}
+
 }
