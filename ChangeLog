@@ -1,5 +1,7 @@
 Version 0.2.0 (?? ??? 2007)
+  - Made most members of Event protected and added get/set methods
   - Fixed handling of "LANGUANGE=..." in description and summary
+  - Fixed handling of dates with "VALUE=DATE" attribute
   - Added error-checking for day of months (including leap year)
   - Added support for "CLASS" in Event object
   - Added support for "URL" in Event

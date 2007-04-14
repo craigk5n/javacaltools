@@ -195,6 +195,13 @@ public class Date extends Property implements Constants, Comparable {
 			// Just date, no time
 			dateOnly = true;
 		}
+
+		// Add attribute that says date-only or date with time
+		if ( dateOnly )
+			addAttribute ( "VALUE", "DATE" );
+		else
+			addAttribute ( "VALUE", "DATE-TIME" );
+
 	}
 
 	/**
@@ -352,6 +359,14 @@ public class Date extends Property implements Constants, Comparable {
 		this.year = year;
 	}
 
+	public boolean equals ( Object o ) {
+		if ( o instanceof Date ) {
+			return ( this.compareTo ( o ) == 0 );
+		} else {
+			return false;
+		}
+	}
+
 	public int compareTo ( Object anotherDate ) throws ClassCastException {
 		Date d2 = (Date) anotherDate;
 		if ( this.year < d2.year )
@@ -366,6 +381,12 @@ public class Date extends Property implements Constants, Comparable {
 			return -1;
 		if ( this.day > d2.day )
 			return 1;
+		if ( this.dateOnly && d2.dateOnly )
+			return 0;
+		if ( !this.dateOnly && d2.dateOnly )
+			return -1;
+		if ( this.dateOnly && !d2.dateOnly )
+			return -1;
 		if ( this.hour < d2.hour )
 			return -1;
 		if ( this.hour > d2.hour )

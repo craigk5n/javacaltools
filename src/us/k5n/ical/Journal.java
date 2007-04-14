@@ -98,6 +98,7 @@ public class Journal implements Constants {
 		// create a sequence if not specified
 		if ( sequence == null )
 			sequence = new Sequence ( 0 );
+		System.out.println ( this.toICalendar () );
 	}
 
 	/**

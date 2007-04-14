@@ -127,11 +127,24 @@ public class Property implements Constants {
 		}
 	}
 
+	private void removeNamedAttribute ( String name ) {
+		name = name.toUpperCase ();
+		// Remove any old attribute with the same name
+		for ( int i = 0; i < attributeList.size (); i++ ) {
+			Attribute a1 = (Attribute) attributeList.elementAt ( i );
+			if ( a1.name.toUpperCase ().equals ( name ) )
+				attributeList.remove ( i );
+		}
+
+	}
+
 	public void addAttribute ( Attribute a ) {
+		removeNamedAttribute ( a.name );
 		attributeList.addElement ( a );
 	}
 
 	public void addAttribute ( String name, String val ) {
+		removeNamedAttribute ( name );
 		attributeList.addElement ( new Attribute ( name, val ) );
 	}
 
