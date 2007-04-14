@@ -39,7 +39,7 @@ public class DateTest extends TestCase implements Constants {
 	 * Test valid detection with time specified.
 	 */
 	public void testTwo () {
-		String dateStr = "DATE:20070131T132047";
+		String dateStr = "DTSTART:20070131T132047";
 		try {
 			Date d = new Date ( dateStr, PARSE_STRICT );
 			assertFalse ( "Date has no time", d.isDateOnly () );
@@ -121,6 +121,48 @@ public class DateTest extends TestCase implements Constants {
 			} catch ( Exception e2 ) {
 				fail ( "Caught exception: " + e2.getMessage () );
 			}
+		}
+	}
+
+	public void testFive () {
+		String dateStr = "DATE:20070131";
+		try {
+			Date d = new Date ( dateStr, PARSE_STRICT );
+			String ical = d.toICalendar ().trim ();
+			assertTrue ( "Incorrect ical output: " + ical,
+			    ical.indexOf ( "20070131" ) >= 0 );
+			Date newDate = new Date ( d.toICalendar (), PARSE_STRICT );
+			assertTrue ( "Dates not equal: " + d + " vs " + newDate, d
+			    .equals ( newDate ) );
+		} catch ( Exception e ) {
+			e.printStackTrace ();
+			fail ( "Failed: " + e.toString () );
+		}
+	}
+
+	public void testSix () {
+		String dateStr = "DATE:20070131T115959";
+		try {
+			Date d = new Date ( dateStr, PARSE_STRICT );
+			Date newDate = new Date ( d.toICalendar (), PARSE_STRICT );
+			assertTrue ( "Dates not equal: " + d + " vs " + newDate, d
+			    .equals ( newDate ) );
+		} catch ( Exception e ) {
+			e.printStackTrace ();
+			fail ( "Failed: " + e.toString () );
+		}
+	}
+
+	public void testSeven () {
+		String dateStr = "DTSTART;VALUE=\"DATE\":20070413T091945";
+		try {
+			Date d = new Date ( dateStr, PARSE_STRICT );
+			Date newDate = new Date ( d.toICalendar (), PARSE_STRICT );
+			assertTrue ( "Dates not equal: " + d.toICalendar () + " vs "
+			    + newDate.toICalendar (), d.equals ( newDate ) );
+		} catch ( Exception e ) {
+			e.printStackTrace ();
+			fail ( "Failed: " + e.toString () );
 		}
 	}
 
