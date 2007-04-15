@@ -309,6 +309,7 @@ public class Date extends Property implements Constants, Comparable {
 
 	public void setDateOnly ( boolean dateOnly ) {
 		this.dateOnly = dateOnly;
+		this.addAttribute ( "VALUE", dateOnly ? "DATE" : "DATE-TIME" );
 	}
 
 	public int getDay () {
