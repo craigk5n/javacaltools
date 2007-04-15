@@ -3,6 +3,7 @@ package us.k5n.journal;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 
 import us.k5n.ical.Constants;
@@ -29,18 +30,48 @@ public class DataFile extends File implements Constants {
 		this ( filename, false );
 	}
 
+	/**
+	 * Create a DataFile object. If the specified filename exists, then it will be
+	 * parsed and all entries loaded into the default DataStore. If the filename
+	 * does not exists, then no parsing/loading will take place.
+	 * 
+	 * @param filename
+	 *          The filename (YYYYMMDD.ics as in "19991231.ics")
+	 * @param strictParsing
+	 */
 	public DataFile(String filename, boolean strictParsing) {
 		super ( filename );
 		parser = new ICalendarParser ( strictParsing ? PARSE_STRICT : PARSE_LOOSE );
-		BufferedReader reader = null;
-		try {
-			reader = new BufferedReader ( new FileReader ( this ) );
-			parser.parse ( reader );
-			reader.close ();
-		} catch ( IOException e ) {
-			System.err.println ( "Error opening " + toString () + ": " + e );
+		if ( this.exists () ) {
+			BufferedReader reader = null;
+			try {
+				reader = new BufferedReader ( new FileReader ( this ) );
+				parser.parse ( reader );
+				reader.close ();
+			} catch ( IOException e ) {
+				System.err.println ( "Error opening " + toString () + ": " + e );
+			}
 		}
 		dataStore = parser.getDataStoreAt ( 0 );
+		// Store this DataFile object in the user data object of each
+		// Journal entry so we can get back to this object if the user
+		// edits and saves a Journal entry.
+		for ( int i = 0; i < getJournalCount (); i++ ) {
+			Journal j = journalEntryAt ( i );
+			j.setUserData ( this );
+		}
+	}
+
+	private DataFile(ICalendarParser parser, String filename) {
+		super ( filename );
+		dataStore = parser.getDataStoreAt ( 0 );
+		// Store this DataFile object in the user data object of each
+		// Journal entry so we can get back to this object if the user
+		// edits and saves a Journal entry.
+		for ( int i = 0; i < getJournalCount (); i++ ) {
+			Journal j = journalEntryAt ( i );
+			j.setUserData ( this );
+		}
 	}
 
 	/**
@@ -80,5 +111,17 @@ public class DataFile extends File implements Constants {
 	 */
 	public ParseError getParseErrorAt ( int ind ) {
 		return (ParseError) parser.getAllErrors ().elementAt ( ind );
+	}
+
+	/**
+	 * Write this DataFile object.
+	 * 
+	 * @throws IOException
+	 */
+	public void write () throws IOException {
+		FileWriter writer = null;
+		writer = new FileWriter ( this );
+		writer.write ( parser.toICalendar () );
+		writer.close ();
 	}
 }

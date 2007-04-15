@@ -15,15 +15,22 @@ import us.k5n.ical.Date;
 public class DisplayDate implements Comparable {
 	// Date formats are specified in the Java API doc.
 	// TODO: allow setting this format in user preferences
-	private static String dateFormat = "EEE, d MMM yyyy h:mm a";
+	private static String dateOnlyFormat = "EEE, d MMM yyyy";
+	private static String dateTimeFormat = "EEE, d MMM yyyy h:mm a";
 	private java.util.Date javaDate;
+	boolean hasTime;
 
 	public DisplayDate(Date d) {
 		javaDate = d.toCalendar ().getTime ();
+		hasTime = !d.isDateOnly ();
 	}
 
 	public String toString () {
-		SimpleDateFormat format = new SimpleDateFormat ( dateFormat );
+		SimpleDateFormat format = null;
+		if ( hasTime )
+			format = new SimpleDateFormat ( dateTimeFormat );
+		else
+			format = new SimpleDateFormat ( dateOnlyFormat );
 		return format.format ( javaDate );
 	}
 

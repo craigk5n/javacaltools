@@ -1,6 +1,7 @@
 package us.k5n.journal;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Vector;
@@ -10,10 +11,10 @@ import us.k5n.ical.Journal;
 import us.k5n.ical.Utils;
 
 /**
- * The Repository class manages all loading and saving of data files.
- * All methods are intended to work with just Journal objects.  However,
- * if an iCalendar file is loaded with Event objects, they should be
- * preserved in the data if it is written back out.
+ * The Repository class manages all loading and saving of data files. All
+ * methods are intended to work with just Journal objects. However, if an
+ * iCalendar file is loaded with Event objects, they should be preserved in the
+ * data if it is written back out.
  * 
  * @author Craig Knudsen, craig@k5n.us
  * @version $Id$
@@ -21,13 +22,17 @@ import us.k5n.ical.Utils;
 public class Repository {
 	File directory;
 	Vector dataFiles;
+	HashMap dataFileHash;
 	int parseErrorCount = 0;
 	int journalCount = 0;
 	Date[] listOfDates;
+	HashMap uidHash;
 
 	public Repository(File dir, boolean strictParsing) {
 		this.directory = dir;
 		this.dataFiles = new Vector ();
+		this.dataFileHash = new HashMap ();
+		this.uidHash = new HashMap ();
 
 		// Load all files.
 		File[] files = this.directory.listFiles ( new IcsFileFilter () );
@@ -37,10 +42,20 @@ public class Repository {
 				this.dataFiles.addElement ( f );
 				journalCount += f.getJournalCount ();
 				parseErrorCount += f.getParseErrorCount ();
+				// Store in HashMap using just the filename (19991231.ics)
+				// as the key
+				this.dataFileHash.put ( files[i].getName ().toLowerCase (), f );
 			}
 		}
 
 		updateDateList ();
+	}
+
+	public DataFile findDataFile ( Journal j ) {
+		String YMD = Utils.DateToYYYYMMDD ( j.getStartDate () );
+		String fileName = YMD + ".ics";
+		DataFile dataFile = (DataFile) this.dataFileHash.get ( fileName );
+		return dataFile;
 	}
 
 	/**
@@ -111,8 +126,8 @@ public class Repository {
 			DataFile df = (DataFile) dataFiles.elementAt ( i );
 			for ( int j = 0; j < df.getJournalCount (); j++ ) {
 				Journal journal = df.journalEntryAt ( j );
-				if ( journal.startDate.getYear () == year
-				    && journal.startDate.getMonth () == month )
+				if ( journal.getStartDate ().getYear () == year
+				    && journal.getStartDate ().getMonth () == month )
 					ret.addElement ( journal );
 			}
 		}
@@ -134,7 +149,7 @@ public class Repository {
 			DataFile df = (DataFile) dataFiles.elementAt ( i );
 			for ( int j = 0; j < df.getJournalCount (); j++ ) {
 				Journal journal = df.journalEntryAt ( j );
-				if ( journal.startDate.getYear () == year )
+				if ( journal.getStartDate ().getYear () == year )
 					ret.addElement ( journal );
 			}
 		}
@@ -167,11 +182,11 @@ public class Repository {
 			DataFile df = (DataFile) dataFiles.elementAt ( i );
 			for ( int j = 0; j < df.getJournalCount (); j++ ) {
 				Journal journal = df.journalEntryAt ( j );
-				if ( journal.startDate != null ) {
-					String YMD = Utils.DateToYYYYMMDD ( journal.startDate );
+				if ( journal.getStartDate () != null ) {
+					String YMD = Utils.DateToYYYYMMDD ( journal.getStartDate () );
 					if ( !h.containsKey ( YMD ) ) {
 						h.put ( YMD, YMD );
-						dates.addElement ( journal.startDate );
+						dates.addElement ( journal.getStartDate () );
 						// System.out.println ( "Added date: " + journal.startDate);
 					}
 				}
@@ -190,4 +205,42 @@ public class Repository {
 		}
 	}
 
+	/**
+	 * Save the specified Journal object. If the Journal is part of an existing
+	 * iCalendar file, the entire file will be written out. If this Journal object
+	 * is new, then a new iCalendar file will be created. Note: It is up to the
+	 * caller to update the Sequence object each time a Journal entry is saved.
+	 * The "LAST-MODIFIED" setting will be updated automatically.
+	 * 
+	 * @param j
+	 * @throws IOException
+	 */
+	public void saveJournal ( Journal j ) throws IOException {
+		DataFile dataFile = (DataFile) j.getUserData ();
+		if ( dataFile == null ) {
+			// New journal. Add to existing data file named YYYYMMDD.ics if
+			// it exists.
+			dataFile = findDataFile ( j );
+			if ( dataFile == null ) {
+				// No file for this date (YYYYMMDD.ics) exists yet.
+				// So, we need to create a new one.
+				File f = new File ( this.directory, Utils.DateToYYYYMMDD ( j
+				    .getStartDate () )
+				    + ".ics" );
+				dataFile = new DataFile ( f.getAbsolutePath () );
+				this.dataFiles.addElement ( dataFile );
+				// Store in HashMap using just the filename (19991231.ics)
+				// as the key
+				this.dataFileHash.put ( dataFile.getName ().toLowerCase (), dataFile );
+				this.updateDateList ();
+			}
+			// Now add this journal entry to the file
+			dataFile.dataStore.storeJournal ( j );
+		} else {
+			// If we are updating, then the Journal to be updated should
+			// already be updated in the DataStore.
+		}
+		j.setLastModified ( Date.getCurrentDateTime ( "LAST-MODIFIED" ) );
+		dataFile.write ();
+	}
 }

@@ -2,8 +2,7 @@ package us.k5n.journal;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
-import java.awt.Frame;
-import java.awt.GridLayout;
+import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,9 +10,12 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
+import java.net.URL;
 import java.util.Vector;
 
 import javax.swing.Box;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -24,7 +26,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTable;
+import javax.swing.JToolBar;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
 import javax.swing.event.ListSelectionEvent;
@@ -45,7 +47,7 @@ import us.k5n.ical.Summary;
  */
 public class Main extends JFrame implements Constants {
 	public static final String DEFAULT_DIR_NAME = "k5njournal";
-	Frame parent;
+	JFrame parent;
 	JLabel messageArea;
 	Repository dataRepository;
 	JTree dateTree;
@@ -58,6 +60,7 @@ public class Main extends JFrame implements Constants {
 	final static String[] monthNames = { "", "January", "February", "March",
 	    "April", "May", "June", "July", "August", "September", "October",
 	    "November", "December" };
+	JButton newButton, editButton;
 
 	class DateFilterTreeNode extends DefaultMutableTreeNode {
 		public int year, month, day;
@@ -101,7 +104,7 @@ public class Main extends JFrame implements Constants {
 		messageArea = new JLabel ( "Welcome to k5njournal..." );
 		contentPane.add ( messageArea, BorderLayout.SOUTH );
 
-		// TODO: add JToolbar at top for buttons (save, open, etc.)
+		contentPane.add ( createToolBar (), BorderLayout.NORTH );
 
 		JPanel navArea = createJournalSelectionPanel ();
 		journalView = new JournalViewPanel ();
@@ -120,6 +123,40 @@ public class Main extends JFrame implements Constants {
 		// updateFilteredJournalList ();
 
 		this.setVisible ( true );
+	}
+
+	JToolBar createToolBar () {
+		JToolBar toolbar = new JToolBar ();
+		newButton = makeNavigationButton ( null, "new", "Add new Journal entry",
+		    "New..." );
+		newButton.addActionListener ( new ActionListener () {
+			public void actionPerformed ( ActionEvent event ) {
+				new EditWindow ( parent, new Dimension ( 500, 500 ), dataRepository,
+				    null );
+			}
+		} );
+		toolbar.add ( newButton );
+
+		editButton = makeNavigationButton ( null, "edit", "Edit Journal entry",
+		    "Edit..." );
+		toolbar.add ( editButton );
+		editButton.addActionListener ( new ActionListener () {
+			public void actionPerformed ( ActionEvent event ) {
+				// Get selected item and open edit window
+				int ind = journalListTable.getSelectedRow ();
+				if ( ind >= 0 && ind < filteredJournalEntries.size () ) {
+					Journal j = (Journal) filteredJournalEntries.elementAt ( ind );
+					new EditWindow ( parent, new Dimension ( 500, 500 ), dataRepository,
+					    j );
+				}
+			}
+		} );
+
+		return toolbar;
+	}
+
+	void updateToolbar ( int numSelected ) {
+		editButton.setEnabled ( numSelected == 1 );
 	}
 
 	public void setMessage ( String msg ) {
@@ -238,15 +275,12 @@ public class Main extends JFrame implements Constants {
 			    public void valueChanged ( ListSelectionEvent event ) {
 				    int ind = journalListTable.getSelectedRow ();
 				    int numSel = journalListTable.getSelectedRowCount ();
+				    updateToolbar ( numSel );
 				    if ( numSel == 0 ) {
 					    journalView.clear ();
 				    } else if ( !event.getValueIsAdjusting () && ind >= 0
 				        && ind < filteredJournalEntries.size () ) {
 					    int[] selRows = journalListTable.getSelectedRows ();
-					    System.out
-					        .println ( "Row: " + journalListTable.getSelectedRow () );
-					    System.out.println ( "ind: " + ind );
-					    System.out.println ( "Event: " + event );
 					    // The call below might actually belong in ReadOnlyTable.
 					    // However, we would need to add a MouseListener to ReadOnlyTable
 					    // and make sure that one got called before this one.
@@ -260,7 +294,7 @@ public class Main extends JFrame implements Constants {
 						    journalView.clear ();
 					    }
 				    } else {
-					    journalListTable.setHighlightedRow ( -1 );
+					    journalListTable.clearHighlightedRows ();
 				    }
 			    }
 		    } );
@@ -330,15 +364,18 @@ public class Main extends JFrame implements Constants {
 	 */
 	void updateFilteredJournalList () {
 		journalListTableModel.setRowCount ( filteredJournalEntries.size () );
+		journalListTable.clearHighlightedRows ();
 		for ( int i = 0; i < filteredJournalEntries.size (); i++ ) {
 			Journal entry = (Journal) filteredJournalEntries.elementAt ( i );
-			journalListTable.setValueAt ( new DisplayDate ( entry.startDate ), i, 0 );
+			journalListTable.setValueAt ( new DisplayDate ( entry.getStartDate () ),
+			    i, 0 );
 			Summary summary = entry.getSummary ();
-			journalListTable
-			    .setValueAt ( summary == null ? "-" : summary.value, i, 1 );
+			journalListTable.setValueAt (
+			    summary == null ? "-" : summary.getValue (), i, 1 );
 		}
 		System.out.println ( "Displaying " + filteredJournalEntries.size ()
 		    + " entries" );
+
 		journalListTable.repaint ();
 	}
 
@@ -387,6 +424,30 @@ public class Main extends JFrame implements Constants {
 		JOptionPane.showMessageDialog ( parent, message, "Fatal Error",
 		    JOptionPane.ERROR );
 		System.exit ( 1 );
+	}
+
+	protected JButton makeNavigationButton ( String imageName,
+	    String actionCommand, String toolTipText, String altText ) {
+		JButton button;
+
+		// Look for the image.
+		String imgLocation = "images/" + imageName;
+		URL imageURL = this.getClass ().getResource ( imgLocation );
+
+		if ( imageURL != null ) { // image found
+			button = new JButton ();
+			button.setIcon ( new ImageIcon ( imageURL, altText ) );
+		} else {
+			// no image found
+			button = new JButton ( altText );
+			if ( imageName != null )
+				System.err.println ( "Resource not found: " + imgLocation );
+		}
+
+		button.setActionCommand ( actionCommand );
+		button.setToolTipText ( toolTipText );
+
+		return button;
 	}
 
 	/**

@@ -67,25 +67,25 @@ public class JournalViewPanel extends JPanel {
 
 	public void setJournal ( Journal j ) {
 		this.journal = j;
-		if ( j.startDate != null ) {
-			DisplayDate d = new DisplayDate ( j.startDate );
+		if ( j.getStartDate () != null ) {
+			DisplayDate d = new DisplayDate ( j.getStartDate () );
 			date.setText ( d.toString () );
 		} else {
 			date.setText ( "None" );
 		}
 		Summary s = j.getSummary ();
 		if ( s != null ) {
-			subject.setText ( s.value );
+			subject.setText ( s.getValue () );
 		} else {
 			subject.setText ( "(None)" );
 		}
-		if ( j.categories != null ) {
-			categories.setText ( j.categories.value );
+		if ( j.getCategories () != null ) {
+			categories.setText ( j.getCategories ().getValue () );
 		} else {
 			categories.setText ( "(None)" );
 		}
-		if ( j.description != null ) {
-			text.setText ( j.description.value );
+		if ( j.getDescription () != null ) {
+			text.setText ( j.getDescription ().getValue () );
 		} else {
 			text.setText ( "" );
 		}
