@@ -166,6 +166,21 @@ public class DateTest extends TestCase implements Constants {
 		}
 	}
 
+	public void testEight () {
+		String dateStr = "DTSTART;VALUE=\"DATE\":20070413T091945";
+		try {
+			Date d = new Date ( "DTSTART", 1999, 12, 31 );
+			assertTrue ( "Date has time", d.isDateOnly () );
+			d = new Date ( "DTSTART", 1999, 12, 31, 23, 59, 59 );
+			assertTrue ( "Date has no time", !d.isDateOnly () );
+			assertTrue ( "Wrong time", d.getHour () == 23 && d.getMinute () == 59
+			    && d.getSecond () == 59 );
+		} catch ( Exception e ) {
+			e.printStackTrace ();
+			fail ( "Failed: " + e.toString () );
+		}
+	}
+
 	public static Test suite () {
 		return new TestSuite ( DateTest.class );
 	}

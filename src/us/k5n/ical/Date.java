@@ -70,14 +70,14 @@ public class Date extends Property implements Constants, Comparable {
 	 */
 
 	public Date(String dateType, int year, int month, int day)
-	    throws ParseException, BogusDataException {
+	    throws BogusDataException {
 		super ( dateType, "" );
 
 		this.year = year;
 		this.month = month;
 		this.day = day;
-		hour = minute = second = 0;
-		dateOnly = true;
+		this.hour = this.minute = this.second = 0;
+		this.dateOnly = true;
 
 		String yearStr, monthStr, dayStr;
 
@@ -94,6 +94,68 @@ public class Date extends Property implements Constants, Comparable {
 
 		// Add attribute that says date-only
 		addAttribute ( "VALUE", "DATE" );
+	}
+
+	/**
+	 * Constructor: create a date based on the specified year, month and day.
+	 * 
+	 * @param dateType
+	 *          Type of date; this should be an ical property name like DTSTART,
+	 *          DTEND or DTSTAMP.
+	 * @param year
+	 *          The 4-digit year
+	 * @param month
+	 *          The month (1-12)
+	 * @param day
+	 *          The day of the month (1-31)
+	 * @param hour
+	 *          The hour of day (0-23)
+	 * @param min
+	 *          minute of hour (0-59(
+	 * @param sec
+	 *          seconds (0-59)
+	 */
+
+	public Date(String dateType, int year, int month, int day, int hour, int min,
+	    int sec) throws BogusDataException {
+		super ( dateType, "" );
+
+		this.year = year;
+		this.month = month;
+		this.day = day;
+		this.hour = hour;
+		this.minute = min;
+		this.second = sec;
+		this.dateOnly = false;
+
+		String yearStr, monthStr, dayStr, hourStr, minStr, secStr;
+
+		yearStr = "" + year;
+		monthStr = "" + month;
+		dayStr = "" + day;
+		hourStr = "" + hour;
+		minStr = "" + min;
+		secStr = "" + sec;
+
+		while ( yearStr.length () < 4 )
+			yearStr = '0' + yearStr;
+		if ( monthStr.length () < 2 )
+			monthStr = '0' + monthStr;
+		if ( dayStr.length () < 2 )
+			dayStr = '0' + dayStr;
+		if ( hourStr.length () < 2 )
+			hourStr = '0' + hourStr;
+		if ( minStr.length () < 2 )
+			minStr = '0' + minStr;
+		if ( secStr.length () < 2 )
+			secStr = '0' + secStr;
+
+		// TODO: use StringBuffer to speed this up
+		// TODO: validate values
+		value = yearStr + monthStr + dayStr + 'T' + hourStr + minStr + secStr;
+
+		// Add attribute that says date has a time
+		addAttribute ( "VALUE", "DATE-TIME" );
 	}
 
 	/**
@@ -219,10 +281,6 @@ public class Date extends Property implements Constants, Comparable {
 		try {
 			d = new Date ( dateType, c.get ( Calendar.YEAR ),
 			    c.get ( Calendar.MONTH ) + 1, c.get ( Calendar.DAY_OF_MONTH ) );
-		} catch ( ParseException e1 ) {
-			// This should never happen since we're setting the m/d/y
-			System.err.println ( e1.toString () );
-			e1.printStackTrace ();
 		} catch ( BogusDataException e2 ) {
 			// This should never happen since we're setting the m/d/y
 			System.err.println ( e2.toString () );
@@ -249,10 +307,6 @@ public class Date extends Property implements Constants, Comparable {
 			d.setMinute ( c.get ( Calendar.MINUTE ) );
 			d.setSecond ( c.get ( Calendar.SECOND ) );
 			d.setDateOnly ( false );
-		} catch ( ParseException e1 ) {
-			// This should never happen since we're setting the m/d/y
-			System.err.println ( e1.toString () );
-			e1.printStackTrace ();
 		} catch ( BogusDataException e2 ) {
 			// This should never happen since we're setting the m/d/y
 			System.err.println ( e2.toString () );
