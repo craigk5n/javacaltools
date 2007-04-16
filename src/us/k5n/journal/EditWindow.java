@@ -79,7 +79,7 @@ public class EditWindow extends JDialog {
 	}
 
 	private void createWindow () {
-		setLayout ( new BorderLayout () );
+		this.getContentPane ().setLayout ( new BorderLayout () );
 
 		JPanel buttonPanel = new JPanel ();
 		buttonPanel.setLayout ( new FlowLayout () );
@@ -98,7 +98,7 @@ public class EditWindow extends JDialog {
 			}
 		} );
 		buttonPanel.add ( closeButton );
-		add ( buttonPanel, BorderLayout.SOUTH );
+		getContentPane ().add ( buttonPanel, BorderLayout.SOUTH );
 
 		JPanel allButButtons = new JPanel ();
 		allButButtons.setLayout ( new BorderLayout () );
@@ -181,7 +181,7 @@ public class EditWindow extends JDialog {
 		descrPanel.add ( scrollPane, BorderLayout.CENTER );
 		allButButtons.add ( descrPanel, BorderLayout.CENTER );
 
-		add ( allButButtons, BorderLayout.CENTER );
+		getContentPane().add ( allButButtons, BorderLayout.CENTER );
 	}
 
 	void save () {
