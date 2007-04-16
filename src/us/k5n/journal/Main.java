@@ -48,6 +48,7 @@ import us.k5n.ical.Summary;
  */
 public class Main extends JFrame implements Constants, RepositoryChangeListener {
 	public static final String DEFAULT_DIR_NAME = "k5njournal";
+	public static final String VERSION = "0.2 (16 Apr 2007)";
 	JFrame parent;
 	JLabel messageArea;
 	Repository dataRepository;
@@ -226,9 +227,9 @@ public class Main extends JFrame implements Constants, RepositoryChangeListener 
 		item.addActionListener ( new ActionListener () {
 			public void actionPerformed ( ActionEvent event ) {
 				// TODO: add logo, etc...
-				JOptionPane.showMessageDialog ( parent,
-				    "k5njournal Version 0.1\n\nDeveloped by k5n.us\n\n"
-				        + "Go to www.k5n.us for more info." );
+				JOptionPane.showMessageDialog ( parent, "k5njournal\nVersion "
+				    + VERSION + "\n\nDeveloped by k5n.us\n\n"
+				    + "Go to www.k5n.us for more info." );
 			}
 		} );
 		helpMenu.add ( item );
@@ -342,8 +343,8 @@ public class Main extends JFrame implements Constants, RepositoryChangeListener 
 		} else {
 			DateFilterTreeNode dateFilter = (DateFilterTreeNode) path
 			    .getLastPathComponent ();
-			//System.out.println ( "Showing entries for " + dateFilter.year + "/"
-			//    + dateFilter.month );
+			// System.out.println ( "Showing entries for " + dateFilter.year + "/"
+			// + dateFilter.month );
 			year = dateFilter.year;
 			if ( dateFilter.month > 0 )
 				month = dateFilter.month;
@@ -395,8 +396,8 @@ public class Main extends JFrame implements Constants, RepositoryChangeListener 
 			journalListTable.setValueAt (
 			    summary == null ? "-" : summary.getValue (), i, 1 );
 		}
-		//System.out.println ( "Displaying " + filteredJournalEntries.size ()
-		//    + " entries" );
+		// System.out.println ( "Displaying " + filteredJournalEntries.size ()
+		// + " entries" );
 
 		journalListTable.repaint ();
 	}

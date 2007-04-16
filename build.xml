@@ -38,7 +38,7 @@
 
     <!-- Put all the lib and k5njournal files into a single jar
          and designate the main class -->
-    <jar jarfile="${dist}/k5njournal.jar" basedir="${build}">
+    <jar jarfile="${dist}/k5njournal-${version}.jar" basedir="${build}">
     <manifest>
        <attribute name="Main-Class" value="us.k5n.journal.Main"/>
     </manifest>
