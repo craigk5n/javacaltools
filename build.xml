@@ -33,7 +33,16 @@
     <mkdir dir="${dist}/lib"/>
 
     <!-- Put everything in ${build} into the k5n-ical-${version}.jar file -->
-    <jar jarfile="${dist}/lib/k5n-ical-${version}.jar" basedir="${build}"/>
+    <jar jarfile="${dist}/lib/k5n-ical-${version}.jar" basedir="${build}"
+      excludes="**/journal/*.class" />
+
+    <!-- Put all the lib and k5njournal files into a single jar
+         and designate the main class -->
+    <jar jarfile="${dist}/k5njournal.jar" basedir="${build}">
+    <manifest>
+       <attribute name="Main-Class" value="us.k5n.journal.Main"/>
+    </manifest>
+    </jar>
   </target>
 
   <target name="clean"
