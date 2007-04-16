@@ -1,4 +1,7 @@
 Version 0.2.0 (?? ??? 2007)
+  - Added k5njournal as the first application.  It will be compiled
+    with the standard ant command and can be run with:
+    "java -jar k5njournal.jar"
   - Made most members of Event protected and added get/set methods
   - Fixed handling of "LANGUANGE=..." in description and summary
   - Fixed handling of dates with "VALUE=DATE" attribute
