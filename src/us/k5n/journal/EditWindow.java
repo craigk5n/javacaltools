@@ -74,9 +74,6 @@ public class EditWindow extends JDialog {
 		if ( this.journal.getCategories () == null )
 			this.journal.setCategories ( new Categories () );
 
-		System.out.println ( "Is date only: "
-		    + ( this.journal.getStartDate ().isDateOnly () ? "true" : "false" ) );
-
 		createWindow ();
 		setVisible ( true );
 	}
@@ -151,14 +148,6 @@ public class EditWindow extends JDialog {
 					DisplayDate d = new DisplayDate ( journal.getStartDate () );
 					startDate.setText ( d.toString () );
 				}
-				// update screen
-				/*
-				 * DateTimeSelectionDialog dts = new DateTimeSelectionDialog ( parent,
-				 * journal.getStartDate () ); System.out.println ( "About to add
-				 * listner"); dts.addListener ( new DateTimeSelectionListener () {
-				 * public void dateSelected ( Date selectedDate ) { journal.setStartDate (
-				 * selectedDate ); } } ); System.out.println ( "listener added!");
-				 */
 			}
 		} );
 		dateSel.setMargin ( new Insets ( 0, 5, 0, 5 ) );
@@ -210,9 +199,6 @@ public class EditWindow extends JDialog {
 			// TODO: add error handler that pops up a window here
 			e2.printStackTrace ();
 		}
-		System.out.println ( "Is date only: "
-		    + ( this.journal.getStartDate ().isDateOnly () ? "true" : "false" ) );
-		// TODO: update main window
 		this.dispose ();
 	}
 

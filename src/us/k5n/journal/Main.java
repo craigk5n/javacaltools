@@ -342,8 +342,8 @@ public class Main extends JFrame implements Constants, RepositoryChangeListener 
 		} else {
 			DateFilterTreeNode dateFilter = (DateFilterTreeNode) path
 			    .getLastPathComponent ();
-			System.out.println ( "Showing entries for " + dateFilter.year + "/"
-			    + dateFilter.month );
+			//System.out.println ( "Showing entries for " + dateFilter.year + "/"
+			//    + dateFilter.month );
 			year = dateFilter.year;
 			if ( dateFilter.month > 0 )
 				month = dateFilter.month;
@@ -395,8 +395,8 @@ public class Main extends JFrame implements Constants, RepositoryChangeListener 
 			journalListTable.setValueAt (
 			    summary == null ? "-" : summary.getValue (), i, 1 );
 		}
-		System.out.println ( "Displaying " + filteredJournalEntries.size ()
-		    + " entries" );
+		//System.out.println ( "Displaying " + filteredJournalEntries.size ()
+		//    + " entries" );
 
 		journalListTable.repaint ();
 	}

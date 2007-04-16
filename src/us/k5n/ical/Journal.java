@@ -98,7 +98,6 @@ public class Journal implements Constants {
 		// create a sequence if not specified
 		if ( sequence == null )
 			sequence = new Sequence ( 0 );
-		System.out.println ( this.toICalendar () );
 	}
 
 	/**
@@ -173,7 +172,7 @@ public class Journal implements Constants {
 		} else if ( up.startsWith ( "URL" ) ) {
 			url = new URL ( icalStr, parseMethod );
 		} else {
-			System.out.println ( "Ignoring: " + icalStr );
+			System.err.println ( "Ignoring: " + icalStr );
 		}
 	}
 

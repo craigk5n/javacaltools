@@ -437,7 +437,7 @@ public class ICalendarParser implements Constants {
 									ds.storeEvent ( event );
 								}
 							} else {
-								System.out.println ( "ERROR: Invalid VEVENT found" );
+								System.err.println ( "ERROR: Invalid VEVENT found" );
 							}
 							textLines.removeAllElements (); // truncate Vector
 						}

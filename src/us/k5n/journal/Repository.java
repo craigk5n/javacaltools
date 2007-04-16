@@ -199,7 +199,7 @@ public class Repository {
 			listOfDates = new Date[dates.size ()];
 			for ( int i = 0; i < dates.size (); i++ ) {
 				listOfDates[i] = (Date) dates.elementAt ( i );
-				System.out.println ( "Found date: " + listOfDates[i] );
+				//System.out.println ( "Found date: " + listOfDates[i] );
 			}
 			// listOfDates = (Date[]) dates.toArray ();
 		} else {
@@ -276,7 +276,6 @@ public class Repository {
 			if ( dataFile.removeJournal ( j ) ) {
 				deleted = true;
 				dataFile.write ();
-				System.out.println ( "Deleted" );
 				for ( int i = 0; this.changeListeners != null
 				    && i < this.changeListeners.size (); i++ ) {
 					RepositoryChangeListener l = (RepositoryChangeListener) this.changeListeners
@@ -284,7 +283,7 @@ public class Repository {
 					l.journalDeleted ( j );
 				}
 			} else {
-				System.out.println ( "Not deleted" );
+				//System.out.println ( "Not deleted" );
 			}
 		}
 		return deleted;

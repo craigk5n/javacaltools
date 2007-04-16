@@ -95,7 +95,6 @@ public class ReadOnlyTable extends JTable {
 	}
 
 	private void autoResize () {
-		System.out.println ( "Calculating column widths for report." );
 		FontMetrics fm = getGraphics ().getFontMetrics ();
 		int[] widths = new int[getColumnCount ()];
 		for ( int i = 0; i < getColumnCount (); i++ ) {
