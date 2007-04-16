@@ -10,6 +10,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Vector;
 
@@ -45,7 +46,7 @@ import us.k5n.ical.Summary;
  * @version $Id$
  * 
  */
-public class Main extends JFrame implements Constants {
+public class Main extends JFrame implements Constants, RepositoryChangeListener {
 	public static final String DEFAULT_DIR_NAME = "k5njournal";
 	JFrame parent;
 	JLabel messageArea;
@@ -60,7 +61,7 @@ public class Main extends JFrame implements Constants {
 	final static String[] monthNames = { "", "January", "February", "March",
 	    "April", "May", "June", "July", "August", "September", "October",
 	    "November", "December" };
-	JButton newButton, editButton;
+	JButton newButton, editButton, deleteButton;
 
 	class DateFilterTreeNode extends DefaultMutableTreeNode {
 		public int year, month, day;
@@ -94,6 +95,9 @@ public class Main extends JFrame implements Constants {
 
 		// Load data
 		dataRepository = new Repository ( getDataDirectory (), false );
+		// Ask to be notified when the repository changes (user adds/edits
+		// an entry)
+		dataRepository.addChangeListener ( this );
 
 		// Create a menu bar
 		setJMenuBar ( createMenu () );
@@ -152,11 +156,37 @@ public class Main extends JFrame implements Constants {
 			}
 		} );
 
+		deleteButton = makeNavigationButton ( null, "delete",
+		    "deleteButton Journal entry", "Delete" );
+		toolbar.add ( deleteButton );
+		deleteButton.addActionListener ( new ActionListener () {
+			public void actionPerformed ( ActionEvent event ) {
+				// Get selected item and open edit window
+				int ind = journalListTable.getSelectedRow ();
+				if ( ind >= 0 && ind < filteredJournalEntries.size () ) {
+					Journal j = (Journal) filteredJournalEntries.elementAt ( ind );
+					if ( JOptionPane.showConfirmDialog ( parent,
+					    "Are you sure you want\nto delete this entry?", "Confirm Delete",
+					    JOptionPane.YES_NO_OPTION ) == 0 ) {
+						try {
+							dataRepository.deleteJournal ( j );
+						} catch ( IOException e1 ) {
+							showError ( "Error deleting." );
+							e1.printStackTrace ();
+						}
+					}
+				} else {
+					System.err.println ( "Index out of range: " + ind );
+				}
+			}
+		} );
+
 		return toolbar;
 	}
 
 	void updateToolbar ( int numSelected ) {
 		editButton.setEnabled ( numSelected == 1 );
+		deleteButton.setEnabled ( numSelected == 1 );
 	}
 
 	public void setMessage ( String msg ) {
@@ -169,16 +199,6 @@ public class Main extends JFrame implements Constants {
 		JMenuBar bar = new JMenuBar ();
 
 		JMenu fileMenu = new JMenu ( "File" );
-
-		item = new JMenuItem ( "Close" );
-		item.setAccelerator ( KeyStroke.getKeyStroke ( 'C', Toolkit
-		    .getDefaultToolkit ().getMenuShortcutKeyMask () ) );
-		item.addActionListener ( new ActionListener () {
-			public void actionPerformed ( ActionEvent event ) {
-				// TODO...
-			}
-		} );
-		fileMenu.add ( item );
 
 		item = new JMenuItem ( "Exit" );
 		item.setAccelerator ( KeyStroke.getKeyStroke ( 'X', Toolkit
@@ -195,6 +215,7 @@ public class Main extends JFrame implements Constants {
 
 		bar.add ( fileMenu );
 
+		// Add help bar to right end of menubar
 		bar.add ( Box.createHorizontalGlue () );
 
 		JMenu helpMenu = new JMenu ( "Help" );
@@ -356,6 +377,7 @@ public class Main extends JFrame implements Constants {
 		dateTree.expandRow ( 0 );
 		// Select "All" by default
 		dateTree.setSelectionRow ( 0 );
+		updateToolbar ( 0 );
 	}
 
 	/**
@@ -419,6 +441,12 @@ public class Main extends JFrame implements Constants {
 		    JOptionPane.INFORMATION_MESSAGE );
 	}
 
+	void showError ( String message ) {
+		System.err.println ( "Error: " + message );
+		JOptionPane
+		    .showMessageDialog ( parent, message, "Error", JOptionPane.ERROR );
+	}
+
 	void fatalError ( String message ) {
 		System.err.println ( "Fatal error: " + message );
 		JOptionPane.showMessageDialog ( parent, message, "Fatal Error",
@@ -448,6 +476,18 @@ public class Main extends JFrame implements Constants {
 		button.setToolTipText ( toolTipText );
 
 		return button;
+	}
+
+	public void journalAdded ( Journal journal ) {
+		handleDateFilterSelection ( 0, null );
+	}
+
+	public void journalUpdated ( Journal journal ) {
+		handleDateFilterSelection ( 0, null );
+	}
+
+	public void journalDeleted ( Journal journal ) {
+		handleDateFilterSelection ( 0, null );
 	}
 
 	/**

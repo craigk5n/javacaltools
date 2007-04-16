@@ -53,7 +53,10 @@ public class JournalViewPanel extends JPanel {
 
 		text = new JTextArea ();
 		text.setEditable ( false );
+		text.setLineWrap ( true );
 		JScrollPane scrollPane = new JScrollPane ( text );
+		scrollPane
+		    .setVerticalScrollBarPolicy ( JScrollPane.VERTICAL_SCROLLBAR_ALWAYS );
 
 		add ( scrollPane, BorderLayout.CENTER );
 	}

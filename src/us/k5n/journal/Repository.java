@@ -27,12 +27,14 @@ public class Repository {
 	int journalCount = 0;
 	Date[] listOfDates;
 	HashMap uidHash;
+	private Vector changeListeners;
 
 	public Repository(File dir, boolean strictParsing) {
 		this.directory = dir;
 		this.dataFiles = new Vector ();
 		this.dataFileHash = new HashMap ();
 		this.uidHash = new HashMap ();
+		this.changeListeners = new Vector ();
 
 		// Load all files.
 		File[] files = this.directory.listFiles ( new IcsFileFilter () );
@@ -236,11 +238,66 @@ public class Repository {
 			}
 			// Now add this journal entry to the file
 			dataFile.dataStore.storeJournal ( j );
+			for ( int i = 0; this.changeListeners != null
+			    && i < this.changeListeners.size (); i++ ) {
+				RepositoryChangeListener l = (RepositoryChangeListener) this.changeListeners
+				    .elementAt ( i );
+				l.journalAdded ( j );
+			}
 		} else {
 			// If we are updating, then the Journal to be updated should
 			// already be updated in the DataStore.
+			for ( int i = 0; this.changeListeners != null
+			    && i < this.changeListeners.size (); i++ ) {
+				RepositoryChangeListener l = (RepositoryChangeListener) this.changeListeners
+				    .elementAt ( i );
+				l.journalUpdated ( j );
+			}
 		}
 		j.setLastModified ( Date.getCurrentDateTime ( "LAST-MODIFIED" ) );
+		j.setUserData ( dataFile );
 		dataFile.write ();
+	}
+
+	/**
+	 * Delete the specified Journal object.
+	 * 
+	 * @param j
+	 * @throws IOException
+	 */
+	public boolean deleteJournal ( Journal j ) throws IOException {
+		boolean deleted = false;
+		DataFile dataFile = (DataFile) j.getUserData ();
+		if ( dataFile == null ) {
+			// New journal. Nothing to do...
+			System.err.println ( "Not found..." );
+		} else {
+			// Journal to be deleted should be in the DataStore.
+			if ( dataFile.removeJournal ( j ) ) {
+				deleted = true;
+				dataFile.write ();
+				System.out.println ( "Deleted" );
+				for ( int i = 0; this.changeListeners != null
+				    && i < this.changeListeners.size (); i++ ) {
+					RepositoryChangeListener l = (RepositoryChangeListener) this.changeListeners
+					    .elementAt ( i );
+					l.journalDeleted ( j );
+				}
+			} else {
+				System.out.println ( "Not deleted" );
+			}
+		}
+		return deleted;
+	}
+
+	/**
+	 * Ask to be notified when changes are made to the Repository.
+	 * 
+	 * @param l
+	 */
+	public void addChangeListener ( RepositoryChangeListener l ) {
+		if ( this.changeListeners == null )
+			this.changeListeners = new Vector ();
+		this.changeListeners.addElement ( l );
 	}
 }

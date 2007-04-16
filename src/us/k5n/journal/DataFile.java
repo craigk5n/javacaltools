@@ -95,6 +95,17 @@ public class DataFile extends File implements Constants {
 	}
 
 	/**
+	 * Remove the Journal object at the specified location in the Vector of
+	 * entries.
+	 * 
+	 * @param ind
+	 * @return true if found and deleted
+	 */
+	public boolean removeJournal ( Journal journal ) {
+		return dataStore.getAllJournals ().remove ( journal );
+	}
+
+	/**
 	 * Get the number of parse errors found in the file.
 	 * 
 	 * @return

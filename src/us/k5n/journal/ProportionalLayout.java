@@ -17,6 +17,9 @@ public class ProportionalLayout implements LayoutManager {
 	private int[] proportions;
 	private int total; // The total of the proportions
 	private int num; // The number in the array
+	public final static int HORIZONTAL_LAYOUT = 1;
+	public final static int VERITCAL_LAYOUT = 2;
+	private int orientation;
 
 	/**
 	 * Constructs a ProportinalLayout instance with the specified horizontal
@@ -30,9 +33,13 @@ public class ProportionalLayout implements LayoutManager {
 	 *          are less than the expected number of components the unused values
 	 *          in the proportions array will correspond to blank space in the
 	 *          layout.
+	 * @param orientation
+	 *          specified whether the layout is vertical (VERTICAL_LAYOUT) or
+	 *          horizontal (HORIZONTAL_LAYOUT).
 	 */
-	public ProportionalLayout(int[] proportions) {
+	public ProportionalLayout(int[] proportions, int orientation) {
 		this.proportions = proportions;
+		this.orientation = orientation;
 		num = proportions.length;
 		for ( int i = 0; i < num; i++ ) {
 			int prop = proportions[i];
@@ -50,9 +57,15 @@ public class ProportionalLayout implements LayoutManager {
 				if ( c.isVisible () ) {
 					Dimension d = ( minimum ) ? c.getMinimumSize () : c
 					    .getPreferredSize ();
-					dim.width += d.width;
-					if ( d.height > dim.height )
-						dim.height = d.height;
+					if ( this.orientation == HORIZONTAL_LAYOUT ) {
+						dim.width += d.width;
+						if ( d.height > dim.height )
+							dim.height = d.height;
+					} else {
+						dim.height += d.height;
+						if ( d.width > dim.width )
+							dim.width = d.width;
+					}
 				}
 				cnt++;
 				if ( cnt == num )
@@ -76,13 +89,20 @@ public class ProportionalLayout implements LayoutManager {
 			// do layout
 			int cnt = 0;
 			int totalwid = pd.width - insets.left - insets.right;
+			int totalhei = pd.height - insets.top - insets.bottom;
 			int x = insets.left;
+			int y = insets.top;
 			for ( int i = 0; i < n; i++ ) {
 				Component c = parent.getComponent ( i );
-				int wid = proportions[i] * totalwid / total;
-				c.setBounds ( x, insets.top, wid, pd.height - insets.bottom
-				    - insets.top );
-				x += wid;
+				if ( this.orientation == HORIZONTAL_LAYOUT ) {
+					int wid = proportions[i] * totalwid / total;
+					c.setBounds ( x, y, wid, pd.height - insets.bottom - insets.top );
+					x += wid;
+				} else {
+					int hei = proportions[i] * totalhei / total;
+					c.setBounds ( x, y, pd.width - insets.left - insets.right, hei );
+					y += hei;
+				}
 				cnt++;
 				if ( cnt == num )
 					break;
