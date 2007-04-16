@@ -48,7 +48,7 @@ import us.k5n.ical.Summary;
  */
 public class Main extends JFrame implements Constants, RepositoryChangeListener {
 	public static final String DEFAULT_DIR_NAME = "k5njournal";
-	public static final String VERSION = "0.2 (16 Apr 2007)";
+	public static final String VERSION = "0.2.1 (16 Apr 2007)";
 	JFrame parent;
 	JLabel messageArea;
 	Repository dataRepository;
