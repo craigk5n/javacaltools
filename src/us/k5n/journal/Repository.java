@@ -41,16 +41,20 @@ public class Repository {
 		for ( int i = 0; files != null && i < files.length; i++ ) {
 			DataFile f = new DataFile ( files[i].getAbsolutePath (), strictParsing );
 			if ( f != null ) {
-				this.dataFiles.addElement ( f );
-				journalCount += f.getJournalCount ();
-				parseErrorCount += f.getParseErrorCount ();
-				// Store in HashMap using just the filename (19991231.ics)
-				// as the key
-				this.dataFileHash.put ( files[i].getName ().toLowerCase (), f );
+				this.addDataFile ( f );
 			}
 		}
 
 		updateDateList ();
+	}
+
+	public void addDataFile ( DataFile f ) {
+		this.dataFiles.addElement ( f );
+		journalCount += f.getJournalCount ();
+		parseErrorCount += f.getParseErrorCount ();
+		// Store in HashMap using just the filename (19991231.ics)
+		// as the key
+		this.dataFileHash.put ( f.getName ().toLowerCase (), f );
 	}
 
 	public DataFile findDataFile ( Journal j ) {
@@ -182,6 +186,8 @@ public class Repository {
 		HashMap h = new HashMap ();
 		for ( int i = 0; i < dataFiles.size (); i++ ) {
 			DataFile df = (DataFile) dataFiles.elementAt ( i );
+			//System.out.println ( "DataFile#" + i + ": " + df.toString () );
+			//System.out.println ( "  df.getJournalCount () =" + df.getJournalCount () );
 			for ( int j = 0; j < df.getJournalCount (); j++ ) {
 				Journal journal = df.journalEntryAt ( j );
 				if ( journal.getStartDate () != null ) {
@@ -189,7 +195,7 @@ public class Repository {
 					if ( !h.containsKey ( YMD ) ) {
 						h.put ( YMD, YMD );
 						dates.addElement ( journal.getStartDate () );
-						// System.out.println ( "Added date: " + journal.startDate);
+						//System.out.println ( "Added date: " + journal.getStartDate () );
 					}
 				}
 			}
@@ -201,7 +207,6 @@ public class Repository {
 				listOfDates[i] = (Date) dates.elementAt ( i );
 				//System.out.println ( "Found date: " + listOfDates[i] );
 			}
-			// listOfDates = (Date[]) dates.toArray ();
 		} else {
 			listOfDates = null;
 		}
@@ -218,26 +223,35 @@ public class Repository {
 	 * @throws IOException
 	 */
 	public void saveJournal ( Journal j ) throws IOException {
+		boolean added = false;
+
 		DataFile dataFile = (DataFile) j.getUserData ();
 		if ( dataFile == null ) {
 			// New journal. Add to existing data file named YYYYMMDD.ics if
 			// it exists.
 			dataFile = findDataFile ( j );
 			if ( dataFile == null ) {
+				added = true;
 				// No file for this date (YYYYMMDD.ics) exists yet.
 				// So, we need to create a new one.
 				File f = new File ( this.directory, Utils.DateToYYYYMMDD ( j
 				    .getStartDate () )
 				    + ".ics" );
 				dataFile = new DataFile ( f.getAbsolutePath () );
-				this.dataFiles.addElement ( dataFile );
-				// Store in HashMap using just the filename (19991231.ics)
-				// as the key
-				this.dataFileHash.put ( dataFile.getName ().toLowerCase (), dataFile );
-				this.updateDateList ();
+				dataFile.addJournal ( j );
+				this.addDataFile ( dataFile );
+			} else {
+				// Add this journal entry to the file
+				dataFile.addJournal ( j );
 			}
-			// Now add this journal entry to the file
-			dataFile.dataStore.storeJournal ( j );
+		}
+		j.setLastModified ( Date.getCurrentDateTime ( "LAST-MODIFIED" ) );
+		j.setUserData ( dataFile );
+		dataFile.write ();
+
+		updateDateList ();
+
+		if ( added ) {
 			for ( int i = 0; this.changeListeners != null
 			    && i < this.changeListeners.size (); i++ ) {
 				RepositoryChangeListener l = (RepositoryChangeListener) this.changeListeners
@@ -254,9 +268,6 @@ public class Repository {
 				l.journalUpdated ( j );
 			}
 		}
-		j.setLastModified ( Date.getCurrentDateTime ( "LAST-MODIFIED" ) );
-		j.setUserData ( dataFile );
-		dataFile.write ();
 	}
 
 	/**
@@ -276,6 +287,7 @@ public class Repository {
 			if ( dataFile.removeJournal ( j ) ) {
 				deleted = true;
 				dataFile.write ();
+				updateDateList ();
 				for ( int i = 0; this.changeListeners != null
 				    && i < this.changeListeners.size (); i++ ) {
 					RepositoryChangeListener l = (RepositoryChangeListener) this.changeListeners
@@ -283,7 +295,7 @@ public class Repository {
 					l.journalDeleted ( j );
 				}
 			} else {
-				//System.out.println ( "Not deleted" );
+				// System.out.println ( "Not deleted" );
 			}
 		}
 		return deleted;

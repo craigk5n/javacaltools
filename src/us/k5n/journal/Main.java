@@ -12,6 +12,7 @@ import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Enumeration;
 import java.util.Vector;
 
 import javax.swing.Box;
@@ -33,6 +34,8 @@ import javax.swing.KeyStroke;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import us.k5n.ical.Constants;
@@ -48,12 +51,12 @@ import us.k5n.ical.Summary;
  */
 public class Main extends JFrame implements Constants, RepositoryChangeListener {
 	public static final String DEFAULT_DIR_NAME = "k5njournal";
-	public static final String VERSION = "0.2.2 (17 Apr 2007)";
+	public static final String VERSION = "0.2.3 (18 Apr 2007)";
 	JFrame parent;
 	JLabel messageArea;
 	Repository dataRepository;
 	JTree dateTree;
-	DefaultMutableTreeNode dateTreeTopNode;
+	DefaultMutableTreeNode dateTreeAllNode;
 	ReadOnlyTable journalListTable;
 	ReadOnlyTabelModel journalListTableModel;
 	JournalViewPanel journalView;
@@ -68,12 +71,12 @@ public class Main extends JFrame implements Constants, RepositoryChangeListener 
 		public int year, month, day;
 		public String label;
 
-		public DateFilterTreeNode(String l, int y, int m, int d) {
+		public DateFilterTreeNode(String l, int y, int m, int d, int count) {
 			super ( l );
 			this.year = y;
 			this.month = m;
 			this.day = d;
-			this.label = l;
+			this.label = l + " (" + count + ")";
 		}
 
 		public String toString () {
@@ -149,7 +152,8 @@ public class Main extends JFrame implements Constants, RepositoryChangeListener 
 			public void actionPerformed ( ActionEvent event ) {
 				// Get selected item and open edit window
 				int ind = journalListTable.getSelectedRow ();
-				if ( ind >= 0 && ind < filteredJournalEntries.size () ) {
+				if ( ind >= 0 && filteredJournalEntries != null
+				    && ind < filteredJournalEntries.size () ) {
 					Journal j = (Journal) filteredJournalEntries.elementAt ( ind );
 					new EditWindow ( parent, new Dimension ( 500, 500 ), dataRepository,
 					    j );
@@ -164,7 +168,8 @@ public class Main extends JFrame implements Constants, RepositoryChangeListener 
 			public void actionPerformed ( ActionEvent event ) {
 				// Get selected item and open edit window
 				int ind = journalListTable.getSelectedRow ();
-				if ( ind >= 0 && ind < filteredJournalEntries.size () ) {
+				if ( ind >= 0 && filteredJournalEntries != null
+				    && ind < filteredJournalEntries.size () ) {
 					Journal j = (Journal) filteredJournalEntries.elementAt ( ind );
 					if ( JOptionPane.showConfirmDialog ( parent,
 					    "Are you sure you want\nto delete this entry?", "Confirm Delete",
@@ -255,8 +260,8 @@ public class Main extends JFrame implements Constants, RepositoryChangeListener 
 		JPanel byDate = new JPanel ();
 		byDate.setLayout ( new BorderLayout () );
 		tabbedPane.addTab ( "Date", byDate );
-		dateTreeTopNode = new DefaultMutableTreeNode ( "All" );
-		dateTree = new JTree ( dateTreeTopNode );
+		dateTreeAllNode = new DefaultMutableTreeNode ( "All" );
+		dateTree = new JTree ( dateTreeAllNode );
 
 		MouseListener ml = new MouseAdapter () {
 			public void mousePressed ( MouseEvent e ) {
@@ -301,6 +306,7 @@ public class Main extends JFrame implements Constants, RepositoryChangeListener 
 				    if ( numSel == 0 ) {
 					    journalView.clear ();
 				    } else if ( !event.getValueIsAdjusting () && ind >= 0
+				        && filteredJournalEntries != null
 				        && ind < filteredJournalEntries.size () ) {
 					    int[] selRows = journalListTable.getSelectedRows ();
 					    // The call below might actually belong in ReadOnlyTable.
@@ -356,30 +362,40 @@ public class Main extends JFrame implements Constants, RepositoryChangeListener 
 		} else {
 			filteredJournalEntries = dataRepository.getEntriesByMonth ( year, month );
 		}
-		if ( filteredJournalEntries == null )
-			filteredJournalEntries = new Vector ();
 		this.updateFilteredJournalList ();
 	}
 
+	// Rebuild the Date JTree.
+	// TODO: What we should really be doing is updating the JTree so that
+	// we can preserve what year nodes were open and what objects were
+	// selected.
 	void updateDateTree () {
+		dateTree.setShowsRootHandles ( true );
 		// Remove all old entries
-		dateTreeTopNode.removeAllChildren ();
+		dateTreeAllNode.removeAllChildren ();
 		// Get entries, starting with years
 		int[] years = dataRepository.getYears ();
 		for ( int i = 0; years != null && i < years.length; i++ ) {
+			Vector yearEntries = dataRepository.getEntriesByYear ( years[i] );
 			DateFilterTreeNode yearNode = new DateFilterTreeNode ( "" + years[i],
-			    years[i], 0, 0 );
-			dateTreeTopNode.add ( yearNode );
+			    years[i], 0, 0, yearEntries == null ? 0 : yearEntries.size () );
+			dateTreeAllNode.add ( yearNode );
 			int[] months = dataRepository.getMonthsForYear ( years[i] );
 			for ( int j = 0; months != null && j < months.length; j++ ) {
+				Vector monthEntries = dataRepository.getEntriesByMonth ( years[i],
+				    months[j] );
 				DateFilterTreeNode monthNode = new DateFilterTreeNode (
-				    monthNames[months[j]], years[i], months[j], 0 );
+				    monthNames[months[j]], years[i], months[j], 0,
+				    monthEntries == null ? 0 : monthEntries.size () );
 				yearNode.add ( monthNode );
 			}
 		}
+		DefaultTreeModel dtm = (DefaultTreeModel) dateTree.getModel ();
+		dtm.nodeStructureChanged ( dateTreeAllNode );
 		dateTree.expandRow ( 0 );
 		// Select "All" by default
 		dateTree.setSelectionRow ( 0 );
+		dateTree.repaint ();
 		updateToolbar ( 0 );
 	}
 
@@ -388,9 +404,11 @@ public class Main extends JFrame implements Constants, RepositoryChangeListener 
 	 * filteredJournalEntries Vector.
 	 */
 	void updateFilteredJournalList () {
-		journalListTableModel.setRowCount ( filteredJournalEntries.size () );
+		journalListTableModel.setRowCount ( filteredJournalEntries == null ? 0
+		    : filteredJournalEntries.size () );
 		journalListTable.clearHighlightedRows ();
-		for ( int i = 0; i < filteredJournalEntries.size (); i++ ) {
+		for ( int i = 0; filteredJournalEntries != null
+		    && i < filteredJournalEntries.size (); i++ ) {
 			Journal entry = (Journal) filteredJournalEntries.elementAt ( i );
 			journalListTable.setValueAt ( new DisplayDate ( entry.getStartDate () ),
 			    i, 0 );
@@ -482,14 +500,17 @@ public class Main extends JFrame implements Constants, RepositoryChangeListener 
 	}
 
 	public void journalAdded ( Journal journal ) {
+		this.updateDateTree ();
 		handleDateFilterSelection ( 0, null );
 	}
 
 	public void journalUpdated ( Journal journal ) {
+		this.updateDateTree ();
 		handleDateFilterSelection ( 0, null );
 	}
 
 	public void journalDeleted ( Journal journal ) {
+		this.updateDateTree ();
 		handleDateFilterSelection ( 0, null );
 	}
 

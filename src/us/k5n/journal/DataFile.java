@@ -62,6 +62,11 @@ public class DataFile extends File implements Constants {
 		}
 	}
 
+	public void addJournal ( Journal journal ) {
+		journal.setUserData ( this );
+		dataStore.storeJournal ( journal );
+	}
+
 	private DataFile(ICalendarParser parser, String filename) {
 		super ( filename );
 		dataStore = parser.getDataStoreAt ( 0 );

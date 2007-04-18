@@ -1,7 +1,7 @@
                            k5n java calendar tools
 ****************************************************************************
 
-Version:      0.1.1
+Version:      0.2.3
 URL:          http://javacaltools.sourceforge.net
 Author:       Craig Knudsen, craig [< at >] k5n.us
 
