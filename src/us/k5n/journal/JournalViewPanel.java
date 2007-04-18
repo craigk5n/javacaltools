@@ -52,8 +52,9 @@ public class JournalViewPanel extends JPanel {
 		add ( topPanel, BorderLayout.NORTH );
 
 		text = new JTextArea ();
-		text.setEditable ( false );
 		text.setLineWrap ( true );
+		text.setWrapStyleWord ( true );
+		text.setEditable ( false );
 		JScrollPane scrollPane = new JScrollPane ( text );
 		scrollPane
 		    .setVerticalScrollBarPolicy ( JScrollPane.VERTICAL_SCROLLBAR_ALWAYS );
@@ -89,6 +90,7 @@ public class JournalViewPanel extends JPanel {
 		}
 		if ( j.getDescription () != null ) {
 			text.setText ( j.getDescription ().getValue () );
+			text.setCaretPosition ( 0 );
 		} else {
 			text.setText ( "" );
 		}

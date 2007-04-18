@@ -175,13 +175,15 @@ public class EditWindow extends JDialog {
 		descrPanel.setLayout ( new BorderLayout () );
 		description = new JTextArea ();
 		description.setLineWrap ( true );
+		description.setWrapStyleWord ( true );
 		if ( journal != null && journal.getDescription () != null )
 			description.setText ( journal.getDescription ().getValue () );
+		description.setCaretPosition ( 0 );
 		JScrollPane scrollPane = new JScrollPane ( description );
 		descrPanel.add ( scrollPane, BorderLayout.CENTER );
 		allButButtons.add ( descrPanel, BorderLayout.CENTER );
 
-		getContentPane().add ( allButButtons, BorderLayout.CENTER );
+		getContentPane ().add ( allButButtons, BorderLayout.CENTER );
 	}
 
 	void save () {
