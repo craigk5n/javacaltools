@@ -2,6 +2,7 @@ Version 0.2.4 (?? Apr 2007)
   - k5njournal changes:
     + in entry descriptions, wrap text at word boundaries (view/edit)
     + don't NullPointerException when data file is missing DTSTART values
+    + default to Windows look and feel
 Version 0.2.3 (18 Apr 2007)
   - Fix k5njournal bug: JTree was not refreshing to show newly added dates
 Version 0.2.2 (17 Apr 2007)

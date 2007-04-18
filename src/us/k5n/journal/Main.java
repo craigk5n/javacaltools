@@ -1,8 +1,10 @@
 package us.k5n.journal;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,7 +14,6 @@ import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Enumeration;
 import java.util.Vector;
 
 import javax.swing.Box;
@@ -31,11 +32,13 @@ import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
+import javax.swing.LookAndFeel;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import us.k5n.ical.Constants;
@@ -90,6 +93,7 @@ public class Main extends JFrame implements Constants, RepositoryChangeListener 
 
 	public Main(int w, int h) {
 		super ( "k5njournal" );
+		setWindowsLAF ();
 		this.parent = this;
 		// TODO: save user's preferred size on exit and set here
 		setSize ( w, h );
@@ -501,6 +505,51 @@ public class Main extends JFrame implements Constants, RepositoryChangeListener 
 		button.setToolTipText ( toolTipText );
 
 		return button;
+	}
+
+	/**
+	 * Set the Look and Feel to be Windows.
+	 */
+	public static void setWindowsLAF () {
+		try {
+			UIManager
+			    .setLookAndFeel ( "com.sun.java.swing.plaf.windows.WindowsLookAndFeel" );
+		} catch ( Exception e ) {
+			System.err.println ( "Unabled to load Windows UI: " + e.toString () );
+		}
+	}
+
+	public static void selectLookAndFeel ( Component toplevel, Frame dialogParent ) {
+		LookAndFeel lafCurrent = UIManager.getLookAndFeel ();
+		System.out.println ( "Current L&F: " + lafCurrent );
+		UIManager.LookAndFeelInfo[] info = UIManager.getInstalledLookAndFeels ();
+		String[] choices = new String[info.length];
+		int sel = 0;
+		for ( int i = 0; i < info.length; i++ ) {
+			System.out.println ( "  " + info[i].toString () );
+			choices[i] = info[i].getClassName ();
+			if ( info[i].getClassName ().equals ( lafCurrent.getClass ().getName () ) )
+				sel = i;
+		}
+		Object uiSelection = JOptionPane.showInputDialog ( dialogParent,
+		    "Select Look and Feel", "Look and Feel",
+		    JOptionPane.INFORMATION_MESSAGE, null, choices, choices[sel] );
+		UIManager.LookAndFeelInfo selectedLAFInfo = null;
+		for ( int i = 0; i < info.length; i++ ) {
+			if ( uiSelection.equals ( choices[i] ) )
+				selectedLAFInfo = info[i];
+		}
+		if ( selectedLAFInfo != null ) {
+			try {
+				System.out.println ( "Changing L&F: " + selectedLAFInfo );
+				UIManager.setLookAndFeel ( selectedLAFInfo.getClassName () );
+				SwingUtilities.updateComponentTreeUI ( toplevel );
+			} catch ( Exception e ) {
+				System.err.println ( "Unabled to load L&F: " + e.toString () );
+			}
+		} else {
+			System.err.println ( "No L&F selected" );
+		}
 	}
 
 	public void journalAdded ( Journal journal ) {
