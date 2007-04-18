@@ -410,8 +410,12 @@ public class Main extends JFrame implements Constants, RepositoryChangeListener 
 		for ( int i = 0; filteredJournalEntries != null
 		    && i < filteredJournalEntries.size (); i++ ) {
 			Journal entry = (Journal) filteredJournalEntries.elementAt ( i );
-			journalListTable.setValueAt ( new DisplayDate ( entry.getStartDate () ),
-			    i, 0 );
+			if ( entry.getStartDate () != null ) {
+				journalListTable.setValueAt (
+				    new DisplayDate ( entry.getStartDate () ), i, 0 );
+			} else {
+				journalListTable.setValueAt ( "Unknown Date", i, 0 );
+			}
 			Summary summary = entry.getSummary ();
 			journalListTable.setValueAt (
 			    summary == null ? "-" : summary.getValue (), i, 1 );

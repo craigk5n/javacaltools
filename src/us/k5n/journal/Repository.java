@@ -132,9 +132,14 @@ public class Repository {
 			DataFile df = (DataFile) dataFiles.elementAt ( i );
 			for ( int j = 0; j < df.getJournalCount (); j++ ) {
 				Journal journal = df.journalEntryAt ( j );
-				if ( journal.getStartDate ().getYear () == year
-				    && journal.getStartDate ().getMonth () == month )
-					ret.addElement ( journal );
+				if ( journal.getStartDate () == null ) {
+					System.err.println ( "Error: no DTSTART date for entry #" + ( j + 1 )
+					    + " of " + df );
+				} else {
+					if ( journal.getStartDate ().getYear () == year
+					    && journal.getStartDate ().getMonth () == month )
+						ret.addElement ( journal );
+				}
 			}
 		}
 		return ret;
@@ -155,8 +160,13 @@ public class Repository {
 			DataFile df = (DataFile) dataFiles.elementAt ( i );
 			for ( int j = 0; j < df.getJournalCount (); j++ ) {
 				Journal journal = df.journalEntryAt ( j );
-				if ( journal.getStartDate ().getYear () == year )
-					ret.addElement ( journal );
+				if ( journal.getStartDate () == null ) {
+					System.err.println ( "Error: no DTSTART date for entry #" + ( j + 1 )
+					    + " of " + df );
+				} else {
+					if ( journal.getStartDate ().getYear () == year )
+						ret.addElement ( journal );
+				}
 			}
 		}
 		return ret;
@@ -186,8 +196,9 @@ public class Repository {
 		HashMap h = new HashMap ();
 		for ( int i = 0; i < dataFiles.size (); i++ ) {
 			DataFile df = (DataFile) dataFiles.elementAt ( i );
-			//System.out.println ( "DataFile#" + i + ": " + df.toString () );
-			//System.out.println ( "  df.getJournalCount () =" + df.getJournalCount () );
+			// System.out.println ( "DataFile#" + i + ": " + df.toString () );
+			// System.out.println ( " df.getJournalCount () =" + df.getJournalCount ()
+			// );
 			for ( int j = 0; j < df.getJournalCount (); j++ ) {
 				Journal journal = df.journalEntryAt ( j );
 				if ( journal.getStartDate () != null ) {
@@ -195,7 +206,7 @@ public class Repository {
 					if ( !h.containsKey ( YMD ) ) {
 						h.put ( YMD, YMD );
 						dates.addElement ( journal.getStartDate () );
-						//System.out.println ( "Added date: " + journal.getStartDate () );
+						// System.out.println ( "Added date: " + journal.getStartDate () );
 					}
 				}
 			}
@@ -205,7 +216,7 @@ public class Repository {
 			listOfDates = new Date[dates.size ()];
 			for ( int i = 0; i < dates.size (); i++ ) {
 				listOfDates[i] = (Date) dates.elementAt ( i );
-				//System.out.println ( "Found date: " + listOfDates[i] );
+				// System.out.println ( "Found date: " + listOfDates[i] );
 			}
 		} else {
 			listOfDates = null;
