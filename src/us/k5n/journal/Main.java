@@ -158,7 +158,8 @@ public class Main extends JFrame implements Constants, RepositoryChangeListener 
 				int ind = journalListTable.getSelectedRow ();
 				if ( ind >= 0 && filteredJournalEntries != null
 				    && ind < filteredJournalEntries.size () ) {
-					Journal j = (Journal) filteredJournalEntries.elementAt ( ind );
+					DisplayDate dd = (DisplayDate) journalListTable.getValueAt ( ind, 0 );
+					Journal j = (Journal) dd.getUserData ();
 					new EditWindow ( parent, new Dimension ( 500, 500 ), dataRepository,
 					    j );
 				}
@@ -318,8 +319,9 @@ public class Main extends JFrame implements Constants, RepositoryChangeListener 
 					    // and make sure that one got called before this one.
 					    journalListTable.setHighlightedRows ( selRows );
 					    if ( selRows != null && selRows.length == 1 ) {
-						    Journal journal = (Journal) filteredJournalEntries
-						        .elementAt ( ind );
+						    DisplayDate dd = (DisplayDate) journalListTable.getValueAt (
+						        ind, 0 );
+						    Journal journal = (Journal) dd.getUserData ();
 						    journalView.setJournal ( journal );
 					    } else {
 						    // more than one selected
@@ -415,10 +417,10 @@ public class Main extends JFrame implements Constants, RepositoryChangeListener 
 		    && i < filteredJournalEntries.size (); i++ ) {
 			Journal entry = (Journal) filteredJournalEntries.elementAt ( i );
 			if ( entry.getStartDate () != null ) {
-				journalListTable.setValueAt (
-				    new DisplayDate ( entry.getStartDate () ), i, 0 );
+				journalListTable.setValueAt ( new DisplayDate ( entry.getStartDate (),
+				    entry ), i, 0 );
 			} else {
-				journalListTable.setValueAt ( "Unknown Date", i, 0 );
+				journalListTable.setValueAt ( new DisplayDate ( null, entry ), i, 0 );
 			}
 			Summary summary = entry.getSummary ();
 			journalListTable.setValueAt (

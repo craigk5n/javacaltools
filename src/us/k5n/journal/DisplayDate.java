@@ -19,19 +19,36 @@ public class DisplayDate implements Comparable {
 	private static String dateTimeFormat = "EEE, d MMM yyyy h:mm a";
 	private java.util.Date javaDate;
 	boolean hasTime;
+	Object userData;
 
 	public DisplayDate(Date d) {
-		javaDate = d.toCalendar ().getTime ();
-		hasTime = !d.isDateOnly ();
+		this ( d, null );
+	}
+
+	public DisplayDate(Date d, Object userData) {
+		if ( d == null ) {
+			javaDate = null;
+			hasTime = false;
+		} else {
+			javaDate = d.toCalendar ().getTime ();
+			hasTime = !d.isDateOnly ();
+		}
+		this.userData = userData;
 	}
 
 	public String toString () {
 		SimpleDateFormat format = null;
+		if ( javaDate == null )
+			return "Unknown Date";
 		if ( hasTime )
 			format = new SimpleDateFormat ( dateTimeFormat );
 		else
 			format = new SimpleDateFormat ( dateOnlyFormat );
 		return format.format ( javaDate );
+	}
+
+	public Object getUserData () {
+		return this.userData;
 	}
 
 	public int compareTo ( Object arg0 ) {

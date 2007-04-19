@@ -1,3 +1,7 @@
+Version 0.2.5 (19 Apr 2007)
+  - k5njournal changes:
+    + fixed bug: clicking on journal list column headers to sort
+      was causing wrong entry to be displayed if you selected one.
 Version 0.2.4 (18 Apr 2007)
   - k5njournal changes:
     + in entry descriptions, wrap text at word boundaries (view/edit)
