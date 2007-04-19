@@ -1,4 +1,4 @@
-Version 0.2.4 (?? Apr 2007)
+Version 0.2.4 (18 Apr 2007)
   - k5njournal changes:
     + in entry descriptions, wrap text at word boundaries (view/edit)
     + don't NullPointerException when data file is missing DTSTART values
