@@ -8,17 +8,21 @@ import java.awt.Frame;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.URL;
 import java.util.Vector;
 
 import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -33,7 +37,6 @@ import javax.swing.JToolBar;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
 import javax.swing.LookAndFeel;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -42,6 +45,8 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
 import us.k5n.ical.Constants;
+import us.k5n.ical.DataStore;
+import us.k5n.ical.ICalendarParser;
 import us.k5n.ical.Journal;
 import us.k5n.ical.Summary;
 
@@ -69,6 +74,8 @@ public class Main extends JFrame implements Constants, RepositoryChangeListener 
 	    "April", "May", "June", "July", "August", "September", "October",
 	    "November", "December" };
 	JButton newButton, editButton, deleteButton;
+	JMenuItem exportSelected;
+	private static File lastExportDirectory = null;
 
 	class DateFilterTreeNode extends DefaultMutableTreeNode {
 		public int year, month, day;
@@ -198,6 +205,7 @@ public class Main extends JFrame implements Constants, RepositoryChangeListener 
 	void updateToolbar ( int numSelected ) {
 		editButton.setEnabled ( numSelected == 1 );
 		deleteButton.setEnabled ( numSelected == 1 );
+		exportSelected.setEnabled ( numSelected >= 1 );
 	}
 
 	public void setMessage ( String msg ) {
@@ -211,8 +219,37 @@ public class Main extends JFrame implements Constants, RepositoryChangeListener 
 
 		JMenu fileMenu = new JMenu ( "File" );
 
+		JMenu exportMenu = new JMenu ( "Export" );
+		exportMenu.setMnemonic ( KeyEvent.VK_X );
+		fileMenu.add ( exportMenu );
+
+		item = new JMenuItem ( "All" );
+		item.addActionListener ( new ActionListener () {
+			public void actionPerformed ( ActionEvent event ) {
+				exportAll ();
+			}
+		} );
+		exportMenu.add ( item );
+		item = new JMenuItem ( "Visible" );
+		item.addActionListener ( new ActionListener () {
+			public void actionPerformed ( ActionEvent event ) {
+				exportVisible ();
+			}
+		} );
+		exportMenu.add ( item );
+		item = new JMenuItem ( "Selected" );
+		item.addActionListener ( new ActionListener () {
+			public void actionPerformed ( ActionEvent event ) {
+				exportSelected ();
+			}
+		} );
+		exportMenu.add ( item );
+		exportSelected = item;
+
+		fileMenu.addSeparator ();
+
 		item = new JMenuItem ( "Exit" );
-		item.setAccelerator ( KeyStroke.getKeyStroke ( 'X', Toolkit
+		item.setAccelerator ( KeyStroke.getKeyStroke ( 'Q', Toolkit
 		    .getDefaultToolkit ().getMenuShortcutKeyMask () ) );
 		item.addActionListener ( new ActionListener () {
 			public void actionPerformed ( ActionEvent event ) {
@@ -221,10 +258,19 @@ public class Main extends JFrame implements Constants, RepositoryChangeListener 
 				System.exit ( 0 );
 			}
 		} );
-
 		fileMenu.add ( item );
 
 		bar.add ( fileMenu );
+
+		/*
+		 * commented out because of bug in JDK that causes NullPointerException when
+		 * we update the UI L&F. JMenu settingsMenu = new JMenu ( "Settings" );
+		 * 
+		 * item = new JMenuItem ( "Look & Feel" ); item.addActionListener ( new
+		 * ActionListener () { public void actionPerformed ( ActionEvent event ) {
+		 * selectLookAndFeel ( parent, parent ); } } ); settingsMenu.add ( item );
+		 * bar.add ( settingsMenu );
+		 */
 
 		// Add help bar to right end of menubar
 		bar.add ( Box.createHorizontalGlue () );
@@ -521,7 +567,7 @@ public class Main extends JFrame implements Constants, RepositoryChangeListener 
 		}
 	}
 
-	public static void selectLookAndFeel ( Component toplevel, Frame dialogParent ) {
+	public void selectLookAndFeel ( Component toplevel, Frame dialogParent ) {
 		LookAndFeel lafCurrent = UIManager.getLookAndFeel ();
 		System.out.println ( "Current L&F: " + lafCurrent );
 		UIManager.LookAndFeelInfo[] info = UIManager.getInstalledLookAndFeels ();
@@ -545,12 +591,102 @@ public class Main extends JFrame implements Constants, RepositoryChangeListener 
 			try {
 				System.out.println ( "Changing L&F: " + selectedLAFInfo );
 				UIManager.setLookAndFeel ( selectedLAFInfo.getClassName () );
-				SwingUtilities.updateComponentTreeUI ( toplevel );
+				// SwingUtilities.updateComponentTreeUI ( parent );
+				// parent.pack ();
 			} catch ( Exception e ) {
 				System.err.println ( "Unabled to load L&F: " + e.toString () );
 			}
 		} else {
 			System.err.println ( "No L&F selected" );
+		}
+	}
+
+	protected void exportAll () {
+		export ( "Export All", dataRepository.getAllEntries () );
+	}
+
+	protected void exportVisible () {
+		export ( "Export Visible", filteredJournalEntries );
+	}
+
+	protected void exportSelected () {
+		Vector selected = new Vector ();
+		int[] sel = journalListTable.getSelectedRows ();
+		if ( sel == null || sel.length == 0 ) {
+			showError ( "You have not selected any entries" );
+			return;
+		}
+		for ( int i = 0; i < sel.length; i++ ) {
+			DisplayDate dd = (DisplayDate) journalListTable.getValueAt ( i, 0 );
+			Journal journal = (Journal) dd.getUserData ();
+			selected.addElement ( journal );
+		}
+		export ( "Export Selected", selected );
+	}
+
+	private void export ( String title, Vector journalEntries ) {
+		JFileChooser fileChooser;
+		File outFile = null;
+
+		if ( lastExportDirectory == null )
+			fileChooser = new JFileChooser ();
+		else
+			fileChooser = new JFileChooser ( lastExportDirectory );
+		fileChooser.setFileSelectionMode ( JFileChooser.FILES_ONLY );
+		fileChooser.setFileFilter ( new ICSFileChooserFilter () );
+		fileChooser.setDialogTitle ( "Select Output File for " + title );
+		fileChooser.setApproveButtonText ( "Save as ICS File" );
+		fileChooser
+		    .setApproveButtonToolTipText ( "Export entries to iCalendar file" );
+		int ret = fileChooser.showOpenDialog ( this );
+		if ( ret == JFileChooser.APPROVE_OPTION ) {
+			outFile = fileChooser.getSelectedFile ();
+		} else {
+			// Cancel
+			return;
+		}
+		// If no file extension provided, use ".ics
+		String basename = outFile.getName ();
+		if ( basename.indexOf ( '.' ) < 0 ) {
+			// No filename extension provided, so add ".csv" to it
+			outFile = new File ( outFile.getParent (), basename + ".ics" );
+		}
+		System.out.println ( "Selected File: " + outFile.toString () );
+		lastExportDirectory = outFile.getParentFile ();
+		if ( outFile.exists () && !outFile.canWrite () ) {
+			JOptionPane.showMessageDialog ( parent,
+			    "You do not have the proper\npermissions to write to:\n\n"
+			        + outFile.toString () + "\n\nPlease select another file.",
+			    "Save Error", JOptionPane.PLAIN_MESSAGE );
+			return;
+		}
+		if ( outFile.exists () ) {
+			if ( JOptionPane.showConfirmDialog ( parent,
+			    "Overwrite existing file?\n\n" + outFile.toString (),
+			    "Overwrite Confirm", JOptionPane.YES_NO_OPTION ) != 0 ) {
+				JOptionPane.showMessageDialog ( parent, "Export canceled.",
+				    "Export canceled", JOptionPane.PLAIN_MESSAGE );
+				return;
+			}
+		}
+		try {
+			PrintWriter writer = new PrintWriter ( new FileWriter ( outFile ) );
+			// Now write!
+			ICalendarParser p = new ICalendarParser ( PARSE_LOOSE );
+			DataStore dataStore = p.getDataStoreAt ( 0 );
+			for ( int i = 0; i < journalEntries.size (); i++ ) {
+				Journal j = (Journal) journalEntries.elementAt ( i );
+				dataStore.storeJournal ( j );
+			}
+			writer.write ( p.toICalendar () );
+			writer.close ();
+			JOptionPane.showMessageDialog ( parent, "Exported to:\n\n"
+			    + outFile.toString (), "Export", JOptionPane.PLAIN_MESSAGE );
+		} catch ( IOException e ) {
+			JOptionPane.showMessageDialog ( parent,
+			    "An error was encountered\nwriting to the file:\n\n"
+			        + e.getMessage (), "Save Error", JOptionPane.PLAIN_MESSAGE );
+			e.printStackTrace ();
 		}
 	}
 
@@ -576,4 +712,22 @@ public class Main extends JFrame implements Constants, RepositoryChangeListener 
 		new Main ();
 	}
 
+}
+
+/**
+ * Create a class to use as a file filter for exporting to ics.
+ */
+class ICSFileChooserFilter extends javax.swing.filechooser.FileFilter {
+	public boolean accept ( File f ) {
+		if ( f.isDirectory () )
+			return true;
+		String name = f.getName ();
+		if ( name.toLowerCase ().endsWith ( ".ics" ) )
+			return true;
+		return false;
+	}
+
+	public String getDescription () {
+		return "*.ics (iCalendar Files)";
+	}
 }

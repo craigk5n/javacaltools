@@ -13,5 +13,9 @@ public class IcsFileFilter implements FileFilter {
 	public boolean accept ( File pathname ) {
 		return pathname.toString ().toUpperCase ().endsWith ( ".ICS" );
 	}
+	
+	public String getDescription () {
+		return "*.ics (iCalendar files)";
+	}
 
 }
