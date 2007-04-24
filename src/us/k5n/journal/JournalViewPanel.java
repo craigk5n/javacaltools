@@ -3,6 +3,7 @@ package us.k5n.journal;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 
+import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -27,6 +28,7 @@ public class JournalViewPanel extends JPanel {
 
 		JPanel topPanel = new JPanel ();
 		topPanel.setLayout ( new GridLayout ( 3, 1 ) );
+		topPanel.setBorder ( BorderFactory.createEmptyBorder ( 2, 4, 2, 4 ) );
 
 		JPanel subpanel = new JPanel ();
 		subpanel.setLayout ( new BorderLayout () );
