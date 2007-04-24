@@ -1,7 +1,7 @@
                            k5n java calendar tools
 ****************************************************************************
 
-Version:      0.2.3
+Version:      0.2.6
 URL:          http://javacaltools.sourceforge.net
 Author:       Craig Knudsen, craig [< at >] k5n.us
 License:      GNU GPL
@@ -18,8 +18,8 @@ ant
 
 This build process will create the following jar files:
 
-	dist/lib/k5n-ical-0.2.3.jar
-	dist/k5njournal-0.2.3.jar
+	dist/lib/k5n-ical-0.2.6.jar
+	dist/k5njournal-0.2.6.jar
 
 The k5n-ical jar is the main iCalendar library that can be used by
 other applications.

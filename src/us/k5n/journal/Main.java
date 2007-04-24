@@ -64,7 +64,7 @@ import us.k5n.ical.Summary;
  */
 public class Main extends JFrame implements Constants, RepositoryChangeListener {
 	public static final String DEFAULT_DIR_NAME = "k5njournal";
-	public static final String VERSION = "0.2.5 (24 Apr 2007)";
+	public static final String VERSION = "0.2.6 (24 Apr 2007)";
 	JFrame parent;
 	JLabel messageArea;
 	Repository dataRepository;
@@ -368,14 +368,7 @@ public class Main extends JFrame implements Constants, RepositoryChangeListener 
 		searchPanel.setBorder ( BorderFactory.createEmptyBorder ( 4, 4, 4, 4 ) );
 		searchPanel.setLayout ( new BorderLayout () );
 		searchPanel.add ( new JLabel ( "Search: " ), BorderLayout.WEST );
-		JButton searchClear = new JButton ( "Clear" );
-		searchPanel.add ( searchClear, BorderLayout.EAST );
-		searchClear.addActionListener ( new ActionListener () {
-			public void actionPerformed ( ActionEvent event ) {
-				searchCleared ();
-			}
-		} );
-		searchTextField = new JTextField ();
+		searchTextField = new SearchTextField ();
 		searchTextField.addActionListener ( new ActionListener () {
 			public void actionPerformed ( ActionEvent event ) {
 				searchUpdated ();
@@ -505,12 +498,8 @@ public class Main extends JFrame implements Constants, RepositoryChangeListener 
 	 */
 	void searchUpdated () {
 		searchText = searchTextField.getText ();
-		updateFilteredJournalList ();
-	}
-
-	void searchCleared () {
-		searchTextField.setText ( "" );
-		searchText = null;
+		if ( searchText != null && searchText.trim ().length () == 0 )
+			searchText = null;
 		updateFilteredJournalList ();
 	}
 
