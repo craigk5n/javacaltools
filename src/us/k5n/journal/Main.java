@@ -8,7 +8,6 @@ import java.awt.Frame;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -18,7 +17,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -33,6 +35,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
@@ -44,8 +47,10 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
+import us.k5n.ical.Categories;
 import us.k5n.ical.Constants;
 import us.k5n.ical.DataStore;
+import us.k5n.ical.Description;
 import us.k5n.ical.ICalendarParser;
 import us.k5n.ical.Journal;
 import us.k5n.ical.Summary;
@@ -59,7 +64,7 @@ import us.k5n.ical.Summary;
  */
 public class Main extends JFrame implements Constants, RepositoryChangeListener {
 	public static final String DEFAULT_DIR_NAME = "k5njournal";
-	public static final String VERSION = "0.2.4 (18 Apr 2007)";
+	public static final String VERSION = "0.2.5 (24 Apr 2007)";
 	JFrame parent;
 	JLabel messageArea;
 	Repository dataRepository;
@@ -67,14 +72,21 @@ public class Main extends JFrame implements Constants, RepositoryChangeListener 
 	DefaultMutableTreeNode dateTreeAllNode;
 	ReadOnlyTable journalListTable;
 	ReadOnlyTabelModel journalListTableModel;
-	JournalViewPanel journalView;
+	JournalViewPanel journalView = null;
+	// filteredJournalEntries is the Vector of Journal objects filtered
+	// by dates selected by the user. (Not yet filtered by search text.)
 	Vector filteredJournalEntries;
+	// filteredSearchedJournalEntries is filtered by both date selection
+	// and text search.
+	Vector filteredSearchedJournalEntries;
 	final static String[] journalListTableHeader = { "Date", "Subject" };
 	final static String[] monthNames = { "", "January", "February", "March",
 	    "April", "May", "June", "July", "August", "September", "October",
 	    "November", "December" };
 	JButton newButton, editButton, deleteButton;
 	JMenuItem exportSelected;
+	JTextField searchTextField;
+	String searchText = null;
 	private static File lastExportDirectory = null;
 
 	class DateFilterTreeNode extends DefaultMutableTreeNode {
@@ -120,13 +132,26 @@ public class Main extends JFrame implements Constants, RepositoryChangeListener 
 		contentPane.setLayout ( new BorderLayout () );
 
 		// Add message/status bar at bottom
+		JPanel messagePanel = new JPanel ();
+		messagePanel.setLayout ( new BorderLayout () );
+		messagePanel.setBorder ( BorderFactory.createEmptyBorder ( 2, 4, 2, 4 ) );
 		messageArea = new JLabel ( "Welcome to k5njournal..." );
-		contentPane.add ( messageArea, BorderLayout.SOUTH );
+		messagePanel.add ( messageArea, BorderLayout.CENTER );
+		contentPane.add ( messagePanel, BorderLayout.SOUTH );
 
 		contentPane.add ( createToolBar (), BorderLayout.NORTH );
 
 		JPanel navArea = createJournalSelectionPanel ();
+		// JPanel viewPanel = new JPanel ();
+		// viewPanel.setLayout ( new BorderLayout () );
+		// JPanel searchPanel = new JPanel ();
+		// searchPanel.setLayout ( new FlowLayout () );
+		// searchPanel.add ( new JLabel ( "Search: " ) );
+		// searchPanel.add ( new JTextField ( 20 ) );
+		// viewPanel.add ( searchPanel );
 		journalView = new JournalViewPanel ();
+
+		// viewPanel.add ( journalView, BorderLayout.CENTER );
 		JSplitPane splitPane = new JSplitPane ( JSplitPane.VERTICAL_SPLIT, navArea,
 		    journalView );
 		splitPane.setOneTouchExpandable ( true );
@@ -163,8 +188,8 @@ public class Main extends JFrame implements Constants, RepositoryChangeListener 
 			public void actionPerformed ( ActionEvent event ) {
 				// Get selected item and open edit window
 				int ind = journalListTable.getSelectedRow ();
-				if ( ind >= 0 && filteredJournalEntries != null
-				    && ind < filteredJournalEntries.size () ) {
+				if ( ind >= 0 && filteredSearchedJournalEntries != null
+				    && ind < filteredSearchedJournalEntries.size () ) {
 					DisplayDate dd = (DisplayDate) journalListTable.getValueAt ( ind, 0 );
 					Journal j = (Journal) dd.getUserData ();
 					new EditWindow ( parent, new Dimension ( 500, 500 ), dataRepository,
@@ -180,9 +205,9 @@ public class Main extends JFrame implements Constants, RepositoryChangeListener 
 			public void actionPerformed ( ActionEvent event ) {
 				// Get selected item and open edit window
 				int ind = journalListTable.getSelectedRow ();
-				if ( ind >= 0 && filteredJournalEntries != null
-				    && ind < filteredJournalEntries.size () ) {
-					Journal j = (Journal) filteredJournalEntries.elementAt ( ind );
+				if ( ind >= 0 && filteredSearchedJournalEntries != null
+				    && ind < filteredSearchedJournalEntries.size () ) {
+					Journal j = (Journal) filteredSearchedJournalEntries.elementAt ( ind );
 					if ( JOptionPane.showConfirmDialog ( parent,
 					    "Are you sure you want\nto delete this entry?", "Confirm Delete",
 					    JOptionPane.YES_NO_OPTION ) == 0 ) {
@@ -220,7 +245,7 @@ public class Main extends JFrame implements Constants, RepositoryChangeListener 
 		JMenu fileMenu = new JMenu ( "File" );
 
 		JMenu exportMenu = new JMenu ( "Export" );
-		exportMenu.setMnemonic ( KeyEvent.VK_X );
+		// exportMenu.setMnemonic ( 'X' );
 		fileMenu.add ( exportMenu );
 
 		item = new JMenuItem ( "All" );
@@ -339,6 +364,26 @@ public class Main extends JFrame implements Constants, RepositoryChangeListener 
 		JPanel journalListPane = new JPanel ();
 		journalListPane.setLayout ( new BorderLayout () );
 
+		JPanel searchPanel = new JPanel ();
+		searchPanel.setBorder ( BorderFactory.createEmptyBorder ( 4, 4, 4, 4 ) );
+		searchPanel.setLayout ( new BorderLayout () );
+		searchPanel.add ( new JLabel ( "Search: " ), BorderLayout.WEST );
+		JButton searchClear = new JButton ( "Clear" );
+		searchPanel.add ( searchClear, BorderLayout.EAST );
+		searchClear.addActionListener ( new ActionListener () {
+			public void actionPerformed ( ActionEvent event ) {
+				searchCleared ();
+			}
+		} );
+		searchTextField = new JTextField ();
+		searchTextField.addActionListener ( new ActionListener () {
+			public void actionPerformed ( ActionEvent event ) {
+				searchUpdated ();
+			}
+		} );
+		searchPanel.add ( searchTextField, BorderLayout.CENTER );
+		journalListPane.add ( searchPanel, BorderLayout.NORTH );
+
 		journalListTableModel = new ReadOnlyTabelModel ( journalListTableHeader, 0,
 		    2 );
 		TableSorter sorter = new TableSorter ( journalListTableModel );
@@ -351,30 +396,34 @@ public class Main extends JFrame implements Constants, RepositoryChangeListener 
 		journalListTable.getSelectionModel ().addListSelectionListener (
 		    new ListSelectionListener () {
 			    public void valueChanged ( ListSelectionEvent event ) {
-				    int ind = journalListTable.getSelectedRow ();
-				    int numSel = journalListTable.getSelectedRowCount ();
-				    updateToolbar ( numSel );
-				    if ( numSel == 0 ) {
-					    journalView.clear ();
-				    } else if ( !event.getValueIsAdjusting () && ind >= 0
-				        && filteredJournalEntries != null
-				        && ind < filteredJournalEntries.size () ) {
-					    int[] selRows = journalListTable.getSelectedRows ();
-					    // The call below might actually belong in ReadOnlyTable.
-					    // However, we would need to add a MouseListener to ReadOnlyTable
-					    // and make sure that one got called before this one.
-					    journalListTable.setHighlightedRows ( selRows );
-					    if ( selRows != null && selRows.length == 1 ) {
-						    DisplayDate dd = (DisplayDate) journalListTable.getValueAt (
-						        ind, 0 );
-						    Journal journal = (Journal) dd.getUserData ();
-						    journalView.setJournal ( journal );
-					    } else {
-						    // more than one selected
+				    if ( journalView != null ) {
+					    int ind = journalListTable.getSelectedRow ();
+					    int numSel = journalListTable.getSelectedRowCount ();
+					    updateToolbar ( numSel );
+					    if ( numSel == 0 ) {
 						    journalView.clear ();
+					    } else if ( !event.getValueIsAdjusting () && ind >= 0
+					        && filteredSearchedJournalEntries != null
+					        && ind < filteredSearchedJournalEntries.size () ) {
+						    int[] selRows = journalListTable.getSelectedRows ();
+						    // The call below might actually belong in ReadOnlyTable.
+						    // However, we would need to add a MouseListener to
+						    // ReadOnlyTable
+						    // and make sure that one got called before this one.
+						    journalListTable.setHighlightedRows ( selRows );
+						    if ( selRows != null && selRows.length == 1 ) {
+							    DisplayDate dd = (DisplayDate) journalListTable.getValueAt (
+							        ind, 0 );
+							    Journal journal = (Journal) dd.getUserData ();
+							    if ( journal != null )
+								    journalView.setJournal ( journal );
+						    } else {
+							    // more than one selected
+							    journalView.clear ();
+						    }
+					    } else {
+						    journalListTable.clearHighlightedRows ();
 					    }
-				    } else {
-					    journalListTable.clearHighlightedRows ();
 				    }
 			    }
 		    } );
@@ -452,16 +501,93 @@ public class Main extends JFrame implements Constants, RepositoryChangeListener 
 	}
 
 	/**
+	 * User pressed the Enter key in the search text.
+	 */
+	void searchUpdated () {
+		searchText = searchTextField.getText ();
+		updateFilteredJournalList ();
+	}
+
+	void searchCleared () {
+		searchTextField.setText ( "" );
+		searchText = null;
+		updateFilteredJournalList ();
+	}
+
+	// Filter the specified Vector of Journal objects by
+	// the searchText using a regular expression.
+	private Vector filterSearchText ( Vector entries ) {
+		Vector ret;
+		Pattern pat;
+		Matcher m;
+
+		if ( searchText == null || searchText.trim ().length () == 0 )
+			return entries;
+
+		// remove any characters that are not regular expression safe
+		StringBuffer sb = new StringBuffer ();
+		for ( int i = 0; i < searchText.length (); i++ ) {
+			char ch = searchText.charAt ( i );
+			if ( ch >= 'a' || ch <= 'Z' || ch >= 'A' || ch <= 'Z' || ch >= '0'
+			    || ch <= '9' || ch == ' ' ) {
+				sb.append ( ch );
+			}
+		}
+		if ( sb.length () == 0 )
+			return entries;
+
+		ret = new Vector ();
+		pat = Pattern.compile ( sb.toString (), Pattern.CASE_INSENSITIVE );
+		// System.out.println ( "Pattern: " + pat );
+		for ( int i = 0; i < entries.size (); i++ ) {
+			Journal j = (Journal) entries.elementAt ( i );
+			Description d = j.getDescription ();
+			boolean matches = false;
+			// Search summary, categories, and description
+			Summary summary = j.getSummary ();
+			if ( summary != null ) {
+				m = pat.matcher ( summary.getValue () );
+				if ( m.find () ) {
+					matches = true;
+				}
+			}
+			if ( !matches ) {
+				Categories cats = j.getCategories ();
+				if ( cats != null ) {
+					m = pat.matcher ( cats.getValue () );
+					if ( m.find () ) {
+						matches = true;
+					}
+				}
+			}
+			if ( !matches ) {
+				if ( d != null ) {
+					m = pat.matcher ( d.getValue () );
+					if ( m.find () ) {
+						matches = true;
+					}
+				}
+			}
+			if ( matches ) {
+				ret.addElement ( j );
+			}
+		}
+		return ret;
+	}
+
+	/**
 	 * Update the JTable of Journal entries based on the Journal objects in the
 	 * filteredJournalEntries Vector.
 	 */
 	void updateFilteredJournalList () {
-		journalListTableModel.setRowCount ( filteredJournalEntries == null ? 0
-		    : filteredJournalEntries.size () );
+		filteredSearchedJournalEntries = filterSearchText ( filteredJournalEntries );
+		journalListTableModel
+		    .setRowCount ( filteredSearchedJournalEntries == null ? 0
+		        : filteredSearchedJournalEntries.size () );
 		journalListTable.clearHighlightedRows ();
-		for ( int i = 0; filteredJournalEntries != null
-		    && i < filteredJournalEntries.size (); i++ ) {
-			Journal entry = (Journal) filteredJournalEntries.elementAt ( i );
+		for ( int i = 0; filteredSearchedJournalEntries != null
+		    && i < filteredSearchedJournalEntries.size (); i++ ) {
+			Journal entry = (Journal) filteredSearchedJournalEntries.elementAt ( i );
 			if ( entry.getStartDate () != null ) {
 				journalListTable.setValueAt ( new DisplayDate ( entry.getStartDate (),
 				    entry ), i, 0 );
@@ -472,8 +598,9 @@ public class Main extends JFrame implements Constants, RepositoryChangeListener 
 			journalListTable.setValueAt (
 			    summary == null ? "-" : summary.getValue (), i, 1 );
 		}
-		// System.out.println ( "Displaying " + filteredJournalEntries.size ()
-		// + " entries" );
+		this.showStatusMessage ( "" + filteredSearchedJournalEntries.size ()
+		    + " entries "
+		    + ( searchText == null ? "" : "matched '" + searchText + "'" ) );
 
 		journalListTable.repaint ();
 	}
@@ -511,6 +638,10 @@ public class Main extends JFrame implements Constants, RepositoryChangeListener 
 		if ( !dir.isDirectory () )
 			fatalError ( "Not a directory: " + dir );
 		return dir;
+	}
+
+	void showStatusMessage ( String string ) {
+		this.messageArea.setText ( string );
 	}
 
 	void showMessage ( String message ) {

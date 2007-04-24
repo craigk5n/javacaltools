@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Vector;
 
+import us.k5n.ical.Categories;
 import us.k5n.ical.Date;
 import us.k5n.ical.Journal;
 import us.k5n.ical.Utils;
@@ -28,6 +29,7 @@ public class Repository {
 	Date[] listOfDates;
 	HashMap uidHash;
 	private Vector changeListeners;
+	private Vector categories; // Vector of String categories
 
 	public Repository(File dir, boolean strictParsing) {
 		this.directory = dir;
@@ -35,6 +37,7 @@ public class Repository {
 		this.dataFileHash = new HashMap ();
 		this.uidHash = new HashMap ();
 		this.changeListeners = new Vector ();
+		this.categories = new Vector ();
 
 		// Load all files.
 		File[] files = this.directory.listFiles ( new IcsFileFilter () );
@@ -45,7 +48,7 @@ public class Repository {
 			}
 		}
 
-		updateDateList ();
+		rebuildPrivateData ();
 	}
 
 	public void addDataFile ( DataFile f ) {
@@ -191,8 +194,13 @@ public class Repository {
 		return ret;
 	}
 
-	public void updateDateList () {
+	/**
+	 * Update the listOfDates array. Update the Vector of existing categories.
+	 */
+	private void rebuildPrivateData () {
 		Vector dates = new Vector ();
+		this.categories = new Vector ();
+		HashMap catH = new HashMap ();
 		HashMap h = new HashMap ();
 		for ( int i = 0; i < dataFiles.size (); i++ ) {
 			DataFile df = (DataFile) dataFiles.elementAt ( i );
@@ -207,6 +215,20 @@ public class Repository {
 						h.put ( YMD, YMD );
 						dates.addElement ( journal.getStartDate () );
 						// System.out.println ( "Added date: " + journal.getStartDate () );
+					}
+				}
+				Categories cats = journal.getCategories ();
+				if ( cats != null && cats.getValue () != null ) {
+					String[] catArray = splitCategories ( cats.getValue () );
+					for ( int k = 0; catArray != null && k < catArray.length; k++ ) {
+						String c1 = catArray[k].trim ();
+						if ( c1.length () > 0 ) {
+							String c1up = c1.toUpperCase ();
+							if ( !catH.containsKey ( c1up ) ) {
+								this.categories.addElement ( c1 );
+								catH.put ( c1up, c1up );
+							}
+						}
 					}
 				}
 			}
@@ -260,7 +282,7 @@ public class Repository {
 		j.setUserData ( dataFile );
 		dataFile.write ();
 
-		updateDateList ();
+		rebuildPrivateData ();
 
 		if ( added ) {
 			for ( int i = 0; this.changeListeners != null
@@ -298,7 +320,7 @@ public class Repository {
 			if ( dataFile.removeJournal ( j ) ) {
 				deleted = true;
 				dataFile.write ();
-				updateDateList ();
+				rebuildPrivateData ();
 				for ( int i = 0; this.changeListeners != null
 				    && i < this.changeListeners.size (); i++ ) {
 					RepositoryChangeListener l = (RepositoryChangeListener) this.changeListeners
@@ -321,5 +343,13 @@ public class Repository {
 		if ( this.changeListeners == null )
 			this.changeListeners = new Vector ();
 		this.changeListeners.addElement ( l );
+	}
+
+	public Vector getCategories () {
+		return this.categories;
+	}
+
+	private static String[] splitCategories ( String categories ) {
+		return categories.trim ().split ( "," );
 	}
 }

@@ -1,5 +1,6 @@
-Version 0.2.5 (20 Apr 2007)
+Version 0.2.5 (24 Apr 2007)
   - k5njournal changes:
+    + Added text search filter
     + Added export to ics in "File" menu
     + fixed bug: clicking on journal list column headers to sort
       was causing wrong entry to be displayed if you selected one.
