@@ -1,6 +1,8 @@
 package us.k5n.journal;
 
+import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
@@ -31,8 +33,10 @@ public class SearchTextField extends JTextField implements MouseListener,
 	int buttonX = -1, buttonY = -1;
 	boolean iconVisible = false;
 	boolean cursorChanged = false;
-	private static Cursor defaultCursor = null;
-	private static Cursor buttonCursor = null;
+	private Cursor defaultCursor = null;
+	private Cursor buttonCursor = null;
+	private Color hintColor = null;
+	public static String HINT = "Enter search text";
 
 	public SearchTextField() {
 		super ();
@@ -46,6 +50,11 @@ public class SearchTextField extends JTextField implements MouseListener,
 		if ( clearImage == null ) {
 			clearImage = new ImageIcon ( clearImageBytes );
 		}
+		if ( hintColor == null ) {
+			// Make hint color a very light grey
+			// TODO: derive this from current colors
+			hintColor = new Color ( 200, 200, 200 );
+		}
 
 		if ( this.getText ().length () > 0 ) {
 			x = this.getWidth () - clearImage.getIconWidth () - 5;
@@ -56,6 +65,12 @@ public class SearchTextField extends JTextField implements MouseListener,
 			this.iconVisible = true;
 		} else {
 			this.iconVisible = false;
+			// No text. Draw hint
+			FontMetrics fm = g.getFontMetrics ();
+			y = ( this.getHeight () - fm.getHeight () ) / 2 + fm.getAscent ();
+			x = ( this.getWidth () - fm.stringWidth ( HINT ) ) / 2;
+			g.setColor ( hintColor );
+			g.drawString ( HINT, x, y );
 		}
 	}
 
@@ -73,9 +88,9 @@ public class SearchTextField extends JTextField implements MouseListener,
 
 	private boolean isOverClearButton ( Point p ) {
 		return ( this.iconVisible && p.x >= this.buttonX
-		    && p.x <= this.buttonX + this.clearImage.getIconWidth ()
+		    && p.x <= this.buttonX + clearImage.getIconWidth ()
 		    && p.y >= this.buttonY && p.y <= this.buttonY
-		    + this.clearImage.getIconHeight () );
+		    + clearImage.getIconHeight () );
 	}
 
 	public void mousePressed ( MouseEvent e ) {
