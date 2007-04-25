@@ -142,16 +142,8 @@ public class Main extends JFrame implements Constants, RepositoryChangeListener 
 		contentPane.add ( createToolBar (), BorderLayout.NORTH );
 
 		JPanel navArea = createJournalSelectionPanel ();
-		// JPanel viewPanel = new JPanel ();
-		// viewPanel.setLayout ( new BorderLayout () );
-		// JPanel searchPanel = new JPanel ();
-		// searchPanel.setLayout ( new FlowLayout () );
-		// searchPanel.add ( new JLabel ( "Search: " ) );
-		// searchPanel.add ( new JTextField ( 20 ) );
-		// viewPanel.add ( searchPanel );
 		journalView = new JournalViewPanel ();
 
-		// viewPanel.add ( journalView, BorderLayout.CENTER );
 		JSplitPane splitPane = new JSplitPane ( JSplitPane.VERTICAL_SPLIT, navArea,
 		    journalView );
 		splitPane.setOneTouchExpandable ( true );
@@ -427,8 +419,7 @@ public class Main extends JFrame implements Constants, RepositoryChangeListener 
 		JSplitPane splitPane = new JSplitPane ( JSplitPane.HORIZONTAL_SPLIT,
 		    tabbedPane, journalListPane );
 		splitPane.setOneTouchExpandable ( true );
-		// splitPane.setResizeWeight ( 0.5 );
-		splitPane.setDividerLocation ( 250 );
+		splitPane.setDividerLocation ( 185 );
 
 		topPanel.add ( splitPane, BorderLayout.CENTER );
 
