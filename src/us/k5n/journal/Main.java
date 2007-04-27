@@ -460,7 +460,7 @@ public class Main extends JFrame implements Constants, RepositoryChangeListener 
 		dateTreeAllNode.removeAllChildren ();
 		// Get entries, starting with years
 		int[] years = dataRepository.getYears ();
-		for ( int i = 0; years != null && i < years.length; i++ ) {
+		for ( int i = years.length - 1; years != null && i >= 0; i-- ) {
 			Vector yearEntries = dataRepository.getEntriesByYear ( years[i] );
 			DateFilterTreeNode yearNode = new DateFilterTreeNode ( "" + years[i],
 			    years[i], 0, 0, yearEntries == null ? 0 : yearEntries.size () );
