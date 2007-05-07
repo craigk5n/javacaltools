@@ -62,6 +62,8 @@ public class Event implements Constants {
 	protected Rrule rrule = null;
 	/** URL */
 	protected URL url = null;
+	/** Private user object for caller to set/get */
+	private Object userData = null;
 
 	// TODO: multiple summaries, descriptions with different LANGUAGE values
 	// TODO: alarms/triggers
@@ -319,6 +321,14 @@ public class Event implements Constants {
 
 	public void setSummary ( Summary summary ) {
 		this.summary = summary;
+	}
+	
+	public Object getUserData () {
+		return userData;
+	}
+
+	public void setUserData ( Object userData ) {
+		this.userData = userData;
 	}
 
 	/**
