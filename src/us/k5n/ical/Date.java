@@ -22,6 +22,10 @@ package us.k5n.ical;
 
 import java.util.Calendar;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.LocalDateTime;
+
 /**
  * Base class for use with a variety of date-related iCalendar fields including
  * LAST-MODIFIED, DTSTAMP, DTSTART, etc. This can represent both a date and a
@@ -37,6 +41,7 @@ public class Date extends Property implements Constants, Comparable {
 	boolean dateOnly = false; // is date only (rather than date-time)?
 	static int[] monthDays = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 	static int[] leapMonthDays = { 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+	String tzid = null;
 
 	/**
 	 * Constructor
@@ -191,6 +196,8 @@ public class Date extends Property implements Constants, Comparable {
 						    icalStr );
 					}
 				}
+			} else if ( aname.equals ( "TZID" ) ) {
+				tzid = a.value;
 			} else {
 				// TODO: anything else allowed here?
 			}
@@ -257,6 +264,39 @@ public class Date extends Property implements Constants, Comparable {
 			// Just date, no time
 			dateOnly = true;
 		}
+
+		if ( isUTC && !dateOnly ) {
+			// Use Joda Time to convert UTC to localtime
+			DateTime utcDateTime = new DateTime ( year, month, day, hour, minute,
+			    second, 0, DateTimeZone.UTC );
+			LocalDateTime localDateTime = new LocalDateTime ( utcDateTime );
+			year = localDateTime.getYear ();
+			month = localDateTime.getMonthOfYear ();
+			day = localDateTime.getDayOfMonth ();
+			hour = localDateTime.getHourOfDay ();
+			minute = localDateTime.getMinuteOfHour ();
+			second = localDateTime.getSecondOfMinute ();
+		} else if ( tzid != null ) {
+			DateTimeZone tz = DateTimeZone.forID ( tzid );
+			if ( tz == null && parseMode == PARSE_STRICT ) {
+				// Invalid Timezone
+				throw new BogusDataException ( "Invalid timezone in date string '"
+				    + inDate + "'", inDate );
+			}
+			if ( tz != null ) {
+				// Convert to localtime
+				DateTime utcDateTime = new DateTime ( year, month, day, hour, minute,
+				    second, 0, tz );
+				LocalDateTime localDateTime = new LocalDateTime ( utcDateTime );
+				year = localDateTime.getYear ();
+				month = localDateTime.getMonthOfYear ();
+				day = localDateTime.getDayOfMonth ();
+				hour = localDateTime.getHourOfDay ();
+				minute = localDateTime.getMinuteOfHour ();
+				second = localDateTime.getSecondOfMinute ();
+			}
+		}
+		isUTC = false;
 
 		// Add attribute that says date-only or date with time
 		if ( dateOnly )

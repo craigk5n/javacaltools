@@ -181,6 +181,20 @@ public class DateTest extends TestCase implements Constants {
 		}
 	}
 
+	public void testTimeZone () {
+		String dateStr = "DTSTART;VALUE=\"DATE\";TZID=\""
+		    + java.util.TimeZone.getDefault ().getID () + "\":20070901T120000";
+		try {
+			// System.out.println ( "Input: " + dateStr );
+			Date d = new Date ( dateStr, PARSE_STRICT );
+			assertTrue ( "Date has time", d.isDateOnly () );
+			assertTrue ( "Wrong time", d.getHour () == 12 );
+		} catch ( Exception e ) {
+			e.printStackTrace ();
+			fail ( "Failed: " + e.toString () );
+		}
+	}
+
 	public static Test suite () {
 		return new TestSuite ( DateTest.class );
 	}
