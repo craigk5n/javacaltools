@@ -266,8 +266,6 @@ public class Date extends Property implements Constants, Comparable {
 		}
 
 		if ( isUTC && !dateOnly ) {
-			System.out.println ( "Converting UTC date " + icalStr + ": " + hour + ":"
-			    + minute + ":" + second );
 			// Use Joda Time to convert UTC to localtime
 			DateTime utcDateTime = new DateTime ( DateTimeZone.UTC );
 			utcDateTime = utcDateTime.withDate ( year, month, day ).withTime ( hour,
