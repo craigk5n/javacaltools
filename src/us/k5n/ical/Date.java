@@ -266,10 +266,14 @@ public class Date extends Property implements Constants, Comparable {
 		}
 
 		if ( isUTC && !dateOnly ) {
+			System.out.println ( "Converting UTC date " + icalStr + ": " + hour + ":"
+			    + minute + ":" + second );
 			// Use Joda Time to convert UTC to localtime
-			DateTime utcDateTime = new DateTime ( year, month, day, hour, minute,
-			    second, 0, DateTimeZone.UTC );
-			LocalDateTime localDateTime = new LocalDateTime ( utcDateTime );
+			DateTime utcDateTime = new DateTime ( DateTimeZone.UTC );
+			utcDateTime = utcDateTime.withDate ( year, month, day ).withTime ( hour,
+			    minute, second, 0 );
+			DateTime localDateTime = utcDateTime.withZone ( DateTimeZone
+			    .getDefault () );
 			year = localDateTime.getYear ();
 			month = localDateTime.getMonthOfYear ();
 			day = localDateTime.getDayOfMonth ();
@@ -285,15 +289,19 @@ public class Date extends Property implements Constants, Comparable {
 			}
 			if ( tz != null ) {
 				// Convert to localtime
-				DateTime utcDateTime = new DateTime ( year, month, day, hour, minute,
-				    second, 0, tz );
-				LocalDateTime localDateTime = new LocalDateTime ( utcDateTime );
+				DateTime utcDateTime = new DateTime ( tz );
+				utcDateTime = utcDateTime.withDate ( year, month, day ).withTime (
+				    hour, minute, second, 0 );
+				DateTime localDateTime = utcDateTime.withZone ( DateTimeZone
+				    .getDefault () );
 				year = localDateTime.getYear ();
 				month = localDateTime.getMonthOfYear ();
 				day = localDateTime.getDayOfMonth ();
 				hour = localDateTime.getHourOfDay ();
 				minute = localDateTime.getMinuteOfHour ();
 				second = localDateTime.getSecondOfMinute ();
+				// Since we have converted to localtime, remove the TZID attribute
+				this.removeNamedAttribute ( "TZID" );
 			}
 		}
 		isUTC = false;
