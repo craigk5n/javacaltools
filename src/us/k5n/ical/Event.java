@@ -47,7 +47,7 @@ public class Event implements Constants {
 	protected Date startDate = null;
 	/** End date */
 	protected Date endDate = null; // may be derived from duration if not
-																	// specified
+	// specified
 	/** Time created */
 	protected Date dtstamp = null;
 	/** Time last modified */
@@ -177,6 +177,8 @@ public class Event implements Constants {
 			endDate = new Date ( icalStr );
 		} else if ( up.startsWith ( "DTSTAMP" ) ) {
 			dtstamp = new Date ( icalStr );
+		} else if ( up.startsWith ( "DURATION" ) ) {
+			duration = new Duration ( icalStr );
 		} else if ( up.startsWith ( "LAST-MODIFIED" ) ) {
 			lastModified = new Date ( icalStr );
 		} else if ( up.startsWith ( "CLASS" ) ) {
@@ -322,7 +324,7 @@ public class Event implements Constants {
 	public void setSummary ( Summary summary ) {
 		this.summary = summary;
 	}
-	
+
 	public Object getUserData () {
 		return userData;
 	}
