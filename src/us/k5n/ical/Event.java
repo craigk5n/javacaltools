@@ -39,6 +39,8 @@ public class Event implements Constants {
 	protected Summary summary = null;
 	/** Full description */
 	protected Description description = null;
+	/** Comment */
+	protected Comment comment = null;
 	/** Classification (PUBLIC, CONFIDENTIAL, PRIVATE) */
 	protected Classification classification = null;
 	/** List of categories (comma-separated) */
@@ -171,6 +173,8 @@ public class Event implements Constants {
 			description = new Description ( icalStr );
 		} else if ( up.startsWith ( "SUMMARY" ) ) {
 			summary = new Summary ( icalStr );
+		} else if ( up.startsWith ( "COMMENT" ) ) {
+			comment = new Comment ( icalStr );
 		} else if ( up.startsWith ( "DTSTART" ) ) {
 			startDate = new Date ( icalStr );
 		} else if ( up.startsWith ( "DTEND" ) ) {
@@ -247,6 +251,14 @@ public class Event implements Constants {
 
 	public void setDescription ( Description description ) {
 		this.description = description;
+	}
+
+	public Comment getComment () {
+		return comment;
+	}
+
+	public void setComment ( Comment comment ) {
+		this.comment = comment;
 	}
 
 	public Date getDtstamp () {

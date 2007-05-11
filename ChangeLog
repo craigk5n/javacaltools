@@ -2,6 +2,8 @@ Version 0.3.0 (09 May 2007)
  - Added setUserData/getUserData methods to Event class
  - Added support for timezones for all date objects by including
    Joda Time (www.joda.org)
+ - Added support for comment for events.
+ - Fixed duration in event
 Version 0.2.6 (24 Apr 2007)
   - k5njournal changes:
     + replaced "Clear" button for text search with graphic icon
