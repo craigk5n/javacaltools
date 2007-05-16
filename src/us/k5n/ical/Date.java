@@ -24,7 +24,6 @@ import java.util.Calendar;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.joda.time.LocalDateTime;
 
 /**
  * Base class for use with a variety of date-related iCalendar fields including
@@ -42,6 +41,13 @@ public class Date extends Property implements Constants, Comparable {
 	static int[] monthDays = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 	static int[] leapMonthDays = { 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 	String tzid = null;
+	public static final int SUNDAY = 0;
+	public static final int MONDAY = 1;
+	public static final int TUESDAY = 2;
+	public static final int WEDNESDAY = 3;
+	public static final int THURSDAY = 4;
+	public static final int FRIDAY = 5;
+	public static final int SATURDAY = 6;
 
 	/**
 	 * Constructor
@@ -460,12 +466,91 @@ public class Date extends Property implements Constants, Comparable {
 		this.year = year;
 	}
 
+	/**
+	 * Get the day of the week where 0=Sunday, 1=Monday, etc.
+	 * 
+	 * @return
+	 */
+	public int getDayOfWeek () {
+		return Utils.getDayOfWeek ( year, month, day );
+	}
+
+	public int getDayOfYear () {
+		int[] days = { -1, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+		int[] ldays = { -1, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+
+		int ret = 0;
+		for ( int i = 1; i < this.month; i++ ) {
+			ret += ( this.year % 4 == 0 ? ldays[i] : days[i] );
+		}
+		ret += this.day;
+		return ret;
+	}
+
+	/**
+	 * Get the ISO8601 week of year. NOTE: This is DIFFERENT than the
+	 * java.util.Calendar week number.
+	 * 
+	 * @return
+	 */
+	public int getWeekOfYear () {
+		int weekdayJan1 = Utils.getFirstDayOfWeekForYear ( this.year );
+		int []offsetsToWeek0 = { 6, 7, 8, 9, 10, 4, 5 };
+		int offsetToWeek0 = offsetsToWeek0[weekdayJan1];
+		int thisDoy = this.getDayOfYear ();
+		int daysSinceStartOfWeek0 = thisDoy + offsetToWeek0;
+		int weekNum = daysSinceStartOfWeek0 / 7;
+		return weekNum;
+	}
+
 	public boolean equals ( Object o ) {
 		if ( o instanceof Date ) {
 			return ( this.compareTo ( o ) == 0 );
 		} else {
 			return false;
 		}
+	}
+
+	public Date clone () {
+		Date ret = null;
+		try {
+			if ( this.dateOnly )
+				ret = new Date ( this.name, this.year, this.month, this.day );
+			else
+				ret = new Date ( this.name, this.year, this.month, this.day, this.hour,
+				    this.minute, this.second );
+		} catch ( BogusDataException e1 ) {
+			// TODO
+		}
+		for ( int i = 0; i < this.attributeList.size (); i++ ) {
+			Attribute a = this.attributeAt ( i );
+			ret.addAttribute ( a.name, a.value );
+		}
+		return ret;
+	}
+
+	/**
+	 * Is the date/time before the specified date?
+	 * 
+	 * @param d2
+	 *          The Date object to compare against
+	 * @return
+	 */
+	public boolean isBefore ( Date d2 ) {
+		int ret = this.compareTo ( d2 );
+		return ret < 0;
+	}
+
+	/**
+	 * Is the date/time after the specified date?
+	 * 
+	 * @param d2
+	 *          The Date object to compare against
+	 * @return
+	 */
+	public boolean isAfter ( Date d2 ) {
+		int ret = this.compareTo ( d2 );
+		return ret > 0;
 	}
 
 	public int compareTo ( Object anotherDate ) throws ClassCastException {

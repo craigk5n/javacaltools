@@ -181,6 +181,28 @@ public class DateTest extends TestCase implements Constants {
 		}
 	}
 
+	// There's no comparable function in java.util.Calendar
+	public void testWeekOfYear () {
+		String[] dates = { "1/1/1999:0", "1/2/1999:0", "1/3/1999:1", "1/1/2000:0",
+		    "1/2/2000:1", "1/3/2000:1", "1/1/2001:1", "1/2/2001:1", "1/3/2001:1",
+		    "1/1/2002:1", "1/2/2002:1", "1/3/2002:1", "1/4/2002:1", "1/5/2002:1",
+		    "1/6/2002:2" };
+		try {
+			for ( int i = 0; i < dates.length; i++ ) {
+				String args[] = dates[i].split ( ":" );
+				String[] dateArgs = args[0].split ( "/" );
+				Date d = new Date ( "XXX", Integer.parseInt ( dateArgs[2] ), Integer
+				    .parseInt ( dateArgs[0] ), Integer.parseInt ( dateArgs[1] ) );
+				int week = d.getWeekOfYear ();
+				int expWeek = Integer.parseInt ( args[1] );
+				assertTrue ( "Incorrect week for " + args[0] + ": got " + week
+				    + " instead of " + expWeek, week == expWeek );
+			}
+		} catch ( BogusDataException e1 ) {
+			this.fail ( e1.getMessage () );
+		}
+	}
+
 	public void testTimeZone () {
 		String dateStr = "DTSTART;VALUE=\"DATE\";TZID=\""
 		    + java.util.TimeZone.getDefault ().getID () + "\":20070901T120000";
