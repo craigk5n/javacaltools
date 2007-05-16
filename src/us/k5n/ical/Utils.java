@@ -163,4 +163,61 @@ public class Utils implements Constants {
 		return ret;
 	}
 
+	/**
+	 * Get the day of the week (0=Sun to 6=Sat) for any specified date.
+	 * 
+	 * @param y
+	 *          year (NNNN format, > 0)
+	 * @param m
+	 *          month (1=Jan)
+	 * @param d
+	 *          Day of month
+	 * @return
+	 */
+	public static int getDayOfWeek ( int y, int m, int d ) {
+		int[] month = { -1, 0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4 };
+
+		if ( m == 1 )
+			y--;
+		if ( m == 2 )
+			y--;
+
+		int wday = ( ( d + month[m] + y + ( y / 4 ) - ( y / 100 ) + ( y / 400 ) ) % 7 );
+		return wday;
+	}
+
+	/**
+	 * Get the weekday for the first day of the year (Jan 1)
+	 * 
+	 * @param y
+	 *          The 4-digit year
+	 * @return The weekday (0=sunday)
+	 */
+	public static int getFirstDayOfWeekForYear ( int y ) {
+		try {
+			Date d = new Date ( "FOOBAR", y, 1, 1 );
+			return getDayOfWeek ( d.getYear (), d.getMonth (), d.getDay () );
+		} catch ( BogusDataException e1 ) {
+			e1.printStackTrace ();
+			return -1;
+		}
+	}
+
+	/**
+	 * Get the weekday for the last day of the year (Dec 31)
+	 * 
+	 * @param y
+	 *          The 4-digit year
+	 * @return The weekday (0=sunday)
+	 */
+	public static int getLastDayOfWeekForYear ( int y ) {
+		try {
+			Date d = new Date ( "FOOBAR", y, 12, 31 );
+			return getDayOfWeek ( d.getYear (), d.getMonth (), d.getDay () );
+		} catch ( BogusDataException e1 ) {
+			e1.printStackTrace ();
+			return -1;
+		}
+	}
+
 }
