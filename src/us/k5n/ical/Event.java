@@ -60,7 +60,7 @@ public class Event implements Constants {
 	// public Individual contact;
 	/** Participants for the event (Vector of Attendee) */
 	protected Vector attendees = null;
-	/** Recurrence rule (RRULE) */
+	/** Recurrance rule (RRULE) */
 	protected Rrule rrule = null;
 	/** URL */
 	protected URL url = null;
@@ -343,6 +343,23 @@ public class Event implements Constants {
 
 	public void setUserData ( Object userData ) {
 		this.userData = userData;
+	}
+
+	/**
+	 * Get a Vector of Date objects that contain the recurrance dates (or null if
+	 * there are none).
+	 * 
+	 * @return
+	 */
+	public Vector getRecurranceDates () {
+		String tzid = null;
+		// TODO: add support for exceptions
+		if ( this.rrule == null )
+			return null;
+		if ( this.startDate == null )
+			return null;
+		tzid = this.startDate.tzid;
+		return rrule.generateRecurrances ( this.startDate, tzid );
 	}
 
 	/**

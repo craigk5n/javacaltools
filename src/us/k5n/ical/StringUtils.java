@@ -165,7 +165,7 @@ public class StringUtils implements Constants {
 		if ( str.charAt ( 0 ) == '+' || str.charAt ( 0 ) == '-' )
 			i = 1;
 		for ( ; i < str.length (); i++ ) {
-			if ( str.charAt ( 0 ) < '0' || str.charAt ( 0 ) > '9' )
+			if ( str.charAt ( i ) < '0' || str.charAt ( i ) > '9' )
 				return false;
 		}
 		return true;

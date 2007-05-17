@@ -58,3 +58,23 @@ the GNU General Public License.
 For information about this license:
 
 	http://www.gnu.org/licenses/gpl.html
+	
+
+---------------------------------------------------------------------------
+                         3RD PARTY PACKAGES
+---------------------------------------------------------------------------
+	
+
+This package makes use of the following packages.  The class files from
+these packages are bundled into the ical jar file, so you do not need
+to download them separately.
+
+Joda Time
+  URL: http://joda-time.sourceforge.net/index.html
+  License: Apache License 2.0
+  License URL: http://joda-time.sourceforge.net/license.html
+  
+Google RFC2445
+  URL: http://code.google.com/p/google-rfc-2445/
+  License: Apache License 2.0
+  License URL: http://www.apache.org/licenses/

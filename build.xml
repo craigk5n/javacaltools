@@ -14,6 +14,7 @@
 
   <property name="version"  value="0.3.0"/>
   <property name="jodatime-jar"  value="lib/joda-time-1.4.jar"/>
+  <property name="google-rrule-jar"  value="lib/google-rfc2445.jar"/>
 
   <target name="init">
     <!-- Create the time stamp -->
@@ -25,7 +26,12 @@
   <target name="compile" depends="init"
         description="compile the source " >
     <!-- Compile the java code from ${src} into ${build} -->
-    <javac srcdir="${src}" destdir="${build}" classpath="${jodatime-jar}" />
+    <javac srcdir="${src}" destdir="${build}">
+      <classpath>
+        <pathelement path="${jodatime-jar}"/>
+        <pathelement path="${google-rrule-jar}"/>
+      </classpath>
+    </javac>
   </target>
 
   <target name="dist" depends="compile"
@@ -35,7 +41,10 @@
 
     <!-- Put everything in ${build} into the k5n-ical-${version}.jar file -->
     <jar jarfile="${dist}/lib/k5n-ical-${version}.jar" basedir="${build}"
-      excludes="**/journal/*.class" />
+      excludes="**/journal/*.class">
+      <zipfileset src="${jodatime-jar}" />
+      <zipfileset src="${google-rrule-jar}" />
+    </jar>
 
     <!-- Put all the lib and k5njournal files into a single jar
          and designate the main class -->
@@ -44,6 +53,7 @@
        <attribute name="Main-Class" value="us.k5n.journal.Main"/>
     </manifest>
     <zipfileset src="${jodatime-jar}" />
+    <zipfileset src="${google-rrule-jar}" />
     </jar>
   </target>
 

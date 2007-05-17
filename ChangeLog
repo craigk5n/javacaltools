@@ -1,4 +1,10 @@
-Version 0.3.0 (09 May 2007)
+Version 0.3.0 (17 May 2007)
+ - Added Google's RRULE java implementation for generating recurrance dates.
+ - Numerous bugfixes for recurrance (RRULE)
+ - Added getDayOfWeek, getFirstDayOfWeekForYear, getLastDayOfWeekForYear
+   to Utils class
+ - Added getWeekOfYear, getDayOfYear, getDayOfWeek, isBefore, isAfter
+   methods to Date object
  - Added setUserData/getUserData methods to Event class
  - Added support for timezones for all date objects by including
    Joda Time (www.joda.org)

@@ -22,6 +22,14 @@ package us.k5n.ical;
 
 import java.util.Vector;
 
+import com.google.ical.iter.RecurrenceIterator;
+import com.google.ical.iter.RecurrenceIteratorFactory;
+import com.google.ical.values.DateTimeValueImpl;
+import com.google.ical.values.DateValueImpl;
+import com.google.ical.values.Frequency;
+import com.google.ical.values.Weekday;
+import com.google.ical.values.WeekdayNum;
+
 class RruleByday {
 	public boolean positive;
 	public int weekday; // (0=Sun, etc.)
@@ -31,6 +39,7 @@ class RruleByday {
 	public RruleByday(String str) {
 		int i = 0;
 		weekday = -1;
+		positive = true;
 		if ( str.charAt ( i ) == '+' ) {
 			positive = true;
 			i++;
@@ -38,7 +47,12 @@ class RruleByday {
 			positive = false;
 			i++;
 		}
-		if ( str.charAt ( i ) >= '0' && str.charAt ( i ) <= '9' ) {
+		if ( str.charAt ( i ) >= '0' && str.charAt ( i ) <= '9'
+		    && str.charAt ( i + 1 ) >= '0' && str.charAt ( i + 1 ) <= '9' ) {
+			number = (int) ( str.charAt ( i ) - '0' ) * 10
+			    + (int) ( str.charAt ( i + 1 ) - '0' );
+			i += 2;
+		} else if ( str.charAt ( i ) >= '0' && str.charAt ( i ) <= '9' ) {
 			number = (int) ( str.charAt ( i ) - '0' );
 			i++;
 		}
@@ -59,6 +73,39 @@ class RruleByday {
 			weekday = 6;
 		if ( weekday >= 0 && str.length () == i + 2 )
 			valid = true;
+	}
+
+	/**
+	 * Convert the a google-compatible WeekdayNum object
+	 */
+	public WeekdayNum toWeekdayNum () {
+		Weekday w;
+		switch ( weekday ) {
+			case 0:
+				w = Weekday.SU;
+				break;
+			case 1:
+				w = Weekday.MO;
+				break;
+			case 2:
+				w = Weekday.TU;
+				break;
+			case 3:
+				w = Weekday.WE;
+				break;
+			case 4:
+				w = Weekday.TH;
+				break;
+			case 5:
+				w = Weekday.FR;
+				break;
+			case 6:
+			default:
+				w = Weekday.SA;
+				break;
+		}
+		WeekdayNum ret = new WeekdayNum ( positive ? number : -number, w );
+		return ret;
 	}
 
 	public String toICalendar () {
@@ -97,6 +144,11 @@ class RruleByday {
  * Class for holding recurrence information for an event/todo as specified in
  * the iCalendar RRULE property.
  * 
+ * This class does its own parsing of the RRULE values. However, the recurrance
+ * dates are generating using Google's RFC2445 jar package. See the following
+ * URL for more info: <a
+ * href="http://code.google.com/p/google-rfc-2445/">http://code.google.com/p/google-rfc-2445/</a>
+ * 
  * @version $Id$
  * @author Craig Knudsen, craig@k5n.us
  */
@@ -123,6 +175,7 @@ public class Rrule extends Property implements Constants {
 	public int[] byyearday = null;
 	/** Month event falls on (1,2 etc.) */
 	public int[] bymonth = null;
+	public int[] bysetpos = null;
 
 	/** Days where event should not occur (Vector of Date) */
 	public Vector exceptions;
@@ -182,6 +235,8 @@ public class Rrule extends Property implements Constants {
 					freq = FREQ_YEARLY;
 				} else if ( aval.equals ( "MONTHLY" ) ) {
 					freq = FREQ_MONTHLY;
+				} else if ( aval.equals ( "WEEKLY" ) ) {
+					freq = FREQ_WEEKLY;
 				} else if ( aval.equals ( "DAILY" ) ) {
 					freq = FREQ_DAILY;
 				} else if ( aval.equals ( "HOURLY" ) ) {
@@ -225,7 +280,20 @@ public class Rrule extends Property implements Constants {
 			} else if ( aname.equals ( "BYWEEKNO" ) ) {
 				// TODO
 			} else if ( aname.equals ( "BYSETPOS" ) ) {
-				// TODO
+				String[] s = aval.split ( "," );
+				bysetpos = new int[s.length];
+				for ( int j = 0; j < s.length; j++ ) {
+					if ( StringUtils.isNumber ( s[j], true ) ) {
+						bysetpos[j] = Integer.parseInt ( s[j] );
+						if ( bysetpos[j] < -366 || bysetpos[j] > 366 ) {
+							throw new BogusDataException ( "Invalid RRULE BYSETPOS (range) '"
+							    + bysetpos[j] + "'", icalStr );
+						}
+					} else {
+						throw new BogusDataException ( "Invalid RRULE BYSETPOS '" + s[j]
+						    + "'", icalStr );
+					}
+				}
 			} else if ( aname.equals ( "BYMONTH" ) ) {
 				String[] s = aval.split ( "," );
 				bymonth = new int[s.length];
@@ -259,8 +327,9 @@ public class Rrule extends Property implements Constants {
 					if ( StringUtils.isNumber ( s[j], true ) ) {
 						bymonthday[j] = Integer.parseInt ( s[j] );
 						if ( bymonthday[j] < -31 || bymonthday[j] > 31 ) {
-							throw new BogusDataException ( "Invalid RRULE BYMONTHDAY '"
-							    + s[j] + "'", icalStr );
+							throw new BogusDataException (
+							    "Invalid RRULE BYMONTHDAY (range) '" + bymonthday[j] + "'",
+							    icalStr );
 						}
 					} else {
 						throw new BogusDataException ( "Invalid RRULE BYMONTHDAY '" + s[j]
@@ -425,4 +494,133 @@ public class Rrule extends Property implements Constants {
 		return super.toICalendar ();
 	}
 
+	/**
+	 * Generate a Vector of Date objects indicating when this event will repeat.
+	 * This DOES NOT include the original event date specified by DTSTART. The
+	 * Google RFC2445 package is used to generate recurrances. See the following
+	 * URL for more info: <a
+	 * ref="http://code.google.com/p/google-rfc-2445/">http://code.google.com/p/google-rfc-2445/</a>
+	 */
+	public Vector generateRecurrances ( Date startDate, String tzid ) {
+		Vector ret = new Vector ();
+		com.google.ical.values.DateValue dtStart = null;
+		if ( startDate.dateOnly ) {
+			dtStart = new DateValueImpl ( startDate.getYear (),
+			    startDate.getMonth (), startDate.getDay () );
+		} else {
+			dtStart = new DateTimeValueImpl ( startDate.getYear (), startDate
+			    .getMonth (), startDate.getDay (), startDate.getHour (), startDate
+			    .getMinute (), startDate.getSecond () );
+		}
+		com.google.ical.values.RRule rrule = new com.google.ical.values.RRule ();
+		rrule.setName ( "RRULE" );
+		rrule.setInterval ( this.interval );
+		switch ( this.freq ) {
+			case FREQ_YEARLY:
+				rrule.setFreq ( Frequency.YEARLY );
+				break;
+			case FREQ_MONTHLY:
+				rrule.setFreq ( Frequency.MONTHLY );
+				break;
+			case FREQ_WEEKLY:
+				rrule.setFreq ( Frequency.WEEKLY );
+				break;
+			case FREQ_DAILY:
+				rrule.setFreq ( Frequency.DAILY );
+				break;
+			case FREQ_HOURLY:
+				rrule.setFreq ( Frequency.HOURLY );
+				break;
+			case FREQ_MINUTELY:
+				rrule.setFreq ( Frequency.MINUTELY );
+				break;
+			case FREQ_SECONDLY:
+				rrule.setFreq ( Frequency.SECONDLY );
+				break;
+		}
+		if ( this.count > 0 )
+			rrule.setCount ( this.count );
+		if ( this.byyearday != null && this.byyearday.length > 0 ) {
+			rrule.setByYearDay ( this.byyearday );
+		}
+		if ( this.bymonth != null && this.bymonth.length > 0 )
+			rrule.setByMonth ( this.bymonth );
+		if ( this.bymonthday != null && this.bymonthday.length > 0 )
+			rrule.setByMonthDay ( this.bymonthday );
+		if ( this.byday != null && this.byday.length > 0 ) {
+			Vector<WeekdayNum> weekdays = new Vector ();
+			for ( int i = 0; i < this.byday.length; i++ ) {
+				WeekdayNum weekday = this.byday[i].toWeekdayNum ();
+				weekdays.addElement ( weekday );
+			}
+			rrule.setByDay ( weekdays );
+		}
+		if ( this.byhour != null && this.byhour.length > 0 )
+			rrule.setByHour ( this.byhour );
+		if ( this.byminute != null && this.byminute.length > 0 )
+			rrule.setByMinute ( this.byminute );
+		if ( this.bysecond != null && this.bysecond.length > 0 )
+			rrule.setBySecond ( this.bysecond );
+		if ( this.bysetpos != null && this.bysetpos.length > 0 )
+			rrule.setBySetPos ( this.bysetpos );
+		if ( this.untilDate != null ) {
+			com.google.ical.values.DateValue rruleUntil = null;
+			if ( this.untilDate.dateOnly ) {
+				rruleUntil = new DateValueImpl ( this.untilDate.getYear (),
+				    this.untilDate.getMonth (), this.untilDate.getDay () );
+			} else {
+				rruleUntil = new DateTimeValueImpl ( this.untilDate.getYear (),
+				    this.untilDate.getMonth (), this.untilDate.getDay (),
+				    this.untilDate.getHour (), this.untilDate.getMinute (),
+				    this.untilDate.getSecond () );
+			}
+			rrule.setUntil ( rruleUntil );
+		}
+
+		// TODO: does this conflict with Joda's own Timezone stuff?
+		// should we be using a Joda timezone object here?
+		java.util.TimeZone timezone = null;
+		if ( tzid != null )
+			timezone = java.util.TimeZone.getTimeZone ( tzid );
+		RecurrenceIterator iter = RecurrenceIteratorFactory
+		    .createRecurrenceIterator ( rrule, dtStart, timezone );
+		int num = 0;
+		int thisYear = java.util.Calendar.getInstance ().get (
+		    java.util.Calendar.YEAR );
+		while ( iter.hasNext () && num++ < 10000 ) {
+			com.google.ical.values.DateValue d = iter.next ();
+			if ( d instanceof com.google.ical.values.DateTimeValue ) {
+				com.google.ical.values.DateTimeValue dt = (com.google.ical.values.DateTimeValue) d;
+				try {
+					Date newDateTime = new Date ( "XXX", dt.year (), dt.month (), dt
+					    .day (), dt.hour (), dt.minute (), dt.second () );
+					// HACK! The google RRULE code does not seem to support
+					// the "UNTIL=" setting, so we will enforce it here.
+					if ( this.untilDate != null && newDateTime.isAfter ( this.untilDate ) ) {
+						break;
+					}
+					ret.addElement ( newDateTime );
+				} catch ( BogusDataException e1 ) {
+					e1.printStackTrace ();
+				}
+			} else {
+				try {
+					Date newDate = new Date ( "XXX", d.year (), d.month (), d.day () );
+					// HACK! The google RRULE code does not seem to support
+					// the "UNTIL=" setting, so we will enforce it here.
+					if ( this.untilDate != null && newDate.isAfter ( this.untilDate ) ) {
+						break;
+					}
+					ret.addElement ( newDate );
+				} catch ( BogusDataException e1 ) {
+					e1.printStackTrace ();
+				}
+			}
+			// Max of 100 years from this year. (To avoid endless loop.)
+			// TODO: make this configurable
+			if ( d.year () >= thisYear + 100 )
+				break;
+		}
+		return ret;
+	}
 }
