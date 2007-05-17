@@ -1,16 +1,17 @@
                            k5n java calendar tools
 ****************************************************************************
 
-Version:      0.2.6
+Version:      0.3.0
 URL:          http://javacaltools.sourceforge.net
 Author:       Craig Knudsen, craig [< at >] k5n.us
 License:      GNU GPL
+Requires:     Java 1.5 or later
 
 ---------------------------------------------------------------------------
                          BUILDING
 ---------------------------------------------------------------------------
 To build the source, you will need to use ant with the provided build.xml
-file.  (Ant 1.6 or later is required.)
+file.  (Ant 1.6 and or later is required.  Java 1.5 or later is required.)
 
 To build with ant:
 
@@ -18,8 +19,8 @@ ant
 
 This build process will create the following jar files:
 
-	dist/lib/k5n-ical-0.2.6.jar
-	dist/k5njournal-0.2.6.jar
+	dist/lib/k5n-ical-0.3.0.jar
+	dist/k5njournal-0.3.0.jar
 
 The k5n-ical jar is the main iCalendar library that can be used by
 other applications.
@@ -37,7 +38,7 @@ you can either double-click on the jar file in your file viewer (Windows
 Explorer or Mac OS X Finder), or you can use the following command from a
 command prompt:
 
-	java -jar k5njournal-0.2.3.jar
+	java -jar k5njournal-0.3.0.jar
 
 
 ---------------------------------------------------------------------------
