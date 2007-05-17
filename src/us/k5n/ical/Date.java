@@ -495,12 +495,24 @@ public class Date extends Property implements Constants, Comparable {
 	 */
 	public int getWeekOfYear () {
 		int weekdayJan1 = Utils.getFirstDayOfWeekForYear ( this.year );
-		int []offsetsToWeek0 = { 6, 7, 8, 9, 10, 4, 5 };
+		int[] offsetsToWeek0 = { 6, 7, 8, 9, 10, 4, 5 };
 		int offsetToWeek0 = offsetsToWeek0[weekdayJan1];
 		int thisDoy = this.getDayOfYear ();
 		int daysSinceStartOfWeek0 = thisDoy + offsetToWeek0;
 		int weekNum = daysSinceStartOfWeek0 / 7;
 		return weekNum;
+	}
+
+	/**
+	 * Get the number of days in the current month.
+	 * 
+	 * @return
+	 */
+	public int getDaysInMonth () {
+		if ( this.year % 4 == 0 )
+			return this.leapMonthDays[this.month - 1];
+		else
+			return monthDays[this.month - 1];
 	}
 
 	public boolean equals ( Object o ) {
