@@ -64,6 +64,8 @@ public class Event implements Constants {
 	protected Rrule rrule = null;
 	/** URL */
 	protected URL url = null;
+	/** Location */
+	protected Location location = null;
 	/** Private user object for caller to set/get */
 	private Object userData = null;
 
@@ -197,6 +199,8 @@ public class Event implements Constants {
 			rrule = new Rrule ( icalStr, parseMethod );
 		} else if ( up.startsWith ( "URL" ) ) {
 			url = new URL ( icalStr );
+		} else if ( up.startsWith ( "LOCATION" ) ) {
+			location = new Location ( icalStr );
 		} else {
 			System.out.println ( "Ignoring: " + icalStr );
 		}
@@ -331,6 +335,14 @@ public class Event implements Constants {
 
 	public void setUrl ( URL url ) {
 		this.url = url;
+	}
+
+	public Location getLocation () {
+		return location;
+	}
+
+	public void setLocation ( Location location ) {
+		this.location = location;
 	}
 
 	public void setSummary ( Summary summary ) {

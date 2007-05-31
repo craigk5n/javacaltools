@@ -596,10 +596,12 @@ public class Rrule extends Property implements Constants {
 					    .day (), dt.hour (), dt.minute (), dt.second () );
 					// HACK! The google RRULE code does not seem to support
 					// the "UNTIL=" setting, so we will enforce it here.
-					if ( this.untilDate != null && newDateTime.isAfter ( this.untilDate ) ) {
-						break;
-					}
-					ret.addElement ( newDateTime );
+					/*
+					 * if ( this.untilDate != null && newDateTime.isAfter ( this.untilDate ) ) {
+					 * break; }
+					 */
+					if ( !newDateTime.equals ( startDate ) )
+						ret.addElement ( newDateTime );
 				} catch ( BogusDataException e1 ) {
 					e1.printStackTrace ();
 				}
@@ -608,10 +610,12 @@ public class Rrule extends Property implements Constants {
 					Date newDate = new Date ( "XXX", d.year (), d.month (), d.day () );
 					// HACK! The google RRULE code does not seem to support
 					// the "UNTIL=" setting, so we will enforce it here.
-					if ( this.untilDate != null && newDate.isAfter ( this.untilDate ) ) {
-						break;
-					}
-					ret.addElement ( newDate );
+					/*
+					 * if ( this.untilDate != null && newDate.isAfter ( this.untilDate ) ) {
+					 * break; }
+					 */
+					if ( !newDate.equals ( startDate ) )
+						ret.addElement ( newDate );
 				} catch ( BogusDataException e1 ) {
 					e1.printStackTrace ();
 				}

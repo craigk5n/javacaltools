@@ -1,4 +1,4 @@
-Version 0.3.0 (17 May 2007)
+Version 0.3.0 (30 May 2007)
  - Added Google's RRULE java implementation for generating recurrance dates.
  - Numerous bugfixes for recurrance (RRULE)
  - Added getDayOfWeek, getFirstDayOfWeekForYear, getLastDayOfWeekForYear
@@ -8,7 +8,7 @@ Version 0.3.0 (17 May 2007)
  - Added setUserData/getUserData methods to Event class
  - Added support for timezones for all date objects by including
    Joda Time (www.joda.org)
- - Added support for comment for events.
+ - Added support for comment and location for events.
  - Fixed duration in event
 Version 0.2.6 (24 Apr 2007)
   - k5njournal changes:

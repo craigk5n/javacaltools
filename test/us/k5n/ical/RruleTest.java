@@ -7,6 +7,12 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import com.google.ical.iter.RecurrenceIterator;
+import com.google.ical.iter.RecurrenceIteratorFactory;
+import com.google.ical.values.DateTimeValueImpl;
+import com.google.ical.values.DateValueImpl;
+import com.google.ical.values.Frequency;
+
 /**
  * Test cases for Rrule.
  * 
@@ -263,6 +269,32 @@ public class RruleTest extends TestCase implements Constants {
 		}
 	}
 
+	// Every other week with no end
+	public void testWeekly2 () {
+		String[] results = { /* "20060915", */"20060929", "20061013", "20061027",
+		    "20061110", "20061124" };
+		String str = "RRULE:FREQ=WEEKLY;INTERVAL=2;BYDAY=FR";
+		try {
+			TimeZone tz = TimeZone.getDefault ();
+			String tzid = tz.getID ();
+			Date dtStart = new Date ( "DTSTART;VALUE=DATE:20060915" );
+			Rrule rrule = new Rrule ( str, PARSE_STRICT );
+			assertNotNull ( "Null RRULE", rrule );
+			Vector dates = rrule.generateRecurrances ( dtStart, tzid );
+			for ( int i = 0; i < dates.size () && i < results.length; i++ ) {
+				Date d = (Date) dates.elementAt ( i );
+				String ymd = Utils.DateToYYYYMMDD ( d );
+				System.out.println ( "testWeekly2)Date#" + i + ": "
+				    + Utils.DateToYYYYMMDD ( d ) );
+				assertTrue ( "Unexpected date#" + i + ", got " + ymd + " instead of "
+				    + results[i], ymd.equals ( results[i] ) );
+			}
+		} catch ( Exception e ) {
+			e.printStackTrace ();
+			fail ( "Failed: " + e.toString () );
+		}
+	}
+
 	// Daily for until May 5
 	public void testDaily1 () {
 		String[] results = { "20070501", "20070502", "20070503", "20070504",
@@ -285,6 +317,45 @@ public class RruleTest extends TestCase implements Constants {
 			}
 			assertTrue ( "More than 5 events returned: " + dates.size (), dates
 			    .size () == 5 );
+		} catch ( Exception e ) {
+			e.printStackTrace ();
+			fail ( "Failed: " + e.toString () );
+		}
+	}
+
+	// DTSTART:20070501T090000
+	// RRULE:FREQ=DAILY;UNTIL=20070506T000000Z
+	public void testGoogleRrule () {
+		String[] results = { "20070501", "20070502", "20070503", "20070504",
+		    "20070505" };
+		// String str = "RRULE:FREQ=DAILY;UNTIL=20070506T000000Z";
+		try {
+			com.google.ical.values.RRule rrule = new com.google.ical.values.RRule ();
+			TimeZone tz = TimeZone.getDefault ();
+			String tzid = tz.getID ();
+			com.google.ical.values.DateValue dtStart = null;
+			dtStart = new DateTimeValueImpl ( 2007, 5, 1, 9, 0, 0 );
+			rrule.setFreq ( Frequency.DAILY );
+			rrule.setName ( "RRULE" );
+			rrule.setInterval ( 1 );
+			rrule.setUntil ( new DateValueImpl ( 2007, 5, 6 ) );
+			java.util.TimeZone timezone = null;
+			if ( tzid != null )
+				timezone = java.util.TimeZone.getTimeZone ( tzid );
+			RecurrenceIterator iter = RecurrenceIteratorFactory
+			    .createRecurrenceIterator ( rrule, dtStart, timezone );
+			int i = 0;
+			while ( iter.hasNext () && i < 10000 ) {
+				com.google.ical.values.DateValue d = iter.next ();
+				Date date = new Date ( "XXX", d.year (), d.month (), d.day () );
+				String ymd = Utils.DateToYYYYMMDD ( date );
+				System.out.println ( "testDaily1)Date#" + i + ": "
+				    + Utils.DateToYYYYMMDD ( date ) );
+				assertTrue ( "Unexpected date#" + i + ", got " + ymd + " instead of "
+				    + results[i], ymd.equals ( results[i] ) );
+				i++;
+			}
+			assertTrue ( "More than 5 events returned: " + i, i == 5 );
 		} catch ( Exception e ) {
 			e.printStackTrace ();
 			fail ( "Failed: " + e.toString () );
