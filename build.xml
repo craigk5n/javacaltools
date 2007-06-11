@@ -110,6 +110,13 @@ Build targets:
       <zipfileset dir="${src}" prefix="k5n-calendarpanel-src-${version}"
         includes="us/k5n/ui/calendar/*.java" />
     </zip>
+    <zip destfile="${dist}/src/k5n-all-src-${version}.zip">
+      <zipfileset dir="." prefix="k5n-all-src-${version}"
+        includes="build.xml,README.txt,ChangeLog,AUTHORS" />
+      <zipfileset dir="${src}" prefix="k5n-all-src-${version}/src" />
+      <zipfileset dir="${test}" prefix="k5n-all-src-${version}/test" />
+      <zipfileset dir="lib" prefix="k5n-all-src-${version}/lib" />
+    </zip>
   </target>
 
   <target name="all" depends="compile,dist,javadoc,source-zip" />
