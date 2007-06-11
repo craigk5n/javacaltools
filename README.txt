@@ -1,11 +1,19 @@
-                           k5n java calendar tools
+****************************************************************************
+			k5n Java Calendar Tools
 ****************************************************************************
 
-Version:      0.3.0
+Version:      0.4.0
 URL:          http://javacaltools.sourceforge.net
 Author:       Craig Knudsen, craig [< at >] k5n.us
 License:      GNU GPL
 Requires:     Java 1.5 or later
+
+---------------------------------------------------------------------------
+                         ABOUT
+---------------------------------------------------------------------------
+The k5n Java Calendar Tools package contains various calendar-related
+libraries written in Java.  See the URL above for more information.
+
 
 ---------------------------------------------------------------------------
                          BUILDING
@@ -15,30 +23,56 @@ file.  (Ant 1.6 and or later is required.  Java 1.5 or later is required.)
 
 To build with ant:
 
-ant
+	ant
 
 This build process will create the following jar files:
 
-	dist/lib/k5n-ical-0.3.0.jar
-	dist/k5njournal-0.3.0.jar
-
-The k5n-ical jar is the main iCalendar library that can be used by
-other applications.
-
-The k5njournal jar is a jar file for the k5njournal application.
+	dist/lib/k5n-ical-0.4.0.jar
+	dist/lib/k5n-calendarpanel-0.4.0.jar
+	dist/k5njournal-0.4.0.jar
 
 ---------------------------------------------------------------------------
-                         RUNNING THE SAMPLE APP
+                         DOCUMENTATION
+---------------------------------------------------------------------------
+To generate the javadoc-based documentation, use the following command:
+
+	ant javadoc
+
+---------------------------------------------------------------------------
+                         OVERVIEW OF CONTENTS
 ---------------------------------------------------------------------------
 
-The k5njournal jar file contains a usable sample application for the
+k5n-ical:
+  The k5n-ical jar is the iCalendar library that can be used by
+  other applications.
+
+k5n-calendarpanel:
+  A Java Swing component for displaying a calendar with events by
+  extending the Swing JPanel class.
+
+k5n-journal:
+  An earlier release of the k5nJournal application includes as an
+  example of how to use the k5n-ical library.  (The most recent
+  version of this application can be found at k5njournal.sourceforge.net)
+
+
+---------------------------------------------------------------------------
+                         RUNNING THE SAMPLES
+---------------------------------------------------------------------------
+
+The k5nJournal jar file contains a usable sample application for the
 iCalendar library.  This jar file contains the files for both the iCalendar
-library and the k5njournal application.  To run the k5njournal application,
+library and the k5nJournal application.  To run the k5njournal application,
 you can either double-click on the jar file in your file viewer (Windows
 Explorer or Mac OS X Finder), or you can use the following command from a
 command prompt:
 
-	java -jar k5njournal-0.3.0.jar
+	java -jar k5n-journal-0.4.0.jar
+
+The CalendarPanel jar file contains a test class that demonstrates the
+appearance of this Swing component.  To view the test class:
+
+	java -jar k5n-calendarpanel-0.4.0.jar
 
 
 ---------------------------------------------------------------------------
