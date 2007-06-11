@@ -1,3 +1,7 @@
+Version 0.4.0 (11 Jun 2007)
+ - Added new CalendarPanel Swing GUI component to package.
+ - Updated build.xml with new targets for packaging source ("source-zip"),
+   building javadoc HTML files ("javadoc").
 Version 0.3.0 (30 May 2007)
  - Added Google's RRULE java implementation for generating recurrance dates.
  - Numerous bugfixes for recurrance (RRULE)
