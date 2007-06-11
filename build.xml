@@ -1,5 +1,19 @@
 <!-- ant build.xml file for k5n ical lib -->
 <!-- $Id$ -->
+<!--
+
+Build targets:
+
+  dist (default): compile and build jar files
+  javadoc: build javadoc-based HTML documentation
+  test: run the JUnit-based unit tests
+  source-zip: create zip files of the source code
+  clean: remove compiled/generated files
+
+  all: abbreviation for dist, javadoc, source-zip
+
+
+-->
 
 <project name="javacaltools" default="dist" basedir=".">
   <description>Top-level build file for k5n javacaltools</description>
@@ -8,11 +22,12 @@
   <property name="src" location="src"/>
   <property name="build" location="build"/>
   <property name="dist"  location="dist"/>
+  <property name="doc"  location="doc"/>
 
   <property name="test" location="test"/>
   <property name="testbuild" location="testbuild"/>
 
-  <property name="version"  value="0.3.0"/>
+  <property name="version"  value="0.4.0"/>
   <property name="jodatime-jar"  value="lib/joda-time-1.4.jar"/>
   <property name="google-rrule-jar"  value="lib/google-rfc2445.jar"/>
 
@@ -41,14 +56,22 @@
 
     <!-- Put everything in ${build} into the k5n-ical-${version}.jar file -->
     <jar jarfile="${dist}/lib/k5n-ical-${version}.jar" basedir="${build}"
-      excludes="**/journal/*.class">
+      excludes="**/journal/*.class,**/ui/calendar/*.class">
       <zipfileset src="${jodatime-jar}" />
       <zipfileset src="${google-rrule-jar}" />
     </jar>
 
+    <!-- Build jar for calendarpanel -->
+    <jar jarfile="${dist}/lib/k5n-calendarpanel-${version}.jar" basedir="${build}"
+      includes="**/ui/calendar/*.class">
+      <manifest>
+        <attribute name="Main-Class" value="us.k5n.ui.calendar.CalendarPanelTest"/>
+      </manifest>
+    </jar>
+
     <!-- Put all the lib and k5njournal files into a single jar
          and designate the main class -->
-    <jar jarfile="${dist}/k5njournal-${version}.jar" basedir="${build}">
+    <jar jarfile="${dist}/k5n-journal-${version}.jar" basedir="${build}">
     <manifest>
        <attribute name="Main-Class" value="us.k5n.journal.Main"/>
     </manifest>
@@ -57,11 +80,46 @@
     </jar>
   </target>
 
+  <target name="javadoc">
+    <mkdir dir="${dist}/doc"/>
+    <javadoc packagenames="us.k5n.ical.*"
+      sourcepath="src" destdir="${doc}/ical/api"
+      windowtitle="k5n ical API">
+    </javadoc>
+    <zip destfile="${dist}/doc/k5n-ical-doc-${version}.zip">
+      <zipfileset dir="${doc}/ical" prefix="k5n-ical-doc-${version}" />
+    </zip>
+
+    <javadoc packagenames="us.k5n.ui.calendar.*"
+      sourcepath="src" destdir="${doc}/calendarpanel/api"
+      windowtitle="k5n CalendarPanel API">
+    </javadoc>
+    <zip destfile="${dist}/doc/k5n-calendarpanel-doc-${version}.zip">
+      <zipfileset dir="${doc}/calendarpanel" prefix="k5n-calendarpanel-doc-${version}" />
+    </zip>
+  </target>
+
+  <!-- for use in making source code releases -->
+  <target name="source-zip">
+    <mkdir dir="${dist}/src"/>
+    <zip destfile="${dist}/src/k5n-ical-src-${version}.zip">
+      <zipfileset dir="${src}" prefix="k5n-ical-src-${version}"
+        includes="us/k5n/ical/*.java" />
+    </zip>
+    <zip destfile="${dist}/src/k5n-calendarpanel-src-${version}.zip">
+      <zipfileset dir="${src}" prefix="k5n-calendarpanel-src-${version}"
+        includes="us/k5n/ui/calendar/*.java" />
+    </zip>
+  </target>
+
+  <target name="all" depends="compile,dist,javadoc,source-zip" />
+
   <target name="clean"
         description="clean up" >
     <!-- Delete the ${build} and ${dist} directory trees -->
     <delete dir="${build}"/>
     <delete dir="${dist}"/>
+    <delete dir="${doc}"/>
   </target>
 
   <!-- Build the JUnit test classes -->
