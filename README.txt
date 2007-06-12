@@ -2,11 +2,12 @@
 			k5n Java Calendar Tools
 ****************************************************************************
 
-Version:      0.4.0
+Version:      0.4.1
 URL:          http://javacaltools.sourceforge.net
 Author:       Craig Knudsen, craig [< at >] k5n.us
 License:      GNU GPL
-Requires:     Java 1.5 or later
+Requires:     Java 1.5 for ical library
+              Java 1.2 for CalendarPanel
 
 ---------------------------------------------------------------------------
                          ABOUT
@@ -27,9 +28,9 @@ To build with ant:
 
 This build process will create the following jar files:
 
-	dist/lib/k5n-ical-0.4.0.jar
-	dist/lib/k5n-calendarpanel-0.4.0.jar
-	dist/k5njournal-0.4.0.jar
+	dist/lib/k5n-ical-0.4.1.jar
+	dist/lib/k5n-calendarpanel-0.4.1.jar
+	dist/k5njournal-0.4.1.jar
 
 ---------------------------------------------------------------------------
                          DOCUMENTATION
@@ -67,12 +68,12 @@ you can either double-click on the jar file in your file viewer (Windows
 Explorer or Mac OS X Finder), or you can use the following command from a
 command prompt:
 
-	java -jar k5n-journal-0.4.0.jar
+	java -jar k5n-journal-0.4.1.jar
 
 The CalendarPanel jar file contains a test class that demonstrates the
 appearance of this Swing component.  To view the test class:
 
-	java -jar k5n-calendarpanel-0.4.0.jar
+	java -jar k5n-calendarpanel-0.4.1.jar
 
 
 ---------------------------------------------------------------------------
