@@ -72,7 +72,7 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 	boolean changingScrollbar = false;
 	int CELL_MARGIN = 2;
 	Vector displayedEvents;
-	Vector<DisplayedDate> displayedDates;
+	Vector displayedDates;
 	private Timer timer = null;
 	private boolean drawDateHint = false;
 	private int fadeStep = 0;
@@ -86,7 +86,7 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 	// that date.
 	private Date selectedDate = null;
 	private int selectedItemInd = -1;// 0=first event of day selected
-	private Vector<CalendarPanelSelectionListener> selectionListeners;
+	private Vector selectionListeners;
 
 	class Date {
 		public int year, month, day;
@@ -234,7 +234,7 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 			}
 			if ( selectedEvent == null ) {
 				for ( int i = 0; displayedDates != null && i < displayedDates.size (); i++ ) {
-					DisplayedDate dd = displayedDates.elementAt ( i );
+					DisplayedDate dd = (DisplayedDate) displayedDates.elementAt ( i );
 					if ( e1.getX () >= dd.rect.x
 					    && e1.getX () <= dd.rect.x + dd.rect.width
 					    && e1.getY () >= dd.rect.y
@@ -246,14 +246,16 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 			}
 			if ( wasSelected ) {
 				for ( int i = 0; i < selectionListeners.size (); i++ ) {
-					CalendarPanelSelectionListener l = selectionListeners.elementAt ( i );
+					CalendarPanelSelectionListener l = (CalendarPanelSelectionListener) selectionListeners
+					    .elementAt ( i );
 					l.eventUnselected ();
 				}
 				doRepaint = true;
 			}
 			if ( selectedDate != null && selectedEvent != null ) {
 				for ( int i = 0; i < selectionListeners.size (); i++ ) {
-					CalendarPanelSelectionListener l = selectionListeners.elementAt ( i );
+					CalendarPanelSelectionListener l = (CalendarPanelSelectionListener) selectionListeners
+					    .elementAt ( i );
 					l.eventSelected ( selectedEvent.event );
 				}
 				doRepaint = true;
@@ -262,14 +264,16 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 			if ( e1.getClickCount () == 2 && selectedDate != null
 			    && selectedEvent != null ) {
 				for ( int i = 0; i < selectionListeners.size (); i++ ) {
-					CalendarPanelSelectionListener l = selectionListeners.elementAt ( i );
+					CalendarPanelSelectionListener l = (CalendarPanelSelectionListener) selectionListeners
+					    .elementAt ( i );
 					l.eventDoubleClicked ( selectedEvent.event );
 				}
 			} else if ( e1.getClickCount () == 2 && selectedDate != null
 			    && selectedEvent == null ) {
 				// Date double-clicked
 				for ( int i = 0; i < selectionListeners.size (); i++ ) {
-					CalendarPanelSelectionListener l = selectionListeners.elementAt ( i );
+					CalendarPanelSelectionListener l = (CalendarPanelSelectionListener) selectionListeners
+					    .elementAt ( i );
 					l.dateDoubleClicked ( selectedDate.year, selectedDate.month,
 					    selectedDate.day );
 				}
@@ -317,7 +321,7 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 		super ();
 		this.repository = repository;
 		this.firstDayOfWeek = getFirstDayOfWeek ();
-		this.selectionListeners = new Vector<CalendarPanelSelectionListener> ();
+		this.selectionListeners = new Vector ();
 
 		this.backgroundColor1 = new Color ( 232, 232, 232 );
 		this.backgroundColor2 = new Color ( 212, 212, 212 );
@@ -328,7 +332,7 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 		this.hintBackground = Color.DARK_GRAY;
 		this.hintForeground = Color.white;
 		this.displayedEvents = new Vector ();
-		this.displayedDates = new Vector<DisplayedDate> ();
+		this.displayedDates = new Vector ();
 
 		createUI ();
 
