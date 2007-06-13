@@ -30,6 +30,7 @@ Build targets:
   <property name="version"  value="0.4.1"/>
   <property name="jodatime-jar"  value="lib/joda-time-1.4.jar"/>
   <property name="google-rrule-jar"  value="lib/google-rfc2445.jar"/>
+  <property name="javacsv-jar"  value="lib/javacsv.jar"/>
 
   <target name="init">
     <!-- Create the time stamp -->
@@ -48,13 +49,14 @@ Build targets:
       <classpath>
         <pathelement path="${jodatime-jar}"/>
         <pathelement path="${google-rrule-jar}"/>
+        <pathelement path="${javacsv-jar}"/>
       </classpath>
     </javac>
   </target>
 
   <target name="compile-calendarpanel" depends="init">
-    <!-- Compile: calendarpanel with 1.4 -->
-    <javac srcdir="${src}" destdir="${build}" source="1.4" target="1.4"
+    <!-- Compile: calendarpanel with 1.2 -->
+    <javac srcdir="${src}" destdir="${build}" source="1.2" target="1.2"
       includes="us/k5n/ui/calendar/**">
     </javac>
   </target>
@@ -69,6 +71,7 @@ Build targets:
       excludes="**/journal/*.class,**/ui/calendar/*.class">
       <zipfileset src="${jodatime-jar}" />
       <zipfileset src="${google-rrule-jar}" />
+      <zipfileset src="${javacsv-jar}" />
     </jar>
 
     <!-- Build jar for calendarpanel -->
@@ -87,6 +90,7 @@ Build targets:
     </manifest>
     <zipfileset src="${jodatime-jar}" />
     <zipfileset src="${google-rrule-jar}" />
+    <zipfileset src="${javacsv-jar}" />
     </jar>
   </target>
 
