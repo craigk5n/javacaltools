@@ -49,16 +49,12 @@ import java.io.IOException;
  * @version $Id$
  * @author Craig Knudsen, craig@k5n.us
  */
-public class ICalendarParser implements Constants {
-	int parseMethod; // PARSE_STRICT or PARSE_LOOSE
-	Vector errorListeners;
-	Vector errors;
+public class ICalendarParser extends CalendarParser implements Constants {
 	Property icalVersion = null;
 	Property prodId = null;
 	Property method = null;
 	Property calscale = null;
 	String language = "EN"; // default language setting
-	Vector dataStores; // DataStore objects in a Vector
 	static final int STATE_NONE = 0;
 	static final int STATE_VCALENDAR = 1;
 	static final int STATE_VEVENT = 2;
@@ -103,129 +99,8 @@ public class ICalendarParser implements Constants {
 	 *          will be returned when the event is queries for a summary.
 	 */
 	public ICalendarParser(int parseMethod, String language) {
-		this.parseMethod = parseMethod;
+		super ( parseMethod );
 		this.language = language;
-		errorListeners = new Vector ();
-		errors = new Vector ();
-		dataStores = new Vector ();
-		// Add the default DataStore
-		dataStores.addElement ( new DefaultDataStore () );
-	}
-
-	/**
-	 * Get the current setting for parse method (PARSE_STRICT or PARSE_LOOSE)
-	 * 
-	 * @return PARSE_STRICT or PARSE_LOOSE
-	 */
-	public int getParseMethod () {
-		return parseMethod;
-	}
-
-	/**
-	 * Add a DataStore. Each DataStore will be called during the parsing process
-	 * as each timezone, event, todo, or journal object is discovered.
-	 * 
-	 * @param dataStore
-	 *          The new DataStore to add
-	 */
-	public void addDataStore ( DataStore dataStore ) {
-		dataStores.addElement ( dataStore );
-	}
-
-	/**
-	 * Return the number of DataStores currently registered.
-	 */
-	public int numDataStores () {
-		return dataStores.size ();
-	}
-
-	/**
-	 * Return the specified DataStore.
-	 * 
-	 * @param ind
-	 *          The DataStore index number (0=first)
-	 */
-	public DataStore getDataStoreAt ( int ind ) {
-		return (DataStore) dataStores.elementAt ( ind );
-	}
-
-	/**
-	 * Remove the specified DataStore.
-	 * 
-	 * @param ind
-	 *          the DataStore index number (0=first)
-	 * @return true if the DataStore was found and removed
-	 */
-	public boolean removeDataStoreAt ( int ind ) {
-		if ( ind < dataStores.size () ) {
-			dataStores.removeElementAt ( ind );
-			return true;
-		}
-		// not found
-		return false;
-	}
-
-	/**
-	 * Is the current parse method set to PARSE_STRICT?
-	 * 
-	 * @return true if the current parse method is PARSE_STRICT
-	 */
-	public boolean isParseStrict () {
-		return ( parseMethod == PARSE_STRICT );
-	}
-
-	/**
-	 * Is the current parse method set to PARSE_LOOSE?
-	 * 
-	 * @return true if the current parse method is PARSE_LOOSE
-	 */
-	public boolean isParseLoose () {
-		return ( parseMethod == PARSE_LOOSE );
-	}
-
-	/**
-	 * Set the current parse method
-	 * 
-	 * @param parseMethod
-	 *          The new parse method (PARSE_STRICT, PARSE_LOOSE)
-	 */
-	public void setParseMethod ( int parseMethod ) {
-		this.parseMethod = parseMethod;
-	}
-
-	/**
-	 * Add a listener for parse error messages.
-	 * 
-	 * @pel The listener for parse errors
-	 */
-	public void addParseErrorListener ( ParseErrorListener pel ) {
-		errorListeners.addElement ( pel );
-	}
-
-	/**
-	 * Send a parse error message to all parse error listeners
-	 * 
-	 * @param msg
-	 *          The error message
-	 * @param icalStr
-	 *          The offending line(s) of iCalendar
-	 */
-	public void reportParseError ( ParseError error ) {
-		errors.addElement ( error );
-		for ( int i = 0; i < errorListeners.size (); i++ ) {
-			ParseErrorListener pel = (ParseErrorListener) errorListeners
-			    .elementAt ( i );
-			pel.reportParseError ( error );
-		}
-	}
-
-	/**
-	 * Get a Vector of all errors encountered;.
-	 * 
-	 * @return A Vector of ParseError objects
-	 */
-	public Vector getAllErrors () {
-		return errors;
 	}
 
 	/**
@@ -492,33 +367,4 @@ public class ICalendarParser implements Constants {
 		return noErrors;
 	}
 
-	public String toICalendar () {
-		StringBuffer ret = new StringBuffer ( 1024 );
-		ret.append ( "BEGIN:VCALENDAR" );
-		ret.append ( CRLF );
-		ret.append ( "VERSION:2.0" );
-		ret.append ( CRLF );
-		// Should we use the PRODID we parsed on input? Since we are generating
-		// output, I think we will use ours.
-		// TODO: add version number in the following
-		ret.append ( "PRODID:-//k5n.us//Java Calendar Tools//EN" );
-		ret.append ( CRLF );
-
-		// Include events
-		Vector events = ( (DataStore) getDataStoreAt ( 0 ) ).getAllEvents ();
-		for ( int i = 0; i < events.size (); i++ ) {
-			Event ev = (Event) events.elementAt ( i );
-			ret.append ( ev.toICalendar () );
-		}
-		// Include journal entries
-		Vector journals = ( (DataStore) getDataStoreAt ( 0 ) ).getAllJournals ();
-		for ( int i = 0; i < journals.size (); i++ ) {
-			Journal j = (Journal) journals.elementAt ( i );
-			ret.append ( j.toICalendar () );
-		}
-
-		ret.append ( "END:VCALENDAR" );
-		ret.append ( CRLF );
-		return ret.toString ();
-	}
 }

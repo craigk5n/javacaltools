@@ -28,7 +28,7 @@ import java.util.Vector;
  * 
  * @version $Id$
  * @author Craig Knudsen, craig@k5n.us
- * @see ICalendarParser
+ * @see CalendarParser
  */
 public class DefaultDataStore implements DataStore {
 	Vector timezones, events, todos, journals, freebusys;

@@ -11,18 +11,18 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
- * Test cases for ICalendarParser.
+ * Test cases for CSVParser.
  * 
  * @author Craig Knudsen, craig@k5n.us
  * @version $Id$
  * 
  */
-public class ICalendarParserTest extends TestCase implements Constants {
-	ICalendarParser parser;
+public class CSVParserTest extends TestCase implements Constants {
+	CSVParser parser;
 	DataStore ds;
 
 	public void setUp () {
-		parser = new ICalendarParser ( PARSE_STRICT );
+		parser = new CSVParser ( PARSE_STRICT );
 		ds = parser.getDataStoreAt ( 0 );
 	}
 
@@ -34,7 +34,7 @@ public class ICalendarParserTest extends TestCase implements Constants {
 		}
 	}
 
-	private void parseIcsFile ( File f ) {
+	private void parseCsvFile ( File f ) {
 		BufferedReader reader = null;
 		if ( f.exists () ) {
 			try {
@@ -51,21 +51,13 @@ public class ICalendarParserTest extends TestCase implements Constants {
 		}
 	}
 
-	public void testBadDate1 () {
-		parseIcsFile ( new File ( "test/data/BadDate1.ics" ) );
-		Vector errors = parser.getAllErrors ();
-		assertTrue ( "Did not find bad date", errors.size () > 0 );
-		Vector events = ds.getAllEvents ();
-		assertTrue ( "Loaded bad event", events.size () == 0 );
-	}
-
 	public void testSimpleDate1 () {
-		parseIcsFile ( new File ( "test/data/SimpleDate1.ics" ) );
+		parseCsvFile ( new File ( "test/data/SimpleDate1.csv" ) );
 		Vector errors = parser.getAllErrors ();
 		Vector events = ds.getAllEvents ();
 		if ( errors.size () > 0 ) {
 			showErrors ( errors );
-			fail ( "Found errors in valid ICS file" );
+			fail ( "Found errors in valid CSV file" );
 		}
 		assertTrue ( "Did not load valid event", events.size () == 1 );
 		Event e = (Event) events.elementAt ( 0 );
@@ -79,11 +71,11 @@ public class ICalendarParserTest extends TestCase implements Constants {
 	}
 
 	public static Test suite () {
-		return new TestSuite ( ICalendarParserTest.class );
+		return new TestSuite ( CSVParserTest.class );
 	}
 
 	public static void main ( String args[] ) {
-		junit.textui.TestRunner.run ( ICalendarParserTest.class );
+		junit.textui.TestRunner.run ( CSVParserTest.class );
 	}
 
 }

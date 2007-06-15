@@ -79,7 +79,7 @@ public class Journal implements Constants {
 	 * @Param textLines
 	 *          Vector of iCalendar text lines
 	 */
-	public Journal(ICalendarParser parser, int initialLine, Vector textLines) {
+	public Journal(CalendarParser parser, int initialLine, Vector textLines) {
 		for ( int i = 0; i < textLines.size (); i++ ) {
 			String line = (String) textLines.elementAt ( i );
 			try {

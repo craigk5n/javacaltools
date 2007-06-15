@@ -31,8 +31,8 @@ public class ParseError {
 	public int lineNo;
 	/** Error message */
 	public String error;
-	/** Offending iCalendar data */
-	public String icalStr;
+	/** Offending input data */
+	public String inputData;
 
 	/**
 	 * Create a parse error
@@ -41,13 +41,29 @@ public class ParseError {
 	 *          Line number of error (if available)
 	 * @param error
 	 *          Error message
-	 * @param icalStr
-	 *          Offending iCalendar data
+	 * @param icainputDatalStr
+	 *          Offending String data
 	 */
-	public ParseError(int lineNo, String error, String icalStr) {
+	public ParseError(int lineNo, String error, String inputData) {
 		this.lineNo = lineNo;
 		this.error = error;
-		this.icalStr = icalStr;
+		this.inputData = inputData;
+	}
+	
+	/**
+	 * Create a parse error
+	 * 
+	 * @param lineNo
+	 *          Line number of error (if available)
+	 * @param error
+	 *          Error message
+	 * @param icalStr
+	 *          Offending String data
+	 */
+	public ParseError(int lineNo, String error) {
+		this.lineNo = lineNo;
+		this.error = error;
+		this.inputData = "[unknown]";
 	}
 
 	/**
@@ -81,7 +97,7 @@ public class ParseError {
 
 		ret.append ( ind );
 		ret.append ( "Input  : " );
-		ret.append ( icalStr );
+		ret.append ( inputData );
 		ret.append ( "\n" );
 
 		return ret.toString ();

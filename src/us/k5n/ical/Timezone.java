@@ -35,7 +35,7 @@ public class Timezone {
 	public String tzOffsetTo = null;
 	public String tzName = null;
 
-	public Timezone(ICalendarParser parser, int initialLine, Vector textLines) {
+	public Timezone(CalendarParser parser, int initialLine, Vector textLines) {
 		// TODO
 	}
 
