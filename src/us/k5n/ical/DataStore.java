@@ -36,7 +36,7 @@ import java.util.Vector;
  * 
  * @version $Id$
  * @author Craig Knudsen, craig@k5n.us
- * @see ICalendarParser
+ * @see CalendarParser
  */
 public interface DataStore {
 
