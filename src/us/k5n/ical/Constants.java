@@ -66,6 +66,25 @@ public interface Constants {
 	/** iCalendar CONFIDENTIAL class */
 	static public final int CONFIDENTIAL = 2;
 
+	/** iCalendar Status not defined */
+	static public final int STATUS_UNDEFINED = -1;
+	/** iCalendar Status tentative (VEVENT only)*/
+	static public final int STATUS_TENTATIVE = 1;
+	/** iCalendar Status confirmed (VEVENT only) */
+	static public final int STATUS_CONFIRMED = 2;
+	/** iCalendar Status confirmed (VEVENT only)*/
+	static public final int STATUS_CANCELLED = 3;
+	/** iCalendar Status needs action (VTODO only) */
+	static public final int STATUS_NEEDS_ACTION = 4;
+	/** iCalendar Status needs action (VTODO only) */
+	static public final int STATUS_COMPLETED = 5;
+	/** iCalendar Status in process (VTODO only) */
+	static public final int STATUS_IN_PROCESS = 6;
+	/** iCalendar Status needs action (VJOURNAL only) */
+	static public final int STATUS_DRAFT = 7;
+	/** iCalendar Status needs action (VJOURNAL only) */
+	static public final int STATUS_FINAL = 8;
+
 	/* iCalendar version (in N.N String format) */
 	static public final String ICAL_VERSION = ICAL_VERSION_MAJOR + "."
 	    + ICAL_VERSION_MINOR;

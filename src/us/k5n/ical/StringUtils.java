@@ -177,4 +177,37 @@ public class StringUtils implements Constants {
 	static public boolean isNumber ( String str ) {
 		return isNumber ( str, false );
 	}
+
+	/**
+	 * Parse a status field.
+	 */
+	static public int parseStatus ( String icalStr, int parseMethod )
+	    throws BogusDataException, ParseException {
+		Property p = new Property ( icalStr, parseMethod );
+		if ( icalStr == null || icalStr.trim ().length () == 0 || p == null
+		    || p.getValue () == null ) {
+			throw new BogusDataException ( "Missing value for STATUS", icalStr );
+		}
+		String str = p.getValue ();
+		str = str.toUpperCase ().trim ();
+		if ( str.equals ( "TENTATIVE" ) ) {
+			return STATUS_TENTATIVE;
+		} else if ( str.equals ( "CONFIRMED" ) ) {
+			return STATUS_CONFIRMED;
+		} else if ( str.equals ( "CANCELLED" ) ) {
+			return STATUS_CANCELLED;
+		} else if ( str.equals ( "NEEDS-ACTION" ) ) {
+			return STATUS_NEEDS_ACTION;
+		} else if ( str.equals ( "COMPLETED" ) ) {
+			return STATUS_COMPLETED;
+		} else if ( str.equals ( "IN-PROCESS" ) ) {
+			return STATUS_IN_PROCESS;
+		} else if ( str.equals ( "DRAFT" ) ) {
+			return STATUS_DRAFT;
+		} else if ( str.equals ( "FINAL" ) ) {
+			return STATUS_FINAL;
+		} else {
+			throw new BogusDataException ( "Invalid STATUS value", str );
+		}
+	}
 }

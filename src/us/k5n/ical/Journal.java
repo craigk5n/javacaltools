@@ -59,6 +59,8 @@ public class Journal implements Constants {
 	protected Rrule rrule = null;
 	/** URL */
 	protected URL url = null;
+	/** Journal status */
+	protected int status = STATUS_UNDEFINED;
 	/** Private user object for caller to set/get */
 	private Object userData = null;
 
@@ -169,6 +171,15 @@ public class Journal implements Constants {
 			sequence = new Sequence ( icalStr );
 		} else if ( up.startsWith ( "RRULE" ) ) {
 			rrule = new Rrule ( icalStr, parseMethod );
+		} else if ( up.startsWith ( "STATUS" ) ) {
+			status = StringUtils.parseStatus ( icalStr, parseMethod );
+			// Only allow VJOURNAL status types
+			if ( status != STATUS_DRAFT && status != STATUS_FINAL ) {
+				if ( parseMethod == PARSE_STRICT ) {
+					throw new BogusDataException ( "Status type not allowed in VJOURNAL",
+					    icalStr );
+				}
+			}
 		} else if ( up.startsWith ( "URL" ) ) {
 			url = new URL ( icalStr, parseMethod );
 		} else {

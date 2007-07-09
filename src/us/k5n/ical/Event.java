@@ -66,6 +66,8 @@ public class Event implements Constants {
 	protected URL url = null;
 	/** Location */
 	protected Location location = null;
+	/** Event status */
+	protected int status = STATUS_UNDEFINED;
 	/** Private user object for caller to set/get */
 	private Object userData = null;
 
@@ -197,6 +199,16 @@ public class Event implements Constants {
 			sequence = new Sequence ( icalStr );
 		} else if ( up.startsWith ( "RRULE" ) ) {
 			rrule = new Rrule ( icalStr, parseMethod );
+		} else if ( up.startsWith ( "STATUS" ) ) {
+			status = StringUtils.parseStatus ( icalStr, parseMethod );
+			// Only allow VEVENT status types
+			if ( status != STATUS_TENTATIVE && status != STATUS_CONFIRMED
+			    && status != STATUS_CANCELLED ) {
+				if ( parseMethod == PARSE_STRICT ) {
+					throw new BogusDataException ( "Status type not allowed in VEVENT",
+					    icalStr );
+				}
+			}
 		} else if ( up.startsWith ( "URL" ) ) {
 			url = new URL ( icalStr );
 		} else if ( up.startsWith ( "LOCATION" ) ) {
@@ -343,6 +355,27 @@ public class Event implements Constants {
 
 	public void setLocation ( Location location ) {
 		this.location = location;
+	}
+
+	/**
+	 * Get the event status
+	 * 
+	 * @return the event status (STATUS_TENTATIVE, STATUS_CONFIRMED or
+	 *         STATUS_CANCELLED)
+	 */
+	public int getStatus () {
+		return status;
+	}
+
+	/**
+	 * Set the status
+	 * 
+	 * @param status
+	 *          The new status (STATUS_TENTATIVE, STATUS_CONFIRMED or
+	 *          STATUS_CANCELLED)
+	 */
+	public void setStatus ( int status ) {
+		this.status = status;
 	}
 
 	public void setSummary ( Summary summary ) {

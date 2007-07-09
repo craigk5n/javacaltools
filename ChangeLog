@@ -1,6 +1,7 @@
 Version 0.4.1 (12 Jun 2007)
  - Modified CalendarPanel code to work with Java 1.2 (removed generics)
  - Added new CSVParser to parse CSV calendar data created from MS Outlook.
+ - Added support for STATUS field in Event and Journal classes.
 Version 0.4.0 (11 Jun 2007)
  - Added new CalendarPanel Swing GUI component to package.
  - Updated build.xml with new targets for packaging source ("source-zip"),
