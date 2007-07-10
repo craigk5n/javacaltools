@@ -232,6 +232,20 @@ public class Journal implements Constants {
 			ret.append ( classification.toICalendar () );
 		if ( categories != null )
 			ret.append ( categories.toICalendar () );
+		if ( url != null )
+			ret.append ( url.toICalendar () );
+		if ( status != STATUS_UNDEFINED ) {
+			switch ( status ) {
+				case STATUS_DRAFT:
+					ret.append ( "STATUS:DRAFT" );
+					ret.append ( CRLF );
+					break;
+				case STATUS_FINAL:
+					ret.append ( "STATUS:FINAL" );
+					ret.append ( CRLF );
+					break;
+			}
+		}
 
 		ret.append ( "END:VJOURNAL" );
 		ret.append ( CRLF );

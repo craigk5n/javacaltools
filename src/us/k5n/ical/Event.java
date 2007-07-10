@@ -435,6 +435,26 @@ public class Event implements Constants {
 			ret.append ( classification.toICalendar () );
 		if ( categories != null )
 			ret.append ( categories.toICalendar () );
+		if ( url != null )
+			ret.append ( url.toICalendar () );
+		if ( location != null )
+			ret.append ( location.toICalendar () );
+		if ( status != STATUS_UNDEFINED ) {
+			switch ( status ) {
+				case STATUS_CONFIRMED:
+					ret.append ( "STATUS:CONFIRMED" );
+					ret.append ( CRLF );
+					break;
+				case STATUS_TENTATIVE:
+					ret.append ( "STATUS:TENTATIVE" );
+					ret.append ( CRLF );
+					break;
+				case STATUS_CANCELLED:
+					ret.append ( "STATUS:CANCELLED" );
+					ret.append ( CRLF );
+					break;
+			}
+		}
 
 		ret.append ( "END:VEVENT" );
 		ret.append ( CRLF );
