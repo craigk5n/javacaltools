@@ -701,7 +701,6 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 
 	public void drawDayOfMonthBackground ( Graphics g, int x, int y, int w,
 	    int h, Color c ) {
-		System.out.println ( "PRIVATE PAINT" );
 		g.setColor ( c );
 		g.fillRect ( x, y, w, h );
 	}
