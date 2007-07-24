@@ -22,6 +22,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Vector;
 
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
@@ -51,6 +52,7 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 	Calendar startDate; // Date of first day displayed
 	int firstDayOfWeek; // Day of week that week starts on (SUNDAY, MONDAY, etc.)
 	Color backgroundColor1, backgroundColor2;
+	Color todayBackgroundColor;
 	Color gridColor;
 	Color selectionColor;
 	Color headerForeground, headerBackground;
@@ -325,6 +327,7 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 
 		this.backgroundColor1 = new Color ( 232, 232, 232 );
 		this.backgroundColor2 = new Color ( 212, 212, 212 );
+		this.todayBackgroundColor = new Color ( 255, 255, 212 );
 		this.headerForeground = Color.BLUE;
 		this.headerBackground = Color.WHITE;
 		this.gridColor = Color.BLACK;
@@ -341,8 +344,19 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 
 	protected void createUI () {
 		this.setLayout ( new BorderLayout () );
+		JPanel titlePanel = new JPanel ();
+		titlePanel.setLayout ( new BorderLayout () );
+		JButton todayButton = new JButton ( "Today" );
+		todayButton.addActionListener ( new ActionListener () {
+			public void actionPerformed ( ActionEvent event ) {
+				// Scroll calendar back to current date.
+				setWeekOffset ( 0 );
+			}
+		} );
+		titlePanel.add ( todayButton, BorderLayout.EAST );
 		this.title = new JLabel ( "Calendar", JLabel.CENTER );
-		this.add ( title, BorderLayout.NORTH );
+		titlePanel.add ( title, BorderLayout.CENTER );
+		this.add ( titlePanel, BorderLayout.NORTH );
 		// ScrollBar values: 0 = current week, -N = N week before, +N = N weeks
 		// after
 		this.scrollBar = new JScrollBar ( JScrollBar.VERTICAL, 0, 5, -52, 52 );
@@ -371,11 +385,14 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 						// We use fadeStep values (0-9) to indicate how translucent
 						// we should draw the date hint.
 						fadeStep++;
-						if ( fadeStep > 9 )
+						if ( fadeStep > 9 ) {
 							drawDateHint = false;
+						} else {
+							drawDateHint = true;
+							timer.setInitialDelay ( 50 );
+							timer.restart ();
+						}
 						drawArea.repaint ();
-						timer.setInitialDelay ( 50 );
-						timer.restart ();
 					}
 				};
 
@@ -437,6 +454,17 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 	public void setBackgroundColors ( Color color1, Color color2 ) {
 		this.backgroundColor1 = color1;
 		this.backgroundColor2 = color2;
+	}
+
+	/**
+	 * Set the background color of the cell for the current date.
+	 * 
+	 * @param color
+	 *          The new background color
+	 */
+	public void setTodayBackgroundColor ( Color color ) {
+		this.todayBackgroundColor = color;
+		;
 	}
 
 	/**
@@ -580,8 +608,9 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 			if ( fadeStep < 10 ) {
 				Graphics2D g2d = (Graphics2D) g;
 				Composite oldComp = g2d.getComposite ();
+				float alpha = 0.5f - ( (float) fadeStep * 0.05f );
 				Composite alphaComp = AlphaComposite.getInstance (
-				    AlphaComposite.SRC_OVER, 0.5f - ( (float) fadeStep * 0.05f ) );
+				    AlphaComposite.SRC_OVER, alpha );
 				g2d.setComposite ( alphaComp );
 				g.setColor ( this.hintBackground );
 				g.fillRoundRect ( x, y, w, h, 10, 10 );
@@ -598,8 +627,17 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 		String label;
 
 		Color fg = g.getColor ();
-		g.setColor ( day.get ( Calendar.MONTH ) % 2 == 0 ? backgroundColor1
-		    : backgroundColor2 );
+		Calendar today = Calendar.getInstance ();
+		if ( today.get ( Calendar.YEAR ) == day.get ( Calendar.YEAR )
+		    && today.get ( Calendar.MONTH ) == day.get ( Calendar.MONTH )
+		    && today.get ( Calendar.DAY_OF_MONTH ) == day
+		        .get ( Calendar.DAY_OF_MONTH ) ) {
+			// Use the special background color for today.
+			g.setColor ( this.todayBackgroundColor );
+		} else {
+			g.setColor ( day.get ( Calendar.MONTH ) % 2 == 0 ? backgroundColor1
+			    : backgroundColor2 );
+		}
 		g.fillRect ( x + 1, y + 1, w - 1, h - 1 );
 		g.setColor ( fg );
 
