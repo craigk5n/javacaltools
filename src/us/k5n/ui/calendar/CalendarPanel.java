@@ -39,6 +39,9 @@ import javax.swing.ToolTipManager;
  * an efficient methods for the CalendarDataRepository interfance. (For example,
  * it would be a bad idea to query a database each time.)
  * 
+ * Note: this class is coded using Java 1.2. So, don't add any Java 1.4/1.5/1.6
+ * dependencies in here without good reason.
+ * 
  * @see CalendarDataRepository
  * @author Craig Knudsen, craig@k5n.us
  * @version $Id$
@@ -464,7 +467,6 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 	 */
 	public void setTodayBackgroundColor ( Color color ) {
 		this.todayBackgroundColor = color;
-		;
 	}
 
 	/**
@@ -628,17 +630,19 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 
 		Color fg = g.getColor ();
 		Calendar today = Calendar.getInstance ();
+		Color bgColor;
 		if ( today.get ( Calendar.YEAR ) == day.get ( Calendar.YEAR )
 		    && today.get ( Calendar.MONTH ) == day.get ( Calendar.MONTH )
 		    && today.get ( Calendar.DAY_OF_MONTH ) == day
 		        .get ( Calendar.DAY_OF_MONTH ) ) {
 			// Use the special background color for today.
-			g.setColor ( this.todayBackgroundColor );
+			bgColor = this.todayBackgroundColor;
 		} else {
-			g.setColor ( day.get ( Calendar.MONTH ) % 2 == 0 ? backgroundColor1
-			    : backgroundColor2 );
+			bgColor = day.get ( Calendar.MONTH ) % 2 == 0 ? backgroundColor1
+			    : backgroundColor2;
 		}
-		g.fillRect ( x + 1, y + 1, w - 1, h - 1 );
+
+		drawDayOfMonthBackground ( g, x + 1, y + 1, w - 1, h - 1, bgColor );
 		g.setColor ( fg );
 
 		if ( showMonthName )
@@ -693,6 +697,13 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 		else
 			sb.append ( "pm" );
 		return sb.toString ();
+	}
+
+	public void drawDayOfMonthBackground ( Graphics g, int x, int y, int w,
+	    int h, Color c ) {
+		System.out.println ( "PRIVATE PAINT" );
+		g.setColor ( c );
+		g.fillRect ( x, y, w, h );
 	}
 
 	protected void drawMonthViewEvent ( Graphics g, Rectangle r,
