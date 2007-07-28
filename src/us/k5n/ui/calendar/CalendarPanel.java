@@ -666,10 +666,9 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 				int startY = y + fm.getHeight ();
 				for ( int i = 0; i < events.size (); i++ ) {
 					EventInstance e = (EventInstance) events.elementAt ( i );
-					Rectangle rect = new Rectangle ( x + CELL_MARGIN, startY
-					    + CELL_MARGIN, w - ( 2 * CELL_MARGIN ), fm.getHeight ()
-					    + ( 2 * CELL_MARGIN ) );
-					startY += fm.getHeight () + ( 3 * CELL_MARGIN );
+					Rectangle rect = new Rectangle ( x + CELL_MARGIN, startY, w
+					    - ( 2 * CELL_MARGIN ), fm.getHeight () );
+					startY += fm.getHeight () + ( 1 * CELL_MARGIN );
 					drawMonthViewEvent ( g, rect, e, dateIsSelected
 					    && i == this.selectedItemInd );
 					DisplayedEvent de = new DisplayedEvent ( e, rect, i );
@@ -732,7 +731,7 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 		} else {
 			text = event.getTitle ();
 		}
-		g.drawString ( text, r.x + 3, r.y + g.getFontMetrics ().getAscent () + 1 );
+		g.drawString ( text, r.x + 3, r.y + g.getFontMetrics ().getAscent () - 1 );
 		g.setColor ( c );
 		// remove clip
 		g.setClip ( null );
