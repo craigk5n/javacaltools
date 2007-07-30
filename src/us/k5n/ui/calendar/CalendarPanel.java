@@ -523,7 +523,6 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 			eventFont = new Font ( headerFont.getFamily (), headerFont.getStyle (),
 			    headerFont.getSize () - 2 );
 			g.setFont ( eventFont );
-			System.out.println ( "Event font size: " + eventFont.getSize () );
 		}
 		if ( hintFont == null ) {
 			hintFont = new Font ( headerFont.getFamily (), headerFont.getStyle (),
@@ -732,7 +731,7 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 		} else {
 			text = event.getTitle ();
 		}
-		g.drawString ( text, r.x + 3, r.y + g.getFontMetrics ().getAscent () - 1 );
+		g.drawString ( text, r.x + 3, r.y + g.getFontMetrics ().getAscent () );
 		g.setColor ( c );
 		// remove clip
 		g.setClip ( null );
