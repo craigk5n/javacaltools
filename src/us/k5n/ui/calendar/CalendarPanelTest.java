@@ -10,7 +10,7 @@ import javax.swing.JFrame;
 /**
  * Simple test/demo class for CalendarPanel that illustrates how to use
  * the CalendarPanel class and can be used to view the appearance of
- * the CalendarPanel calss.
+ * the CalendarPanel class.
  * 
  * @author Craig Knudsen, craig@k5n.us
  * @version $Id$
