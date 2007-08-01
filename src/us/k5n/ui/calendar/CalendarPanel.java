@@ -358,6 +358,9 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 		} );
 		titlePanel.add ( todayButton, BorderLayout.EAST );
 		this.title = new JLabel ( "Calendar", JLabel.CENTER );
+		Font f = this.title.getFont ();
+		this.title
+		    .setFont ( new Font ( f.getFamily (), Font.BOLD, f.getSize () + 4 ) );
 		titlePanel.add ( title, BorderLayout.CENTER );
 		this.add ( titlePanel, BorderLayout.NORTH );
 		// ScrollBar values: 0 = current week, -N = N week before, +N = N weeks
