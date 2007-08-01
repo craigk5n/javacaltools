@@ -1,8 +1,9 @@
-Version 0.4.2 (?? ??? 2007)
+Version 0.4.2 (01 Aug 2007)
  - Added support for STATUS field in Event and Journal classes.
  - CalendarPanel changes:
    + Added different background for today's date
    + Added "Today" button to bring display back to current date
+   + Allow for overriding background color drawing
 Version 0.4.1 (12 Jun 2007)
  - Modified CalendarPanel code to work with Java 1.2 (removed generics)
  - Added new CSVParser to parse CSV calendar data created from MS Outlook.
