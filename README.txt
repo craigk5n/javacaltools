@@ -119,3 +119,8 @@ Java CSV Library:
   URL: http://sourceforge.net/projects/javacsv/
   License: LGPL
   License URL: http://www.gnu.org/licenses/lgpl.html
+  
+Apache Commons Codec:
+  URL: http://commons.apache.org/codec/
+  License: Apache License Version 2.0
+  License URL: http://www.apache.org/licenses/LICENSE-2.0.html

@@ -31,6 +31,7 @@ Build targets:
   <property name="jodatime-jar"  value="lib/joda-time-1.4.jar"/>
   <property name="google-rrule-jar"  value="lib/google-rfc2445.jar"/>
   <property name="javacsv-jar"  value="lib/javacsv.jar"/>
+  <property name="commons-code-jar"  value="lib/commons-codec-1.3.jar"/>
 
   <target name="init">
     <!-- Create the time stamp -->
@@ -50,6 +51,7 @@ Build targets:
         <pathelement path="${jodatime-jar}"/>
         <pathelement path="${google-rrule-jar}"/>
         <pathelement path="${javacsv-jar}"/>
+      	<pathelement path="${commons-code-jar}"/>
       </classpath>
     </javac>
   </target>
@@ -91,6 +93,7 @@ Build targets:
     <zipfileset src="${jodatime-jar}" />
     <zipfileset src="${google-rrule-jar}" />
     <zipfileset src="${javacsv-jar}" />
+    <zipfileset src="${commons-code-jar}"/>
     </jar>
   </target>
 
