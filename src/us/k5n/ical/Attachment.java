@@ -95,13 +95,19 @@ public class Attachment extends Property {
 	}
 
 	/**
-	 * Create an attachment from the specified file.
+	 * Create an inline embedded attachment from the specified file. The contents
+	 * of the attachment will be stored in the iCalendar data file using base64
+	 * encoding.
 	 * 
 	 * @param filename
+	 *          The file to attach
+	 * @param formatType
+	 *          The format type of the file ("image/jpeg", etc.)
 	 * @throws ParseException
 	 * @throws IOException
 	 */
-	public Attachment(File filename) throws ParseException, IOException {
+	public Attachment(File filename, String formatType) throws ParseException,
+	    IOException {
 		super ( "ATTACH", "" );
 		this.addAttribute ( "ENCODING", "BASE64" );
 		this.addAttribute ( "VALUE", "BINARY" );
@@ -128,6 +134,36 @@ public class Attachment extends Property {
 	public Attachment(URL url) throws ParseException {
 		super ( "ATTACH", "" );
 		this.setValue ( url.toString () );
+	}
+
+	/**
+	 * Get the FMTTYPE setting for this attachment. This is the MIME type (such as
+	 * "image/jpeg").
+	 * 
+	 * @return
+	 */
+	public String getFormatType () {
+		Attribute a = this.getNamedAttribute ( "FMTTYPE" );
+		if ( a == null )
+			return null;
+		else
+			return a.value;
+	}
+
+	/**
+	 * Set the FMTTYPE setting for this attachment. This is the MIME type (such as
+	 * "image/jpeg").
+	 */
+	public void setFormatType ( String formatType ) {
+		if ( formatType == null )
+			this.removeNamedAttribute ( "FMTTYPE" );
+		else {
+			Attribute a = this.getNamedAttribute ( "FMTTYPE" );
+			if ( a != null )
+				a.value = formatType;
+			else
+				this.addAttribute ( "FMTTYPE", formatType );
+		}
 	}
 
 	/**

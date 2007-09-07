@@ -25,8 +25,9 @@ public class AttachmentTest extends TestCase implements Constants {
 
 	public void test01 () {
 		try {
-			Attachment x = new Attachment ( new File ( "test/data/plaintext.txt" ) );
-			System.out.println ( "Attachment:\n\n" + x.toICalendar () );
+			Attachment x = new Attachment ( new File ( "test/data/plaintext.txt" ),
+			    "text/plain" );
+			//System.out.println ( "Attachment:\n\n" + x.toICalendar () );
 			String val = x.getValue ();
 			assertTrue ( "getValue is null", val != null );
 			assertTrue ( "getValue is length 0", val.length () > 0 );
@@ -37,7 +38,7 @@ public class AttachmentTest extends TestCase implements Constants {
 			}
 			byte[] decoded = Base64.decodeBase64 ( bytes );
 			String decStr = new String ( decoded );
-			System.out.println ( "\n\nDecoded:\n" + decStr );
+			//System.out.println ( "\n\nDecoded:\n" + decStr );
 			assertTrue ( "\"How now brown cow\" not found", decStr
 			    .indexOf ( "How now brown cow" ) >= 0 );
 		} catch ( Exception e ) {
@@ -80,7 +81,7 @@ public class AttachmentTest extends TestCase implements Constants {
 			}
 			byte[] decoded = Base64.decodeBase64 ( bytes );
 			String decStr = new String ( decoded );
-			System.out.println ( "\n\nDecoded:\n" + decStr );
+			//System.out.println ( "\n\nDecoded:\n" + decStr );
 			assertTrue ( "\"How now brown cow\" not found", decStr
 			    .indexOf ( "How now brown cow" ) >= 0 );
 			// Get binary data
