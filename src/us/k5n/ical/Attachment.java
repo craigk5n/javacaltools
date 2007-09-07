@@ -69,7 +69,7 @@ public class Attachment extends Property {
 	 */
 	public Attachment(String icalStr) throws ParseException {
 		this ( icalStr, PARSE_LOOSE );
-		// Decode the attachment if there is one.
+		// Decode the inline binary attachment if there is one.
 		Attribute valueAttr = this.getNamedAttribute ( "VALUE" );
 		Attribute encAttr = this.getNamedAttribute ( "ENCODING" );
 		if ( valueAttr != null && valueAttr.value.equalsIgnoreCase ( "BINARY" ) ) {
