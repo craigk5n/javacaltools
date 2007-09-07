@@ -59,6 +59,8 @@ public class Journal implements Constants {
 	protected Rrule rrule = null;
 	/** URL */
 	protected URL url = null;
+	/** Attachments */
+	protected Vector attachments = null;
 	/** Journal status */
 	protected int status = STATUS_UNDEFINED;
 	/** Private user object for caller to set/get */
@@ -171,6 +173,11 @@ public class Journal implements Constants {
 			sequence = new Sequence ( icalStr );
 		} else if ( up.startsWith ( "RRULE" ) ) {
 			rrule = new Rrule ( icalStr, parseMethod );
+		} else if ( up.startsWith ( "ATTACH" ) ) {
+			Attachment attach = new Attachment ( icalStr );
+			if ( this.attachments == null )
+				this.attachments = new Vector ();
+			this.attachments.addElement ( attach );
 		} else if ( up.startsWith ( "STATUS" ) ) {
 			status = StringUtils.parseStatus ( icalStr, parseMethod );
 			// Only allow VJOURNAL status types
@@ -234,6 +241,12 @@ public class Journal implements Constants {
 			ret.append ( categories.toICalendar () );
 		if ( url != null )
 			ret.append ( url.toICalendar () );
+		if ( this.attachments != null ) {
+			for ( int i = 0; i < this.attachments.size (); i++ ) {
+				Attachment attach = (Attachment) this.attachments.elementAt ( i );
+				ret.append ( attach.toICalendar () );
+			}
+		}
 		if ( status != STATUS_UNDEFINED ) {
 			switch ( status ) {
 				case STATUS_DRAFT:
@@ -344,6 +357,22 @@ public class Journal implements Constants {
 	public void setUrl ( URL url ) {
 		this.url = url;
 	}
+
+	public Vector getAttachments () {
+  	return attachments;
+  }
+
+	public void setAttachments ( Vector attachments ) {
+  	this.attachments = attachments;
+  }
+
+	public int getStatus () {
+  	return status;
+  }
+
+	public void setStatus ( int status ) {
+  	this.status = status;
+  }
 
 	public Object getUserData () {
 		return userData;

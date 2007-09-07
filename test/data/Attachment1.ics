@@ -1,0 +1,25 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//k5n.us/k5n.us iCalendar Test Case 1//EN
+
+BEGIN:VEVENT
+UID:20070401-k5n-us
+DTSTART;VALUE=DATE:20070401
+DTSTAMP:20070401
+SUMMARY:
+ Event on 20070401
+DESCRIPTION:
+ Event on 20070401\n
+ - Option:  Starting on 20070401\n
+ - Default: No timezone specified\, using local time\n
+ - Default: No status given\, not necessarily confirmed\n
+ - Default: No class given\, treat event details as publicly accessible\n
+ - Default: Event treated as transparent (just a single date given)\n
+ \n
+ Consider this describing an event on the day where the time is not known
+ATTACH;ENCODING="BASE64";VALUE="BINARY":VGhpcyBpcyBqdXN0IGEgcGxhaW4gdGV4dC
+ BmaWxlLg0KSG93IG5vdyBicm93biBjb3cuDQpIb3cgbm93IGJyb3duIGNvdy4NCkhvdyBub3cg
+ YnJvd24gY293Lg0KSG93IG5vdyBicm93biBjb3cuDQpIb3cgbm93IGJyb3duIGNvdy4NCkhvdy
+ Bub3cgYnJvd24gY293Lg0KVGhpcyBpcyB0aGUgbGFzdCBsaW5lLg==
+END:VEVENT
+END:VCALENDAR

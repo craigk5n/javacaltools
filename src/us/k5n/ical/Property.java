@@ -152,6 +152,15 @@ public class Property implements Constants {
 		return (Attribute) attributeList.elementAt ( i );
 	}
 
+	public Attribute getNamedAttribute ( String attributeName ) {
+		for ( int i = 0; i < this.attributeList.size (); i++ ) {
+			Attribute a = this.attributeAt ( i );
+			if ( a.name.equalsIgnoreCase ( attributeName ) )
+				return a;
+		}
+		return null; // not found
+	}
+
 	/**
 	 * Get the Property name (DTSTART, SUMMARY, etc.) This is always uppercase
 	 * 

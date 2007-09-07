@@ -52,6 +52,8 @@ import org.apache.commons.codec.binary.Base64;
  * @author Craig Knudsen, craig@k5n.us
  */
 public class Attachment extends Property {
+	protected byte[] bytes = null;
+
 	/**
 	 * Constructor
 	 */
@@ -67,6 +69,16 @@ public class Attachment extends Property {
 	 */
 	public Attachment(String icalStr) throws ParseException {
 		this ( icalStr, PARSE_LOOSE );
+		// Decode the attachment if there is one.
+		Attribute valueAttr = this.getNamedAttribute ( "VALUE" );
+		Attribute encAttr = this.getNamedAttribute ( "ENCODING" );
+		if ( valueAttr != null && valueAttr.value.equalsIgnoreCase ( "BINARY" ) ) {
+			if ( "BASE64".equalsIgnoreCase ( encAttr.value ) ) {
+				this.bytes = Base64.decodeBase64 ( this.getValue ().getBytes () );
+			} else {
+				// TODO: handle other types of encoding
+			}
+		}
 	}
 
 	/**
@@ -79,6 +91,7 @@ public class Attachment extends Property {
 	 */
 	public Attachment(String icalStr, int parseMode) throws ParseException {
 		super ( icalStr, parseMode );
+		// convert the encoded data into bytes.
 	}
 
 	/**
@@ -93,10 +106,10 @@ public class Attachment extends Property {
 		this.addAttribute ( "ENCODING", "BASE64" );
 		this.addAttribute ( "VALUE", "BINARY" );
 		long size = filename.length ();
-		byte[] bytes = new byte[(int)size];
+		this.bytes = new byte[(int) size];
 		FileInputStream is = new FileInputStream ( filename );
-		is.read ( bytes );
-		byte[] encoded = Base64.encodeBase64 ( bytes );
+		is.read ( this.bytes );
+		byte[] encoded = Base64.encodeBase64 ( this.bytes );
 		this.value = new String ( encoded );
 	}
 
@@ -112,11 +125,23 @@ public class Attachment extends Property {
 	 * @throws ParseException
 	 * @throws IOException
 	 */
-	public Attachment(URL url) throws ParseException  {
+	public Attachment(URL url) throws ParseException {
 		super ( "ATTACH", "" );
 		this.setValue ( url.toString () );
 	}
-	
+
+	/**
+	 * Get the binary data for the attachment. This is only valid for inline
+	 * attachments encoded with base64 encoding. Attachments with URLs or CIDs
+	 * will need to load the file contents externally.
+	 * 
+	 * @return The binary data of the inline attachment as an array of byte, or
+	 *         null if not an inline attachment.
+	 */
+	public byte[] getBytes () {
+		return this.bytes;
+	}
+
 	/**
 	 * Export to a properly folded iCalendar line.
 	 */
@@ -139,5 +164,5 @@ public class Attachment extends Property {
 
 		return ( StringUtils.foldLine ( ret.toString () ) );
 	}
-	
+
 }

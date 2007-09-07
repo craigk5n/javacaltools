@@ -68,6 +68,8 @@ public class Event implements Constants {
 	protected Location location = null;
 	/** Event status */
 	protected int status = STATUS_UNDEFINED;
+	/** Attachments */
+	protected Vector attachments = null;
 	/** Private user object for caller to set/get */
 	private Object userData = null;
 
@@ -213,6 +215,11 @@ public class Event implements Constants {
 			url = new URL ( icalStr );
 		} else if ( up.startsWith ( "LOCATION" ) ) {
 			location = new Location ( icalStr );
+		} else if ( up.startsWith ( "ATTACH" ) ) {
+			Attachment attach = new Attachment ( icalStr );
+			if ( this.attachments == null )
+				this.attachments = new Vector ();
+			this.attachments.addElement ( attach );
 		} else {
 			System.out.println ( "Ignoring: " + icalStr );
 		}
@@ -382,6 +389,14 @@ public class Event implements Constants {
 		this.summary = summary;
 	}
 
+	public Vector getAttachments () {
+  	return attachments;
+  }
+
+	public void setAttachments ( Vector attachments ) {
+  	this.attachments = attachments;
+  }
+
 	public Object getUserData () {
 		return userData;
 	}
@@ -439,6 +454,12 @@ public class Event implements Constants {
 			ret.append ( url.toICalendar () );
 		if ( location != null )
 			ret.append ( location.toICalendar () );
+		if ( this.attachments != null ) {
+			for ( int i = 0; i < this.attachments.size (); i++ ) {
+				Attachment attach = (Attachment) this.attachments.elementAt ( i );
+				ret.append ( attach.toICalendar () );
+			}
+		}
 		if ( status != STATUS_UNDEFINED ) {
 			switch ( status ) {
 				case STATUS_CONFIRMED:
