@@ -1,5 +1,6 @@
 package us.k5n.ical;
 
+import java.io.File;
 import java.util.Calendar;
 
 import junit.framework.Test;
@@ -41,7 +42,25 @@ public class UtilsTest extends TestCase implements Constants {
 				break;
 		}
 	}
-	
+
+	public void testFileExtensionToMime () {
+		String mime = Utils.getMimeTypeForExtension ( "picture.jpg" );
+		assertTrue ( "Wrong mime type for jpg: " + mime, mime
+		    .equals ( "image/jpeg" ) );
+		mime = Utils.getMimeTypeForExtension ( "picture.jpeg" );
+		assertTrue ( "Wrong mime type for jpeg: " + mime, mime
+		    .equals ( "image/jpeg" ) );
+		mime = Utils.getMimeTypeForExtension ( "file.doc" );
+		assertTrue ( "Wrong mime type for doc: " + mime, mime
+		    .equals ( "application/msword" ) );
+		mime = Utils.getMimeTypeForExtension ( "file.xls" );
+		assertTrue ( "Wrong mime type for xls: " + mime, mime
+		    .equals ( "application/excel" ) );
+		mime = Utils.getMimeTypeForExtension ( "file.html" );
+		assertTrue ( "Wrong mime type for xls: " + mime, mime
+		    .equals ( "text/html" ) );
+	}
+
 	public static Test suite () {
 		return new TestSuite ( UtilsTest.class );
 	}

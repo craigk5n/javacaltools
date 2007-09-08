@@ -111,12 +111,32 @@ public class Attachment extends Property {
 		super ( "ATTACH", "" );
 		this.addAttribute ( "ENCODING", "BASE64" );
 		this.addAttribute ( "VALUE", "BINARY" );
+		this.setFormatType ( formatType );
+		// NOTE: There is no "FILENAME" property attribute specified in RFC2445
+		// (which seems like a large oversight), but most good parsers should just
+		// ignore the extra attribute.
+		this.addAttribute ( "FILENAME", filename.getName () );
 		long size = filename.length ();
 		this.bytes = new byte[(int) size];
 		FileInputStream is = new FileInputStream ( filename );
 		is.read ( this.bytes );
 		byte[] encoded = Base64.encodeBase64 ( this.bytes );
 		this.value = new String ( encoded );
+	}
+
+	/**
+	 * Create an inline embedded attachment from the specified file. The contents
+	 * of the attachment will be stored in the iCalendar data file using base64
+	 * encoding. The MIME type will be derived from the filename extension
+	 * (assuming it is a common MIME type).
+	 * 
+	 * @param filename
+	 *          The file to attach
+	 * @throws ParseException
+	 * @throws IOException
+	 */
+	public Attachment(File filename) throws ParseException, IOException {
+		this ( filename, Utils.getMimeTypeForExtension ( filename.toString () ) );
 	}
 
 	/**
@@ -152,7 +172,8 @@ public class Attachment extends Property {
 
 	/**
 	 * Set the FMTTYPE setting for this attachment. This is the MIME type (such as
-	 * "image/jpeg").
+	 * "image/jpeg"). Note: You can use the Utils.getMimeTypeForExtension method
+	 * to obtain the MIME type for most common file extensions.
 	 */
 	public void setFormatType ( String formatType ) {
 		if ( formatType == null )
@@ -176,6 +197,19 @@ public class Attachment extends Property {
 	 */
 	public byte[] getBytes () {
 		return this.bytes;
+	}
+
+	/**
+	 * Return the size (in bytes) of an inline/binary attachment, or -1 if the
+	 * attachment is external.
+	 * 
+	 * @return the size in bytes
+	 */
+	public int getSize () {
+		if ( this.bytes != null )
+			return this.bytes.length;
+		else
+			return -1;
 	}
 
 	/**
