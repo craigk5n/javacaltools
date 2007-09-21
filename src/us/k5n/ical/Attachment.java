@@ -213,6 +213,18 @@ public class Attachment extends Property {
 	}
 
 	/**
+	 * Get the FILENAME attribute (if there is one). Note that this is not a
+	 * "standard" RFC 2445 attribute and will not be supported by other iCalendar
+	 * tools.
+	 * 
+	 * @return filename (or null if none)
+	 */
+	public String getFilename () {
+		Attribute a = this.getNamedAttribute ( "FILENAME" );
+		return a == null ? null : (String) a.value;
+	}
+
+	/**
 	 * Export to a properly folded iCalendar line.
 	 */
 	public String toICalendar () {
