@@ -116,6 +116,7 @@ public class ICalendarParser extends CalendarParser implements Constants {
 		String line, nextLine;
 		BufferedReader r = new BufferedReader ( reader );
 		StringBuffer data = new StringBuffer ();
+		StringBuffer notYetParsed;
 		int state = STATE_NONE;
 		int ln = 0; // line number
 		int startLineNo = 0;
@@ -132,6 +133,7 @@ public class ICalendarParser extends CalendarParser implements Constants {
 		// last line number of the text will be reported.
 		textLines = new Vector ();
 		nextLine = r.readLine ();
+		notYetParsed = new StringBuffer ();
 		if ( nextLine == null ) {
 			// empty file
 		} else {
@@ -141,8 +143,7 @@ public class ICalendarParser extends CalendarParser implements Constants {
 				if ( nextLine != null ) {
 					nextLine = r.readLine ();
 					// if nextLine is null, don't set done to true yet since we
-					// still
-					// need another iteration through the while loop for the text
+					// still need another iteration through the while loop for the text
 					// to get processed.
 				}
 				// Check to see if next line is a continuation of the current
@@ -152,9 +153,18 @@ public class ICalendarParser extends CalendarParser implements Constants {
 				    && nextLine.length () > 0
 				    && ( nextLine.charAt ( 0 ) == SPACE || nextLine.charAt ( 0 ) == TAB ) ) {
 					// Line folding found. Add to previous line and continue.
-					nextLine = line + CRLF + nextLine;
+					if ( notYetParsed.length () == 0 )
+						notYetParsed.append ( line );
+					notYetParsed.append ( CRLF );
+					notYetParsed.append ( nextLine );
+					// nextLine = line + CRLF + nextLine;
 					continue; // skip back to start of while loop
 				}
+				// not a continuation line
+				if ( notYetParsed.length () > 0 )
+					line = notYetParsed.toString ();
+				notYetParsed.setLength ( 0 );
+
 				data.append ( line );
 				String lineUp = line.toUpperCase ();
 

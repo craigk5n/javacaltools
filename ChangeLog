@@ -2,6 +2,8 @@ Version 0.4.3 (20 Sep 2007)
  - Added support for attachments using iCalendar ATTACH.  Added Apache
    Commons Codec library (for base64 encoding/decoding).
  - Added new getNamedAttribute method to all Property classes
+ - Performance improvements for parsing data with very long folded
+   lines, such as inline attachments.
 Version 0.4.2 (01 Aug 2007)
  - Added support for STATUS field in Event and Journal classes.
  - CalendarPanel changes:
