@@ -74,6 +74,7 @@ Build targets:
       <zipfileset src="${jodatime-jar}" />
       <zipfileset src="${google-rrule-jar}" />
       <zipfileset src="${javacsv-jar}" />
+      <zipfileset src="${commons-code-jar}" />
     </jar>
 
     <!-- Build jar for calendarpanel -->
