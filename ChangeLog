@@ -1,3 +1,7 @@
+
+Version 0.4.4 (12 Dec 2007)
+ - Fixed generated iCalendar output for RRULEs.  Added simple constructor for
+   Rrule class.
 Version 0.4.3 (20 Sep 2007)
  - Added support for attachments using iCalendar ATTACH.  Added Apache
    Commons Codec library (for base64 encoding/decoding).

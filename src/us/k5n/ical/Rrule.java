@@ -191,7 +191,17 @@ public class Rrule extends Property implements Constants {
 	public static final int FREQ_MINUTELY = 6;
 	public static final int FREQ_SECONDLY = 7;
 
-	// TODO: constructor
+	/**
+	 * Create an Rrule.
+	 * 
+	 * @param frequence
+	 *          The frequency of the recurrence (FREQ_DAILY, FREQ_WEEKLY, etc.)
+	 */
+	public Rrule(int frequency) {
+		super ( "RRULE", "" );
+		this.freq = frequency;
+	}
+
 	/**
 	 * Construct based on iCalendar RRULE text
 	 * 
@@ -397,11 +407,29 @@ public class Rrule extends Property implements Constants {
 	}
 
 	/**
+	 * Get the frequency of the recurrence. This can be any of the following:
+	 * <ul>
+	 * <li>FREQ_NOT_SPECIFIED </li>
+	 * <li>FREQ_YEARLY </li>
+	 * <li>FREQ_MONTHLY</li>
+	 * <li>FREQ_WEEKLY </li>
+	 * <li>FREQ_DAILY </li>
+	 * <li>FREQ_HOURLY </li>
+	 * <li>FREQ_MINUTELY </li>
+	 * <li>FREQ_SECONDLY </li>
+	 * </ul>
+	 * 
+	 * @return
+	 */
+	public int getFrequency () {
+		return this.freq;
+	}
+
+	/**
 	 * Convert to a RRULE iCalendar line
 	 */
 	public String toICalendar () {
 		StringBuffer ret = new StringBuffer ();
-		ret.append ( "RRULE:" );
 		// regenerate value in case anything was updated and so we can validate
 		// parse was correct
 		switch ( freq ) {

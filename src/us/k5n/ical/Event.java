@@ -446,6 +446,8 @@ public class Event implements Constants {
 			ret.append ( dtstamp.toICalendar () );
 		if ( lastModified != null )
 			ret.append ( lastModified.toICalendar () );
+		if ( rrule != null )
+			ret.append ( rrule.toICalendar () );
 		if ( classification != null )
 			ret.append ( classification.toICalendar () );
 		if ( categories != null )
