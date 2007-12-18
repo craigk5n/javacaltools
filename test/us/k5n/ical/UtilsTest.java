@@ -1,6 +1,5 @@
 package us.k5n.ical;
 
-import java.io.File;
 import java.util.Calendar;
 
 import junit.framework.Test;
