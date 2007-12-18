@@ -1,10 +1,7 @@
 package us.k5n.ical;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.Calendar;
-import java.util.Vector;
 
 import com.csvreader.CsvReader;
 
