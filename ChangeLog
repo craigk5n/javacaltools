@@ -1,4 +1,6 @@
-
+Version 0.4.5 (?? ??? ????)
+ - Bug fix for CalendarPanel: today button was showing wrong week during last week
+   of year.
 Version 0.4.4 (12 Dec 2007)
  - Fixed generated iCalendar output for RRULEs.  Added simple constructor for
    Rrule class.

@@ -352,8 +352,12 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 		JButton todayButton = new JButton ( "Today" );
 		todayButton.addActionListener ( new ActionListener () {
 			public void actionPerformed ( ActionEvent event ) {
-				// Scroll calendar back to current date.
-				setWeekOffset ( 0 );
+				// Scroll calendar back to current date. Note that we cannot just
+				// use an offset of 0 since this causes some issues at the end
+				// of the year.
+				Calendar c = Calendar.getInstance ();
+				int week = c.get ( Calendar.WEEK_OF_YEAR );
+				setWeekOffset ( week );
 			}
 		} );
 		titlePanel.add ( todayButton, BorderLayout.EAST );
