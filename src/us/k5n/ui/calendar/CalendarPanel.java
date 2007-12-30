@@ -342,8 +342,7 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 
 		createUI ();
 
-		Calendar c = Calendar.getInstance ();
-		this.setWeekOffset ( c.get ( Calendar.WEEK_OF_YEAR ) );
+		this.setWeekOffset ( 0 );
 	}
 
 	protected void createUI () {
@@ -353,12 +352,8 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 		JButton todayButton = new JButton ( "Today" );
 		todayButton.addActionListener ( new ActionListener () {
 			public void actionPerformed ( ActionEvent event ) {
-				// Scroll calendar back to current date. Note that we cannot just
-				// use an offset of 0 since this causes some issues at the end
-				// of the year.
-				Calendar c = Calendar.getInstance ();
-				int week = c.get ( Calendar.WEEK_OF_YEAR );
-				setWeekOffset ( week );
+				// Scroll calendar back to current date.
+				setWeekOffset ( 0 );
 			}
 		} );
 		titlePanel.add ( todayButton, BorderLayout.EAST );
@@ -433,10 +428,18 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 		    Calendar.FRIDAY, Calendar.SATURDAY };
 		Calendar c = Calendar.getInstance ();
 		c.setLenient ( true );
+		// Note that we do the adjustment by day of year rather than week of year,
+		// which would seem to be the logical choice. However, at the end of the
+		// year, you can have a week of year of 1 at the end of December. This
+		// seems to muck up the calculations, so we will use day of year instead.
 		this.firstDayOfWeek = getFirstDayOfWeek ();
-		int currentWeek = c.get ( Calendar.WEEK_OF_YEAR );
-		c.set ( Calendar.DAY_OF_WEEK, weekdayTranslation[this.firstDayOfWeek] );
-		c.set ( Calendar.WEEK_OF_YEAR, currentWeek + weekOffset );
+		int currentDayOfYear = c.get ( Calendar.DAY_OF_YEAR );
+		int currentDayOfWeek = c.get ( Calendar.DAY_OF_WEEK );
+		int weekStartDayOfYear = currentDayOfYear
+		    - weekdayTranslation[currentDayOfWeek];
+		// add offset
+		int offsetDayOfYear = weekStartDayOfYear + ( weekOffset * 7 );
+		c.set ( Calendar.DAY_OF_YEAR, offsetDayOfYear );
 
 		this.startDate = Calendar.getInstance ();
 		this.startDate.setTimeInMillis ( c.getTimeInMillis () );
