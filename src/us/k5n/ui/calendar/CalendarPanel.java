@@ -342,7 +342,8 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 
 		createUI ();
 
-		this.setWeekOffset ( 0 );
+		Calendar c = Calendar.getInstance ();
+		this.setWeekOffset ( c.get ( Calendar.WEEK_OF_YEAR ) );
 	}
 
 	protected void createUI () {
