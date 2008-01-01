@@ -16,6 +16,7 @@ import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.Calendar;
@@ -26,9 +27,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
-import javax.swing.JToolTip;
 import javax.swing.Timer;
-import javax.swing.ToolTipManager;
 
 /**
  * The CalendarPanel class is a Swing component for displaying a monthly
@@ -92,6 +91,7 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 	private Date selectedDate = null;
 	private int selectedItemInd = -1;// 0=first event of day selected
 	private Vector selectionListeners;
+	DisplayedEvent currentMouseOverEvent = null;
 
 	class Date {
 		public int year, month, day;
@@ -113,6 +113,13 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 			this.rect = rect;
 			this.eventNoForDay = eventNo;
 		}
+
+		public boolean isSameEvent ( Object o ) {
+			if ( ! ( o instanceof DisplayedEvent ) )
+				return false;
+			DisplayedEvent e2 = (DisplayedEvent) o;
+			return ( rect.equals ( e2.rect ) );
+		}
 	}
 
 	class DisplayedDate {
@@ -125,29 +132,14 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 		}
 	}
 
-	class MonthPanel extends JPanel implements MouseListener {
+	class MonthPanel extends JPanel implements MouseListener, MouseMotionListener {
 		private static final long serialVersionUID = 1000L;
+		DisplayedEvent lastMouseEvent = null;
 
 		public MonthPanel() {
 			super ();
-			// enable tooltips for this JPanel
-			this.setToolTipText ( "Month View" );
-			// Reset the initial delay for a tooltip. It seems like there
-			// should be a getToolTipManager call somewhere, but I haven't found
-			// it in the API.
-			// TODO: make this delay configurable
-			MouseListener[] listeners = this.getMouseListeners ();
-			for ( int i = 0; listeners != null && i < listeners.length; i++ ) {
-				if ( listeners[i] instanceof ToolTipManager ) {
-					ToolTipManager ttm = (ToolTipManager) listeners[i];
-					ttm.setInitialDelay ( 1 );
-				}
-			}
 			this.addMouseListener ( this );
-		}
-
-		public JToolTip createToolTip () {
-			return (JToolTip) new JMToolTip ();
+			this.addMouseMotionListener ( this );
 		}
 
 		public String formattedTime ( int hour, int minute ) {
@@ -184,36 +176,26 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 			return null;
 		}
 
-		public String getToolTipText ( MouseEvent e ) {
-			DisplayedEvent de = getEventForPosition ( e.getX (), e.getY () );
-			if ( de != null ) {
-				StringBuffer sb = new StringBuffer ();
-				sb.append ( "<html>" );
-				if ( de.event.hasTime () ) {
-					sb.append ( formattedTime ( de.event.getHour (), de.event
-					    .getMinute () ) );
-					sb.append ( "<br>" );
-				}
-				sb.append ( de.event.getTitle () );
-				if ( de.event.getLocation () != null ) {
-					sb.append ( "<br>" );
-					sb.append ( "Location: " );
-					sb.append ( de.event.getLocation () );
-				}
-				if ( de.event.getDescription () != null
-				    && !de.event.getDescription ().equals ( de.event.getTitle () ) ) {
-					sb.append ( "<br>" );
-					sb.append ( de.event.getDescription ().replaceAll ( "\n", "<br>" ) );
-				}
-				sb.append ( "</html>" );
-				return sb.toString ();
-			}
-			return null;
+		public DisplayedEvent getMouseOverEvent ( MouseEvent e ) {
+			return getEventForPosition ( e.getX (), e.getY () );
 		}
 
 		public void paint ( Graphics g ) {
 			super.paint ( g );
 			paintMonth ( g );
+		}
+
+		private DisplayedEvent getEventForMouseEvent ( MouseEvent e1 ) {
+			for ( int i = 0; displayedEvents != null && i < displayedEvents.size (); i++ ) {
+				DisplayedEvent de = (DisplayedEvent) displayedEvents.elementAt ( i );
+				if ( e1.getX () >= de.rect.x && e1.getX () <= de.rect.x + de.rect.width
+				    && e1.getY () >= de.rect.y
+				    && e1.getY () <= de.rect.y + de.rect.height ) {
+					// Found item
+					return de;
+				}
+			}
+			return null; // not found
 		}
 
 		public void mouseClicked ( MouseEvent e1 ) {
@@ -222,6 +204,9 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 			selectedDate = null;
 			selectedItemInd = -1;
 			DisplayedEvent selectedEvent = null;
+			if ( currentMouseOverEvent != null )
+				doRepaint = true;
+			currentMouseOverEvent = null; // Don't display event popup
 			for ( int i = 0; displayedEvents != null && i < displayedEvents.size (); i++ ) {
 				DisplayedEvent de = (DisplayedEvent) displayedEvents.elementAt ( i );
 				if ( e1.getX () >= de.rect.x && e1.getX () <= de.rect.x + de.rect.width
@@ -290,15 +275,46 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 		}
 
 		public void mouseEntered ( MouseEvent e1 ) {
+			this.lastMouseEvent = getEventForMouseEvent ( e1 );
+			currentMouseOverEvent = getMouseOverEvent ( e1 );
+			if ( currentMouseOverEvent != null )
+				repaint ();
 		}
 
 		public void mouseExited ( MouseEvent e1 ) {
+			this.lastMouseEvent = null;
+			if ( currentMouseOverEvent != null )
+				repaint ();
+			currentMouseOverEvent = null; // Display event popup?
 		}
 
 		public void mousePressed ( MouseEvent e1 ) {
+			if ( currentMouseOverEvent != null )
+				repaint ();
+			currentMouseOverEvent = null; // Display event popup?
 		}
 
 		public void mouseReleased ( MouseEvent e1 ) {
+			if ( currentMouseOverEvent != null )
+				repaint ();
+			currentMouseOverEvent = null; // Display event popup?
+		}
+
+		public void mouseDragged ( MouseEvent e1 ) {
+			currentMouseOverEvent = null; // Display event popup?
+		}
+
+		public void mouseMoved ( MouseEvent e1 ) {
+			this.lastMouseEvent = getEventForMouseEvent ( e1 );
+			// Display event popup?
+			DisplayedEvent oldEvent = currentMouseOverEvent;
+			currentMouseOverEvent = getMouseOverEvent ( e1 );
+			if ( ( oldEvent == null && currentMouseOverEvent != null )
+			    || ( oldEvent != null && currentMouseOverEvent == null ) )
+				repaint ();
+			else if ( oldEvent != null && currentMouseOverEvent != null
+			    && !oldEvent.isSameEvent ( currentMouseOverEvent ) )
+				repaint ();
 		}
 	}
 
@@ -517,6 +533,29 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 		}
 	}
 
+	public String formattedTime ( int hour, int minute ) {
+		// TODO: support alternate formats
+		StringBuffer ret = new StringBuffer ();
+		String ampm = null;
+		if ( hour < 12 ) {
+			// AM
+			ampm = "am";
+		} else {
+			// PM
+			hour %= 12;
+			ampm = "pm";
+		}
+		if ( hour == 0 )
+			hour = 12;
+		ret.append ( hour );
+		ret.append ( ':' );
+		if ( minute < 10 )
+			ret.append ( '0' );
+		ret.append ( minute );
+		ret.append ( ampm );
+		return ret.toString ();
+	}
+
 	public void paintMonth ( Graphics g ) {
 		Color defaultColor = g.getColor ();
 
@@ -542,7 +581,7 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 
 		if ( this.lastWidth != drawArea.getWidth ()
 		    || this.lastHeight != drawArea.getHeight () ) {
-			// component was resized. recalc dimenions
+			// component was resized. recalculate dimensions
 			handleResize ( g );
 		}
 
@@ -595,6 +634,7 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 		}
 
 		if ( this.drawDateHint ) {
+			Font oldFont = g.getFont ();
 			StringBuffer hintBuf = new StringBuffer ();
 			// Display name of first full month in view
 			if ( this.startDate.get ( Calendar.DAY_OF_MONTH ) == 1 ) {
@@ -631,7 +671,106 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 				g.drawString ( hint, x + 5, y + 5 + fm.getAscent () );
 				g2d.setComposite ( oldComp );
 			}
+			g.setFont ( oldFont );
 		}
+		drawEventPopup ( g );
+	}
+
+	/**
+	 * Draw the event details popup. This replaced the old behavior implemented
+	 * with Swing's built-in ToolTip. We moved to this because of restrictions on
+	 * how much you can customize the appearance of a ToolTip.
+	 */
+	public void drawEventPopup ( Graphics g ) {
+		if ( this.currentMouseOverEvent != null ) {
+			EventInstance evInst = this.currentMouseOverEvent.event;
+			// Get event details to include in popup.
+			Vector textLines = new Vector ();
+			String header = null;
+			// TODO: draw drop shadow with transparency
+			// If event is in upper half of panel, put popup above. Otherwise,
+			// put it below.
+			boolean above = ( this.currentMouseOverEvent.rect.y > ( this.getHeight () / 2 ) );
+			if ( evInst.hasTime () ) {
+				header = formattedTime ( evInst.getHour (), evInst.getMinute () ) + " "
+				    + evInst.getTitle ();
+			} else {
+				header = evInst.getTitle ();
+			}
+			if ( evInst.getLocation () != null ) {
+				textLines.addElement ( "Location: " + evInst.getLocation () );
+			}
+			if ( evInst.getDescription () != null ) {
+				// TODO: wrap long lines
+				String[] lines = evInst.getDescription ().split ( "\n" );
+				for ( int i = 0; i < lines.length; i++ ) {
+					textLines.addElement ( lines[i] );
+				}
+			}
+			FontMetrics fm = g.getFontMetrics ();
+			int w = 0, h = 0, x = 0, y = 0;
+			w = fm.stringWidth ( header );
+			for ( int i = 0; i < textLines.size (); i++ ) {
+				String s = (String) textLines.elementAt ( i );
+				if ( fm.stringWidth ( s ) > w )
+					w = fm.stringWidth ( s );
+			}
+			w += 4;
+			h = fm.getHeight () * ( 1 + textLines.size () ) + 2;
+			x = this.currentMouseOverEvent.rect.x
+			    + ( this.currentMouseOverEvent.rect.width / 2 ) - ( w / 2 );
+			if ( x < 5 )
+				x = 5;
+			else if ( ( x + w ) >= ( this.getWidth () - 5 ) )
+				x = this.getWidth () - ( w + 5 );
+			if ( above )
+				y = this.currentMouseOverEvent.rect.y - h - 15;
+			else
+				y = this.currentMouseOverEvent.rect.y
+				    + this.currentMouseOverEvent.rect.height + 15;
+			// Draw 8 lines of drop shadow. We do this buy drawing repeating rounded
+			// rectangles using the same alpha transparency setting. By doing this,
+			// they alpha values end up adding up since we draw on the same location
+			// multiple times.
+			Graphics2D g2d = (Graphics2D) g;
+			Composite oldComp = g2d.getComposite ();
+			Color shadow = Color.BLACK;
+			for ( int i = 0; i < 8; i++ ) {
+				// float alpha = 0.1f + ( (float) i * 0.04f );
+				float alpha = 0.15f;
+				Composite alphaComp = AlphaComposite.getInstance (
+				    AlphaComposite.SRC_OVER, alpha );
+				g2d.setComposite ( alphaComp );
+				g.setColor ( shadow );
+				g.fillRoundRect ( x + 1 + i, y + 1 + ( 8 - i ), w - 2 - ( 2 * i ),
+				    h - 2, 12, 12 );
+			}
+			g2d.setComposite ( oldComp );
+			// TODO: handle height too long gracefully
+			Color color = darkerColor ( evInst.getBackgroundColor (), evInst
+			    .getForegroundColor () );
+			g.setColor ( color );
+			g.fillRoundRect ( x, y, w, h, 8, 8 );
+			g.setColor ( Color.WHITE );
+			g.drawString ( header, x + 2, y + fm.getHeight () );
+			Rectangle omitHeader = new Rectangle ( x, y + fm.getHeight ()
+			    + fm.getDescent (), w, h - fm.getHeight () );
+			g.setClip ( omitHeader );
+			g.setColor ( Color.WHITE );
+			g.fillRoundRect ( x + 1, y + 1, w - 2, h - 2, 8, 8 );
+			g.setClip ( null );
+			g.setColor ( color );
+			for ( int i = 0; i < textLines.size (); i++ ) {
+				String s = (String) textLines.elementAt ( i );
+				g.drawString ( s, x + 2, y + ( i + 1 ) * fm.getHeight () );
+			}
+		}
+	}
+
+	Color darkerColor ( Color color1, Color color2 ) {
+		int sum1 = color1.getRed () + color1.getBlue () + color1.getGreen ();
+		int sum2 = color2.getRed () + color2.getBlue () + color2.getGreen ();
+		return ( sum1 < sum2 ? color1 : color2 );
 	}
 
 	protected void drawDayOfMonth ( Graphics g, Calendar day,
