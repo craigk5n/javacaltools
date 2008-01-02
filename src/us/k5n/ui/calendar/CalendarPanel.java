@@ -775,8 +775,13 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 				    h - 2, 12, 12 );
 			}
 			g2d.setComposite ( oldComp );
-			Color color = darkerColor ( evInst.getBackgroundColor (), evInst
-			    .getForegroundColor () );
+			Color color = evInst.getBackgroundColor ();
+			// If color is not dark enough contrast to white, then make it darker
+			if ( color.getRed () > 100 && color.getBlue () > 100
+			    && color.getGreen () > 100 ) {
+				color = new Color ( color.getRed () / 2, color.getGreen () / 2, color
+				    .getBlue () / 2 );
+			}
 			g.setColor ( color );
 			g.fillRoundRect ( x, y, w, h, 8, 8 );
 			g.setColor ( Color.WHITE );
@@ -793,21 +798,6 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 				g.drawString ( s, x + 2, y + ( i + 2 ) * fm.getHeight () );
 			}
 		}
-	}
-
-	/**
-	 * Calculate the darker of the two specific colors.
-	 * 
-	 * @param color1
-	 *          the first color
-	 * @param color2
-	 *          the second color
-	 * @return The darker of the two colors
-	 */
-	Color darkerColor ( Color color1, Color color2 ) {
-		int sum1 = color1.getRed () + color1.getBlue () + color1.getGreen ();
-		int sum2 = color2.getRed () + color2.getBlue () + color2.getGreen ();
-		return ( sum1 < sum2 ? color1 : color2 );
 	}
 
 	/**
