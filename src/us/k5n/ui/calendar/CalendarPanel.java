@@ -762,13 +762,19 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 			Color shadow = Color.BLACK;
 			for ( int i = 0; i < 8; i++ ) {
 				// float alpha = 0.1f + ( (float) i * 0.04f );
-				float alpha = 0.15f;
+				float alpha = 0.04f;
 				Composite alphaComp = AlphaComposite.getInstance (
 				    AlphaComposite.SRC_OVER, alpha );
 				g2d.setComposite ( alphaComp );
 				g.setColor ( shadow );
 				g.fillRoundRect ( x + 1 + i, y + 1 + ( 8 - i ), w - 2 - ( 2 * i ),
 				    h - 2, 12, 12 );
+				int n = 8 - i;
+				alpha = 0.01f;
+				alphaComp = AlphaComposite.getInstance (
+				    AlphaComposite.SRC_OVER, alpha );
+				g2d.setComposite ( alphaComp );
+				g.fillRoundRect ( x - n, y - n, w + ( 2 * n ), h + 2 * n, 12, 12 );
 			}
 			g2d.setComposite ( oldComp );
 			Color color = evInst.getBackgroundColor ();
