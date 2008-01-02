@@ -142,29 +142,6 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 			this.addMouseMotionListener ( this );
 		}
 
-		public String formattedTime ( int hour, int minute ) {
-			// TODO: support alternate formats
-			StringBuffer ret = new StringBuffer ();
-			String ampm = null;
-			if ( hour < 12 ) {
-				// AM
-				ampm = "am";
-			} else {
-				// PM
-				hour %= 12;
-				ampm = "pm";
-			}
-			if ( hour == 0 )
-				hour = 12;
-			ret.append ( hour );
-			ret.append ( ':' );
-			if ( minute < 10 )
-				ret.append ( '0' );
-			ret.append ( minute );
-			ret.append ( ampm );
-			return ret.toString ();
-		}
-
 		protected DisplayedEvent getEventForPosition ( int x, int y ) {
 			for ( int i = 0; displayedEvents != null && i < displayedEvents.size (); i++ ) {
 				DisplayedEvent de = (DisplayedEvent) displayedEvents.elementAt ( i );
@@ -529,8 +506,8 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 		}
 	}
 
-	public String formattedTime ( int hour, int minute ) {
-		// TODO: support alternate formats
+	public static String formattedTime ( int hour, int minute ) {
+		// TODO: support alternate time formats
 		StringBuffer ret = new StringBuffer ();
 		String ampm = null;
 		if ( hour < 12 ) {
@@ -688,8 +665,9 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 			// put it below.
 			boolean above = ( this.currentMouseOverEvent.rect.y > ( this.getHeight () / 2 ) );
 			if ( evInst.hasTime () ) {
-				header = formattedTime ( evInst.getHour (), evInst.getMinute () ) + " "
-				    + evInst.getTitle ();
+				header = CalendarPanel.formattedTime ( evInst.getHour (), evInst
+				    .getMinute () )
+				    + " " + evInst.getTitle ();
 			} else {
 				header = evInst.getTitle ();
 			}
@@ -767,10 +745,10 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 				    h - 2, 12, 12 );
 				int n = 8 - i;
 				alpha = 0.01f;
-				alphaComp = AlphaComposite.getInstance (
-				    AlphaComposite.SRC_OVER, alpha );
+				alphaComp = AlphaComposite
+				    .getInstance ( AlphaComposite.SRC_OVER, alpha );
 				g2d.setComposite ( alphaComp );
-				g.fillRoundRect ( x - n, y - n, w + ( 2 * n ), h + 2 * n, 12, 12 );
+				g.fillRoundRect ( x - n, y - n, w + ( 2 * n ), h + 2 * n, 30, 30 );
 			}
 			g2d.setComposite ( oldComp );
 			Color color = evInst.getBackgroundColor ();
