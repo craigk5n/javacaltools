@@ -442,24 +442,20 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 		this.addMouseWheelListener ( this );
 	}
 
+	// Note that we should do the adjustment by day of year rather than week of
+	// year, which would seem to be the logical choice. However, at the end of the
+	// year, you can have a week of year of 1 at the end of December. This
+	// seems to muck up the calculations, so we still need to fix this bug.
 	public void setWeekOffset ( int weekOffset ) {
 		int[] weekdayTranslation = { Calendar.SUNDAY, Calendar.MONDAY,
 		    Calendar.TUESDAY, Calendar.WEDNESDAY, Calendar.THURSDAY,
 		    Calendar.FRIDAY, Calendar.SATURDAY };
 		Calendar c = Calendar.getInstance ();
 		c.setLenient ( true );
-		// Note that we do the adjustment by day of year rather than week of year,
-		// which would seem to be the logical choice. However, at the end of the
-		// year, you can have a week of year of 1 at the end of December. This
-		// seems to muck up the calculations, so we will use day of year instead.
 		this.firstDayOfWeek = getFirstDayOfWeek ();
-		int currentDayOfYear = c.get ( Calendar.DAY_OF_YEAR );
-		int currentDayOfWeek = c.get ( Calendar.DAY_OF_WEEK );
-		int weekStartDayOfYear = currentDayOfYear
-		    - weekdayTranslation[currentDayOfWeek];
-		// add offset
-		int offsetDayOfYear = weekStartDayOfYear + ( weekOffset * 7 );
-		c.set ( Calendar.DAY_OF_YEAR, offsetDayOfYear );
+		int currentWeek = c.get ( Calendar.WEEK_OF_YEAR );
+		c.set ( Calendar.DAY_OF_WEEK, weekdayTranslation[this.firstDayOfWeek] );
+		c.set ( Calendar.WEEK_OF_YEAR, currentWeek + weekOffset );
 
 		this.startDate = Calendar.getInstance ();
 		this.startDate.setTimeInMillis ( c.getTimeInMillis () );
