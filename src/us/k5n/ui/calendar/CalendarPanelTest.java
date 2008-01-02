@@ -8,9 +8,9 @@ import java.util.Vector;
 import javax.swing.JFrame;
 
 /**
- * Simple test/demo class for CalendarPanel that illustrates how to use
- * the CalendarPanel class and can be used to view the appearance of
- * the CalendarPanel class.
+ * Simple test/demo class for CalendarPanel that illustrates how to use the
+ * CalendarPanel class and can be used to view the appearance of the
+ * CalendarPanel class.
  * 
  * @author Craig Knudsen, craig@k5n.us
  * @version $Id$
@@ -19,6 +19,34 @@ import javax.swing.JFrame;
 public class CalendarPanelTest extends JFrame implements CalendarDataRepository {
 	private static final long serialVersionUID = 1000L;
 	CalendarPanel cpanel;
+	static final String longDescr = "Mary had a little lamb,\n"
+	    + "Little lamb, little lamb,\n" + "Mary had a little lamb,\n"
+	    + "Its fleece was white as snow\n" + "And everywhere that Mary went\n"
+	    + "Mary went, Mary went,\n" + "Everywhere that Mary went\n"
+	    + "The lamb was sure to go\n" + "It followed her to school one day\n"
+	    + "School one day, school one day\n"
+	    + "It followed her to school one day\n"
+	    + "Which was against the rules.\n"
+	    + "It made the children laugh and play,\n"
+	    + "Laugh and play, laugh and play,\n"
+	    + "It made the children laugh and play\n" + "To see a lamb at school\n"
+	    + "And so the teacher turned it out,\n"
+	    + "Turned it out, turned it out,\n"
+	    + "And so the teacher turned it out,\n" + "But still it lingered near\n"
+	    + "And waited patiently about,\n" + "Patiently about, patiently about,\n"
+	    + "And waited patiently about\n" + "Till Mary did appear\n"
+	    + "\"Why does the lamb love Mary so?\"\n"
+	    + "Love Mary so? Love Mary so?\n"
+	    + "\"Why does the lamb love Mary so?\"\n" + "The eager children cry\n"
+	    + "\"Why, Mary loves the lamb, you know.\"\n"
+	    + "Loves the lamb, you know, loves the lamb, you know\n"
+	    + "\"Why, Mary loves the lamb, you know.\"\n" + "The teacher did reply.";
+	static final String wordWrapTest = "We the People of the United States, in Order to form a "
+	    + "more perfect Union,  establish Justice, insure domestic "
+	    + "Tranquility, provide for the common defence, promote the "
+	    + "general Welfare, and secure the Blessings of Liberty to "
+	    + "ourselves and our Posterity, do ordain and establish this "
+	    + "Constitution for the United States of America.";
 
 	public CalendarPanelTest() {
 		super ( "Calendar Test" );
@@ -59,10 +87,23 @@ public class CalendarPanelTest extends JFrame implements CalendarDataRepository 
 			    0 ) );
 		}
 		if ( day % 5 == 0 ) {
-			ret
-			    .addElement ( new Event ( "Test 8:15 event",
-			        "This is a test event.\nTest description", year, month, day, 8,
-			        15, 0 ) );
+			ret.addElement ( new Event ( "Long Description Event", longDescr, year,
+			    month, day ) );
+		}
+		if ( day % 4 == 0 ) {
+			ret.addElement ( new Event ( "Word Wrap Test", wordWrapTest, year, month,
+			    day ) );
+		}
+		if ( day == 15 ) {
+			for ( int i = 0; i < 10; i++ ) {
+				ret
+				    .addElement ( new Event (
+				        "Event#" + ( i + 1 ),
+				        "This is a test event.\n"
+				            + "We're checking to see how the calendar renders when you put a whole bunch of "
+				            + "events on the same day.", year, month, day ) );
+			}
+
 		}
 		return ret;
 	}
@@ -156,9 +197,8 @@ public class CalendarPanelTest extends JFrame implements CalendarDataRepository 
 		public boolean hasDuration () {
 			return false;
 		}
-		
-		public String getLocation ()
-		{
+
+		public String getLocation () {
 			return null;
 		}
 

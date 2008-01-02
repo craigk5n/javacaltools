@@ -21,7 +21,11 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -612,7 +616,7 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 			g.drawLine ( 0, rowY[row], maxX, rowY[row] );
 		}
 
-		// Draw dates
+		// Draw dates including all the events
 		g.setColor ( defaultColor );
 		Calendar c = Calendar.getInstance ();
 		c.setLenient ( true );
@@ -673,6 +677,7 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 			}
 			g.setFont ( oldFont );
 		}
+
 		drawEventPopup ( g );
 	}
 
@@ -687,7 +692,6 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 			// Get event details to include in popup.
 			Vector textLines = new Vector ();
 			String header = null;
-			// TODO: draw drop shadow with transparency
 			// If event is in upper half of panel, put popup above. Otherwise,
 			// put it below.
 			boolean above = ( this.currentMouseOverEvent.rect.y > ( this.getHeight () / 2 ) );
@@ -701,11 +705,8 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 				textLines.addElement ( "Location: " + evInst.getLocation () );
 			}
 			if ( evInst.getDescription () != null ) {
-				// TODO: wrap long lines
-				String[] lines = evInst.getDescription ().split ( "\n" );
-				for ( int i = 0; i < lines.length; i++ ) {
-					textLines.addElement ( lines[i] );
-				}
+				// wrap long lines
+				textLines.addAll ( Utils.wrapLines ( evInst.getDescription (), 50 ) );
 			}
 			FontMetrics fm = g.getFontMetrics ();
 			int w = 0, h = 0, x = 0, y = 0;
@@ -716,18 +717,46 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 					w = fm.stringWidth ( s );
 			}
 			w += 4;
-			h = fm.getHeight () * ( 1 + textLines.size () ) + 2;
+			h = fm.getHeight () * ( 1 + textLines.size () ) + 4;
 			x = this.currentMouseOverEvent.rect.x
 			    + ( this.currentMouseOverEvent.rect.width / 2 ) - ( w / 2 );
-			if ( x < 5 )
-				x = 5;
-			else if ( ( x + w ) >= ( this.getWidth () - 5 ) )
-				x = this.getWidth () - ( w + 5 );
-			if ( above )
+			boolean recalcW = false;
+			if ( above ) {
 				y = this.currentMouseOverEvent.rect.y - h - 15;
-			else
+				// If too tall, then remove some lines at the end...
+				while ( y < 1 && textLines.size () >= 2 ) {
+					textLines.setSize ( textLines.size () - 2 );
+					textLines.addElement ( "..." );
+					h = fm.getHeight () * ( 1 + textLines.size () ) + 4;
+					y = this.currentMouseOverEvent.rect.y - h - 15;
+					recalcW = true;
+				}
+			} else {
 				y = this.currentMouseOverEvent.rect.y
 				    + this.currentMouseOverEvent.rect.height + 15;
+				// If too tall, then remove some lines at the end...
+				while ( ( y + h + 8 ) > ( this.getHeight () - 25 )
+				    && textLines.size () >= 2 ) {
+					textLines.setSize ( textLines.size () - 2 );
+					textLines.addElement ( "..." );
+					h = fm.getHeight () * ( 1 + textLines.size () ) + 4;
+					recalcW = true;
+				}
+			}
+			// Recalculate width if we removed text above
+			if ( recalcW ) {
+				w = fm.stringWidth ( header );
+				for ( int i = 0; i < textLines.size (); i++ ) {
+					String s = (String) textLines.elementAt ( i );
+					if ( fm.stringWidth ( s ) > w )
+						w = fm.stringWidth ( s );
+				}
+				w += 4;
+			}
+			if ( x < 5 )
+				x = 5;
+			else if ( ( x + w ) >= ( this.drawArea.getWidth () - 5 ) )
+				x = this.drawArea.getWidth () - ( w + 5 );
 			// Draw 8 lines of drop shadow. We do this buy drawing repeating rounded
 			// rectangles using the same alpha transparency setting. By doing this,
 			// they alpha values end up adding up since we draw on the same location
@@ -746,7 +775,6 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 				    h - 2, 12, 12 );
 			}
 			g2d.setComposite ( oldComp );
-			// TODO: handle height too long gracefully
 			Color color = darkerColor ( evInst.getBackgroundColor (), evInst
 			    .getForegroundColor () );
 			g.setColor ( color );
@@ -762,17 +790,37 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 			g.setColor ( color );
 			for ( int i = 0; i < textLines.size (); i++ ) {
 				String s = (String) textLines.elementAt ( i );
-				g.drawString ( s, x + 2, y + ( i + 1 ) * fm.getHeight () );
+				g.drawString ( s, x + 2, y + ( i + 2 ) * fm.getHeight () );
 			}
 		}
 	}
 
+	/**
+	 * Calculate the darker of the two specific colors.
+	 * 
+	 * @param color1
+	 *          the first color
+	 * @param color2
+	 *          the second color
+	 * @return The darker of the two colors
+	 */
 	Color darkerColor ( Color color1, Color color2 ) {
 		int sum1 = color1.getRed () + color1.getBlue () + color1.getGreen ();
 		int sum2 = color2.getRed () + color2.getBlue () + color2.getGreen ();
 		return ( sum1 < sum2 ? color1 : color2 );
 	}
 
+	/**
+	 * Draw a single day of the month, including all the events for that date.
+	 * 
+	 * @param g
+	 * @param day
+	 * @param showMonthName
+	 * @param x
+	 * @param y
+	 * @param w
+	 * @param h
+	 */
 	protected void drawDayOfMonth ( Graphics g, Calendar day,
 	    boolean showMonthName, int x, int y, int w, int h ) {
 		FontMetrics fm = g.getFontMetrics ();

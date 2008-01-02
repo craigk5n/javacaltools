@@ -1,6 +1,8 @@
 Version 0.4.5 (?? ??? ????)
  - Bug fix for CalendarPanel: today button was showing wrong week during last week
    of year.
+ - Modified CalendarPanel to not use Swing's internal ToolTip functionality and replaced
+   with custom mouse-over popup displays with a more polished appearance,
 Version 0.4.4 (12 Dec 2007)
  - Fixed generated iCalendar output for RRULEs.  Added simple constructor for
    Rrule class.
