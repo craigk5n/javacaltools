@@ -773,10 +773,10 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 			g2d.setComposite ( oldComp );
 			Color color = evInst.getBackgroundColor ();
 			// If color is not dark enough contrast to white, then make it darker
-			if ( color.getRed () > 100 && color.getBlue () > 100
-			    && color.getGreen () > 100 ) {
-				color = new Color ( color.getRed () / 2, color.getGreen () / 2, color
-				    .getBlue () / 2 );
+			if ( ( 255 - color.getRed () ) + ( 255 - color.getBlue () )
+			    + ( 255 - color.getGreen () ) < 400 ) {
+				color = new Color ( color.getRed () * 2 / 3, color.getGreen () * 2 / 3,
+				    color.getBlue () * 2 / 3 );
 			}
 			g.setColor ( color );
 			g.fillRoundRect ( x, y, w, h, 8, 8 );
