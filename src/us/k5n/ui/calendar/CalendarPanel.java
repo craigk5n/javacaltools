@@ -828,11 +828,24 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 				    && this.selectedDate.month == ( day.get ( Calendar.MONTH ) + 1 )
 				    && this.selectedDate.day == day.get ( Calendar.DAY_OF_MONTH );
 				int startY = y + fm.getHeight ();
+				// Calculate how to layout the events for this date. Normally, the
+				// events will just be shown in a single column vertically. However, if
+				// there are too many events to fit in the given space, we will have to
+				// use more than one column.
+				int visibleRows = ( h - fm.getHeight () )
+				    / ( fm.getHeight () + ( 1 + CELL_MARGIN ) );
+				int cols = 1;
+				while ( cols * visibleRows < events.size () )
+					cols++;
+				int colWidth = w / cols;
 				for ( int i = 0; i < events.size (); i++ ) {
+					int thisCol = cols == 1 ? 0 : ( i % cols );
+					int thisRow = cols == 1 ? i : ( i / cols );
 					EventInstance e = (EventInstance) events.elementAt ( i );
-					Rectangle rect = new Rectangle ( x + CELL_MARGIN, startY, w
+					Rectangle rect = new Rectangle ( x + CELL_MARGIN
+					    + ( thisCol * colWidth ), startY
+					    + ( ( fm.getHeight () + CELL_MARGIN ) * thisRow ), colWidth
 					    - ( 2 * CELL_MARGIN ), fm.getHeight () );
-					startY += fm.getHeight () + ( 1 * CELL_MARGIN );
 					drawMonthViewEvent ( g, rect, e, dateIsSelected
 					    && i == this.selectedItemInd );
 					DisplayedEvent de = new DisplayedEvent ( e, rect, i );
