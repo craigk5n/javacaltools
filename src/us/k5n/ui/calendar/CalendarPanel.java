@@ -419,6 +419,21 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 		this.addMouseWheelListener ( this );
 	}
 
+	public void setFont ( Font newFont ) {
+		if ( newFont != null ) {
+			super.setFont ( newFont );
+			if ( this.drawArea != null ) {
+				this.title.setFont ( newFont );
+				this.drawArea.setFont ( newFont );
+				this.headerFont = newFont;
+				this.eventFont = new Font ( newFont.getFamily (), newFont.getStyle (),
+				    newFont.getSize () - 2 );
+				this.hintFont = new Font ( newFont.getFamily (), newFont.getStyle (),
+				    newFont.getSize () + 8 );
+			}
+		}
+	}
+
 	// Note that we should do the adjustment by day of year rather than week of
 	// year, which would seem to be the logical choice. However, at the end of the
 	// year, you can have a week of year of 1 at the end of December. This
