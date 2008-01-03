@@ -1,4 +1,5 @@
 Version 0.4.5 (?? ??? ????)
+ - Bug fix: weekly repeating events not saved correctly
  - CalendarPanel bug fix: After pressing the "Today" button, the scrollbar values
    were no longer accurate.
  - Modified CalendarPanel to handle more events per day.  Instead of just not displaying

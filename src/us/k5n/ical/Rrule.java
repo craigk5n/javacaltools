@@ -439,6 +439,9 @@ public class Rrule extends Property implements Constants {
 			case FREQ_MONTHLY:
 				ret.append ( "FREQ=MONTHLY" );
 				break;
+			case FREQ_WEEKLY:
+				ret.append ( "FREQ=WEEKLY" );
+				break;
 			case FREQ_DAILY:
 				ret.append ( "FREQ=DAILY" );
 				break;
