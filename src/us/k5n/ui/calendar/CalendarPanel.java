@@ -295,7 +295,7 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 		}
 	}
 
-	private int getFirstDayOfWeek () {
+	private static int getFirstDayOfWeek () {
 		switch ( Calendar.getInstance ().getFirstDayOfWeek () ) {
 			case Calendar.SUNDAY:
 				return ( 0 );
@@ -318,7 +318,7 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 	public CalendarPanel(CalendarDataRepository repository) {
 		super ();
 		this.repository = repository;
-		this.firstDayOfWeek = getFirstDayOfWeek ();
+		this.firstDayOfWeek = CalendarPanel.getFirstDayOfWeek ();
 		this.selectionListeners = new Vector ();
 
 		this.backgroundColor1 = new Color ( 232, 232, 232 );
@@ -347,6 +347,10 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 			public void actionPerformed ( ActionEvent event ) {
 				// Scroll calendar back to current date.
 				setWeekOffset ( 0 );
+				// Change scrollbar settings so that 0 is in the middle again
+				scrollBar.setMinimum ( -52 );
+				scrollBar.setMaximum ( 52 );
+				scrollBar.setValue ( 0 );
 			}
 		} );
 		titlePanel.add ( todayButton, BorderLayout.EAST );
@@ -423,11 +427,14 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 		int[] weekdayTranslation = { Calendar.SUNDAY, Calendar.MONDAY,
 		    Calendar.TUESDAY, Calendar.WEDNESDAY, Calendar.THURSDAY,
 		    Calendar.FRIDAY, Calendar.SATURDAY };
+
 		Calendar c = Calendar.getInstance ();
 		c.setLenient ( true );
-		this.firstDayOfWeek = getFirstDayOfWeek ();
+		this.firstDayOfWeek = CalendarPanel.getFirstDayOfWeek ();
 		int currentWeek = c.get ( Calendar.WEEK_OF_YEAR );
+		// Set c to first day of the week
 		c.set ( Calendar.DAY_OF_WEEK, weekdayTranslation[this.firstDayOfWeek] );
+		// Now move weekOffset weeks
 		c.set ( Calendar.WEEK_OF_YEAR, currentWeek + weekOffset );
 
 		this.startDate = Calendar.getInstance ();
