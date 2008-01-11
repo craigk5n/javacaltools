@@ -1,4 +1,6 @@
-Version 0.4.5 (?? ??? ????)
+Version 0.4.6 (11 Jan 2008)
+ - Bug fix: new events can have empty UID
+Version 0.4.5 (03 Jan 2008)
  - Bug fix: weekly repeating events not saved correctly
  - CalendarPanel bug fix: After pressing the "Today" button, the scrollbar values
    were no longer accurate.

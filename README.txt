@@ -2,7 +2,7 @@
 			k5n Java Calendar Tools
 ****************************************************************************
 
-Version:      0.4.4
+Version:      0.4.6
 URL:          http://javacaltools.sourceforge.net
 Author:       Craig Knudsen, craig [< at >] k5n.us
 License:      GNU GPL

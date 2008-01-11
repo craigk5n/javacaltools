@@ -447,4 +447,26 @@ public class Utils implements Constants {
 		return "text/plain";
 	}
 
+	/**
+	 * Generate a unique identifier for the current user.
+	 * 
+	 * @param prefix
+	 *          A prefix to include in the identifier
+	 * @return
+	 */
+	public static String generateUniqueId ( String prefix ) {
+		StringBuffer ret = new StringBuffer ();
+		ret.append ( prefix == null ? "JAVACALTOOLS" : prefix.toUpperCase () );
+		ret.append ( '-' );
+		String user = (String) System.getProperty ( "user.name" );
+		if ( user == null ) {
+			ret.append ( "UNKNOWN" );
+			user = "UNKNOWN";
+		} else {
+			ret.append ( user.toUpperCase () );
+		}
+		ret.append ( java.util.Calendar.getInstance ().getTimeInMillis () );
+		return ret.toString ();
+	}
+
 }

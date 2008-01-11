@@ -104,8 +104,10 @@ public class Event implements Constants {
 			}
 		}
 		// must have UID
-		if ( uid == null )
+		if ( uid == null ) {
 			uid = new Uid ();
+			uid.value = Utils.generateUniqueId ( "JAVACALTOOLS" );
+		}
 		// create a sequence if not specified
 		if ( sequence == null )
 			sequence = new Sequence ( 0 );
@@ -390,12 +392,12 @@ public class Event implements Constants {
 	}
 
 	public Vector getAttachments () {
-  	return attachments;
-  }
+		return attachments;
+	}
 
 	public void setAttachments ( Vector attachments ) {
-  	this.attachments = attachments;
-  }
+		this.attachments = attachments;
+	}
 
 	public Object getUserData () {
 		return userData;
