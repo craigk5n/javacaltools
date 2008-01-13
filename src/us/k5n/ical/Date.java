@@ -30,13 +30,17 @@ import org.joda.time.DateTimeZone;
  * LAST-MODIFIED, DTSTAMP, DTSTART, etc. This can represent both a date and a
  * date-time.
  * 
+ * According to RFC2445, date-time values can either "float" (so they are the
+ * same time in every timezone), or they must have a timezone specified. This
+ * class will assume the user's local timezone unless they specifically set the
+ * object to be floating.
+ * 
  * @version $Id$
  * @author Craig Knudsen, craig@k5n.us
  */
 public class Date extends Property implements Constants, Comparable {
 	int year, month, day;
 	int hour, minute, second;
-	boolean isUTC = false;
 	boolean dateOnly = false; // is date only (rather than date-time)?
 	static int[] monthDays = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 	static int[] leapMonthDays = { 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
@@ -48,6 +52,7 @@ public class Date extends Property implements Constants, Comparable {
 	public static final int THURSDAY = 4;
 	public static final int FRIDAY = 5;
 	public static final int SATURDAY = 6;
+	private boolean floating = false;
 
 	/**
 	 * Constructor
@@ -67,7 +72,9 @@ public class Date extends Property implements Constants, Comparable {
 	}
 
 	/**
-	 * Constructor: create a date based on the specified year, month and day.
+	 * Constructor: create a date based on the specified year, month and day. This
+	 * Date object will be considered "untimed" so that there is no need for
+	 * timezone information.
 	 * 
 	 * @param dateType
 	 *          Type of date; this should be an ical property name like DTSTART,
@@ -79,7 +86,6 @@ public class Date extends Property implements Constants, Comparable {
 	 * @param day
 	 *          The day of the month (1-31)
 	 */
-
 	public Date(String dateType, int year, int month, int day)
 	    throws BogusDataException {
 		super ( dateType, "" );
@@ -89,6 +95,7 @@ public class Date extends Property implements Constants, Comparable {
 		this.day = day;
 		this.hour = this.minute = this.second = 0;
 		this.dateOnly = true;
+		this.floating = false;
 
 		String yearStr, monthStr, dayStr;
 
@@ -108,7 +115,11 @@ public class Date extends Property implements Constants, Comparable {
 	}
 
 	/**
-	 * Constructor: create a date based on the specified year, month and day.
+	 * Constructor: create a date based on the specified year, month, day, hour,
+	 * minute and second. The date-time value will be in the current user's
+	 * timezone (retrieved from system settings). If the Date object should be
+	 * "floating" (not a different time in each timezone), then the caller should
+	 * call Date.setFloating after the constructor.
 	 * 
 	 * @param dateType
 	 *          Type of date; this should be an ical property name like DTSTART,
@@ -126,7 +137,6 @@ public class Date extends Property implements Constants, Comparable {
 	 * @param sec
 	 *          seconds (0-59)
 	 */
-
 	public Date(String dateType, int year, int month, int day, int hour, int min,
 	    int sec) throws BogusDataException {
 		super ( dateType, "" );
@@ -138,6 +148,7 @@ public class Date extends Property implements Constants, Comparable {
 		this.minute = min;
 		this.second = sec;
 		this.dateOnly = false;
+		this.floating = false;
 
 		String yearStr, monthStr, dayStr, hourStr, minStr, secStr;
 
@@ -167,10 +178,16 @@ public class Date extends Property implements Constants, Comparable {
 
 		// Add attribute that says date has a time
 		addAttribute ( "VALUE", "DATE-TIME" );
+		// Assume local system's current timezone
+		this.tzid = java.util.TimeZone.getDefault ().getID ();
+		addAttribute ( "TZID", this.tzid );
 	}
 
 	/**
-	 * Constructor
+	 * Constructor from iCalendar-formated line. The format can be either a date
+	 * or a date-time value. If it is a date-time value, it should have a timezone
+	 * setting. If it has no timezone setting, it will be considered a "floating"
+	 * time.
 	 * 
 	 * @param icalStr
 	 *          One or more lines of iCalendar that specifies a date
@@ -183,12 +200,12 @@ public class Date extends Property implements Constants, Comparable {
 
 		year = month = day = 0;
 		hour = minute = second = 0;
+		this.tzid = null;
 
 		for ( int i = 0; i < attributeList.size (); i++ ) {
 			Attribute a = attributeAt ( i );
 			String aname = a.name.toUpperCase ();
 			String aval = a.value.toUpperCase ();
-			// TODO: not sure if any attributes are allowed here...
 			// Look for VALUE=DATE or VALUE=DATE-TIME
 			// DATE means untimed for the event
 			if ( aname.equals ( "VALUE" ) ) {
@@ -203,13 +220,25 @@ public class Date extends Property implements Constants, Comparable {
 					}
 				}
 			} else if ( aname.equals ( "TZID" ) ) {
-				tzid = a.value;
+				this.tzid = a.value;
+				// Validate timezone
+				try {
+					DateTimeZone timezone = DateTimeZone.forID ( tzid );
+					if ( timezone == null ) {
+						System.err.println ( "Ignoring unrecognized timezone '" + tzid
+						    + "'" );
+					}
+				} catch ( IllegalArgumentException e1 ) {
+					System.err.println ( "Ignoring unrecognized timezone '" + tzid + "'" );
+				}
 			} else {
+				System.out.println ( "Ignoring unknown date attribute " + a.name );
 				// TODO: anything else allowed here?
 			}
 		}
 
 		String inDate = value;
+		boolean isUTC = false;
 
 		if ( inDate.length () < 8 ) {
 			// Invalid format
@@ -284,12 +313,21 @@ public class Date extends Property implements Constants, Comparable {
 			hour = localDateTime.getHourOfDay ();
 			minute = localDateTime.getMinuteOfHour ();
 			second = localDateTime.getSecondOfMinute ();
-		} else if ( tzid != null ) {
-			DateTimeZone tz = DateTimeZone.forID ( tzid );
+			// Now set timezone to local since we converted.
+			this.tzid = DateTimeZone.getDefault ().getID ();
+			this.addAttribute ( "TZID", this.tzid );
+		} else if ( this.tzid != null ) {
+			DateTimeZone tz = null;
+			try {
+				tz = DateTimeZone.forID ( this.tzid );
+			} catch ( IllegalArgumentException e1 ) {
+				if ( parseMode == PARSE_STRICT )
+					throw new BogusDataException (
+					    "Invalid timezone '" + this.tzid + "'", icalStr );
+			}
 			if ( tz == null && parseMode == PARSE_STRICT ) {
-				// Invalid Timezone
-				throw new BogusDataException ( "Invalid timezone in date string '"
-				    + inDate + "'", inDate );
+				throw new BogusDataException ( "Invalid timezone '" + this.tzid + "'",
+				    icalStr );
 			}
 			if ( tz != null ) {
 				// Convert to localtime
@@ -305,17 +343,44 @@ public class Date extends Property implements Constants, Comparable {
 				minute = localDateTime.getMinuteOfHour ();
 				second = localDateTime.getSecondOfMinute ();
 				// Since we have converted to localtime, remove the TZID attribute
+				// and replace with our own timezone
 				this.removeNamedAttribute ( "TZID" );
+				this.tzid = DateTimeZone.getDefault ().getID ();
+				this.addAttribute ( "TZID", this.tzid );
 			}
+		} else if ( !isUTC && this.tzid == null ) {
+			// No timezone specified. This is a "floating" time. So, if the
+			// time is 3PM, then it's 3PM EST and 3PM PST, etc.
+			this.floating = true;
 		}
-		isUTC = false;
 
 		// Add attribute that says date-only or date with time
 		if ( dateOnly )
 			addAttribute ( "VALUE", "DATE" );
 		else
 			addAttribute ( "VALUE", "DATE-TIME" );
+	}
 
+	/**
+	 * Is the time for the Date object "floating"? (If so, then the time specified
+	 * is valid for ALL timezones.)
+	 * 
+	 * @return
+	 */
+	public boolean isFloating () {
+		return floating;
+	}
+
+	/**
+	 * Set whether this Date object is "floating". If it is floating, then the
+	 * same time should be used for all timezones. If this is set to true, all
+	 * timezone info will be removed from the Date object.
+	 * 
+	 * @param floating
+	 *          The new floating value
+	 */
+	public void setFloating ( boolean floating ) {
+		this.floating = floating;
 	}
 
 	/**
@@ -359,6 +424,7 @@ public class Date extends Property implements Constants, Comparable {
 			d.setMinute ( c.get ( Calendar.MINUTE ) );
 			d.setSecond ( c.get ( Calendar.SECOND ) );
 			d.setDateOnly ( false );
+			d.addAttribute ( "TZID", DateTimeZone.getDefault ().getID () );
 		} catch ( BogusDataException e2 ) {
 			// This should never happen since we're setting the m/d/y
 			System.err.println ( e2.toString () );
@@ -382,7 +448,58 @@ public class Date extends Property implements Constants, Comparable {
 	 * Generate the iCalendar string for this Date.
 	 */
 	public String toICalendar () {
+		// We don't need to worry about timezone if it is date-only.
+		// If there is a time, convert to GMT.
 		StringBuffer sb = new StringBuffer ( dateOnly ? 8 : 15 );
+		if ( dateOnly ) {
+			sb.append ( year );
+			if ( month < 10 )
+				sb.append ( '0' );
+			sb.append ( month );
+			if ( day < 10 )
+				sb.append ( '0' );
+			sb.append ( day );
+			value = sb.toString ();
+			return super.toICalendar ();
+		}
+
+		// Convert from timezone specified to GMT
+		String timezoneId = this.tzid;
+		if ( timezoneId == null )
+			timezoneId = DateTimeZone.getDefault ().getID ();
+		DateTimeZone tz = null;
+		try {
+			tz = DateTimeZone.forID ( this.tzid );
+		} catch ( IllegalArgumentException e1 ) {
+			// Invalid timezone
+		}
+		if ( tz != null ) {
+			DateTime dt = new DateTime ( year, month, day, hour, minute, second, 0,
+			    tz );
+			DateTime utc = dt.withZone ( DateTimeZone.forID ( "GMT" ) );
+			sb.append ( utc.getYear () );
+			if ( utc.getMonthOfYear () < 10 )
+				sb.append ( '0' );
+			sb.append ( utc.getMonthOfYear () );
+			if ( utc.getDayOfMonth () < 10 )
+				sb.append ( '0' );
+			sb.append ( utc.getDayOfMonth () );
+
+			sb.append ( 'T' );
+			if ( utc.getHourOfDay () < 10 )
+				sb.append ( '0' );
+			sb.append ( utc.getHourOfDay () );
+			if ( utc.getMinuteOfHour () < 10 )
+				sb.append ( '0' );
+			sb.append ( utc.getMinuteOfHour () );
+			if ( utc.getSecondOfMinute () < 10 )
+				sb.append ( '0' );
+			sb.append ( utc.getSecondOfMinute () );
+			sb.append ( 'Z' );
+			value = sb.toString ();
+			return super.toICalendar ();
+		}
+
 		sb.append ( year );
 		if ( month < 10 )
 			sb.append ( '0' );
@@ -391,20 +508,16 @@ public class Date extends Property implements Constants, Comparable {
 			sb.append ( '0' );
 		sb.append ( day );
 
-		if ( !dateOnly ) {
-			sb.append ( 'T' );
-			if ( hour < 10 )
-				sb.append ( '0' );
-			sb.append ( hour );
-			if ( minute < 10 )
-				sb.append ( '0' );
-			sb.append ( minute );
-			if ( second < 10 )
-				sb.append ( '0' );
-			sb.append ( second );
-			if ( isUTC )
-				sb.append ( 'Z' );
-		}
+		sb.append ( 'T' );
+		if ( hour < 10 )
+			sb.append ( '0' );
+		sb.append ( hour );
+		if ( minute < 10 )
+			sb.append ( '0' );
+		sb.append ( minute );
+		if ( second < 10 )
+			sb.append ( '0' );
+		sb.append ( second );
 		value = sb.toString ();
 		return super.toICalendar ();
 	}
@@ -416,6 +529,13 @@ public class Date extends Property implements Constants, Comparable {
 	public void setDateOnly ( boolean dateOnly ) {
 		this.dateOnly = dateOnly;
 		this.addAttribute ( "VALUE", dateOnly ? "DATE" : "DATE-TIME" );
+		if ( !dateOnly && this.tzid == null ) {
+			this.tzid = java.util.TimeZone.getDefault ().getID ();
+			addAttribute ( "TZID", this.tzid );
+		} else if ( dateOnly ) {
+			this.tzid = null;
+			this.removeNamedAttribute ( "TZID" );
+		}
 	}
 
 	public int getDay () {

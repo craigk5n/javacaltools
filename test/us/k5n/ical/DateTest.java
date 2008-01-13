@@ -140,13 +140,13 @@ public class DateTest extends TestCase implements Constants {
 		}
 	}
 
-	public void testSix () {
+	public void testICalendarOutput () {
 		String dateStr = "DATE:20070131T115959";
 		try {
 			Date d = new Date ( dateStr, PARSE_STRICT );
 			Date newDate = new Date ( d.toICalendar (), PARSE_STRICT );
-			assertTrue ( "Dates not equal: " + d + " vs " + newDate, d
-			    .equals ( newDate ) );
+			assertTrue ( "Dates not equal: " + d.toICalendar () + " vs "
+			    + newDate.toICalendar (), d.equals ( newDate ) );
 		} catch ( Exception e ) {
 			e.printStackTrace ();
 			fail ( "Failed: " + e.toString () );
@@ -167,7 +167,6 @@ public class DateTest extends TestCase implements Constants {
 	}
 
 	public void testEight () {
-		String dateStr = "DTSTART;VALUE=\"DATE\":20070413T091945";
 		try {
 			Date d = new Date ( "DTSTART", 1999, 12, 31 );
 			assertTrue ( "Date has time", d.isDateOnly () );
@@ -211,6 +210,58 @@ public class DateTest extends TestCase implements Constants {
 			Date d = new Date ( dateStr, PARSE_STRICT );
 			assertTrue ( "Date has time", d.isDateOnly () );
 			assertTrue ( "Wrong time", d.getHour () == 12 );
+		} catch ( Exception e ) {
+			e.printStackTrace ();
+			fail ( "Failed: " + e.toString () );
+		}
+	}
+
+	// Make sure iCalender output includes a timezone
+	public void testTimezoneParsing () {
+		String dateStr = "DTSTART;TZID=America/Los_Angeles:20070901T120000";
+		try {
+			Date d = new Date ( dateStr, PARSE_STRICT );
+			assertTrue ( "Date has time", !d.isDateOnly () );
+			String icalStr = d.toICalendar ();
+			if ( icalStr.indexOf ( "TZID" ) <= 0 )
+				fail ( "No TZID in iCalendar output" );
+			// System.out.println ( "Start: " + dateStr + "\n\tFinish: " + icalStr );
+		} catch ( Exception e ) {
+			e.printStackTrace ();
+			fail ( "Failed: " + e.toString () );
+		}
+	}
+
+	// Make sure iCalender output does not include a timezone when
+	// we use a floating date-time.
+	public void testFloatingDateTime () {
+		String dateStr = "DTSTART;VALUE=\"DATE-TIME\":20070901T120000";
+		try {
+			// System.out.println ( "Input: " + dateStr );
+			Date d = new Date ( dateStr, PARSE_STRICT );
+			assertTrue ( "Wrong hour in floating time: " + d.getHour (),
+			    d.getHour () == 12 );
+			assertTrue ( "Date has no time", !d.isDateOnly () );
+			String icalStr = d.toICalendar ();
+			if ( icalStr.indexOf ( "TZID" ) >= 0 )
+				fail ( "Date-time should not have timezone" );
+		} catch ( Exception e ) {
+			e.printStackTrace ();
+			fail ( "Failed: " + e.toString () );
+		}
+	}
+
+	// Make sure iCalender output does include a timezone when
+	// we specify a GMT value.
+	public void testTimedDateTime () {
+		String dateStr = "DTSTART;VALUE=\"DATE-TIME\":20070901T120000Z";
+		try {
+			// System.out.println ( "Input: " + dateStr );
+			Date d = new Date ( dateStr, PARSE_STRICT );
+			assertTrue ( "Date has no time", !d.isDateOnly () );
+			String icalStr = d.toICalendar ();
+			assertTrue ( "Date-time should have timezone: " + icalStr, icalStr
+			    .indexOf ( "TZID" ) >= 0 );
 		} catch ( Exception e ) {
 			e.printStackTrace ();
 			fail ( "Failed: " + e.toString () );

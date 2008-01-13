@@ -222,6 +222,11 @@ public class Event implements Constants {
 			if ( this.attachments == null )
 				this.attachments = new Vector ();
 			this.attachments.addElement ( attach );
+		} else if ( up.startsWith ( "ATTENDEE" ) ) {
+			Attendee attendee = new Attendee ( icalStr );
+			if ( this.attendees == null )
+				this.attendees = new Vector ();
+			this.attendees.addElement ( attendee );
 		} else {
 			System.out.println ( "Ignoring: " + icalStr );
 		}
@@ -462,6 +467,12 @@ public class Event implements Constants {
 			for ( int i = 0; i < this.attachments.size (); i++ ) {
 				Attachment attach = (Attachment) this.attachments.elementAt ( i );
 				ret.append ( attach.toICalendar () );
+			}
+		}
+		if ( this.attendees != null ) {
+			for ( int i = 0; i < this.attendees.size (); i++ ) {
+				Attendee attendee = (Attendee) this.attendees.elementAt ( i );
+				ret.append ( attendee.toICalendar () );
 			}
 		}
 		if ( status != STATUS_UNDEFINED ) {
