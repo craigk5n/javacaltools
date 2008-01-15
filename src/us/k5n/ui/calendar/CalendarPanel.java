@@ -419,7 +419,16 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 		this.addMouseWheelListener ( this );
 	}
 
+	/**
+	 * Set the Font for the CalendarPanel. This will apply to the title font
+	 * (where the current date range is displayed), the days of the month, the
+	 * header (for weekday labels). Additionally, the event font will be two
+	 * points smaller and the hint font (shown in the middle when you scroll will
+	 * be 8 points larger).
+	 */
 	public void setFont ( Font newFont ) {
+		// We need to recalculate dimensions since the header height is dependent
+		// on the header font height.
 		if ( newFont != null ) {
 			super.setFont ( newFont );
 			if ( this.drawArea != null ) {
@@ -431,6 +440,8 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 				this.hintFont = new Font ( newFont.getFamily (), newFont.getStyle (),
 				    newFont.getSize () + 8 );
 			}
+			this.lastWidth = this.lastHeight = -1; // force resize calculation
+			repaint ();
 		}
 	}
 

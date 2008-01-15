@@ -3,9 +3,15 @@ package us.k5n.ui.calendar;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Vector;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 /**
  * Simple test/demo class for CalendarPanel that illustrates how to use the
@@ -55,9 +61,41 @@ public class CalendarPanelTest extends JFrame implements CalendarDataRepository 
 		Container contentPane = getContentPane ();
 		contentPane.setLayout ( new BorderLayout () );
 
+		JPanel buttonPanel = new JPanel ( new FlowLayout () );
+		JButton larger = new JButton ( "+" );
+		larger.addActionListener ( new ActionListener () {
+			public void actionPerformed ( ActionEvent event ) {
+				larger ();
+			}
+		} );
+		buttonPanel.add ( larger );
+		JButton smaller = new JButton ( "-" );
+		smaller.addActionListener ( new ActionListener () {
+			public void actionPerformed ( ActionEvent event ) {
+				smaller ();
+			}
+		} );
+		buttonPanel.add ( smaller );
+
+		contentPane.add ( buttonPanel, BorderLayout.NORTH );
+
 		cpanel = new CalendarPanel ( this );
 		contentPane.add ( cpanel, BorderLayout.CENTER );
 		this.setVisible ( true );
+	}
+
+	void larger () {
+		Font f = cpanel.getFont ();
+		Font newFont = new Font ( f.getFamily (), f.getStyle (), f.getSize () + 2 );
+		cpanel.setFont ( newFont );
+	}
+
+	void smaller () {
+		Font f = cpanel.getFont ();
+		if ( f.getSize () > 4 ) {
+			Font newFont = new Font ( f.getFamily (), f.getStyle (), f.getSize () - 2 );
+			cpanel.setFont ( newFont );
+		}
 	}
 
 	/**
