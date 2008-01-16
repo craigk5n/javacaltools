@@ -392,7 +392,7 @@ public class Event implements Constants {
 	 * Set the TRANSP setting, which determines if the event shows up in a
 	 * freebusy search.
 	 * 
-	 * @return Ether TRANSP_OPAQUE or TRANSP_TRANSPARENT
+	 * @return Either TRANSP_OPAQUE or TRANSP_TRANSPARENT
 	 */
 	public int getTransp () {
 		return transp;
