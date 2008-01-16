@@ -78,6 +78,7 @@ public class Event implements Constants {
 	private Object userData = null;
 
 	// TODO: multiple summaries, descriptions with different LANGUAGE values
+	// TODO: auto-change transp if either all-day or no duration
 	// TODO: alarms/triggers
 	// TODO: RDATE - recurrance dates
 	// TODO: EXDATE - exception dates
