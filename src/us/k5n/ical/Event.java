@@ -62,7 +62,7 @@ public class Event implements Constants {
 	// public Individual contact;
 	/** Participants for the event (Vector of Attendee) */
 	protected Vector attendees = null;
-	/** Recurrance rule (RRULE) */
+	/** Recurrence rule (RRULE) */
 	protected Rrule rrule = null;
 	/** URL */
 	protected URL url = null;
