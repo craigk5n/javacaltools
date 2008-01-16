@@ -238,7 +238,7 @@ public class Event implements Constants {
 				this.attendees = new Vector ();
 			this.attendees.addElement ( attendee );
 		} else {
-			System.out.println ( "Ignoring: " + icalStr );
+			System.out.println ( "Ignoring VEVENT line: " + icalStr );
 		}
 	}
 

@@ -173,7 +173,8 @@ public class Attendee extends Property {
 				// TODO
 			} else {
 				// TODO: generate errors on unrecognized attributes?
-				System.out.println ( "Ignoring unknown attribute '" + a.name + "'" );
+				System.out.println ( "Ignoring unknown attribute '" + a.name + "' in "
+				    + this.getName () );
 			}
 		}
 	}

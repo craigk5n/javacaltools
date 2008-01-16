@@ -226,13 +226,15 @@ public class Date extends Property implements Constants, Comparable {
 					DateTimeZone timezone = DateTimeZone.forID ( tzid );
 					if ( timezone == null ) {
 						System.err.println ( "Ignoring unrecognized timezone '" + tzid
-						    + "'" );
+						    + "' in Date " + this.getName () );
 					}
 				} catch ( IllegalArgumentException e1 ) {
-					System.err.println ( "Ignoring unrecognized timezone '" + tzid + "'" );
+					System.err.println ( "Ignoring unrecognized timezone '" + tzid
+					    + "' in Date " + this.getName () );
 				}
 			} else {
-				System.out.println ( "Ignoring unknown date attribute " + a.name );
+				System.out.println ( "Ignoring unknown date attribute " + a.name
+				    + " in Date " + this.getName () );
 				// TODO: anything else allowed here?
 			}
 		}

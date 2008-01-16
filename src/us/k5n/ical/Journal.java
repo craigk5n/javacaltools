@@ -195,7 +195,7 @@ public class Journal implements Constants {
 		} else if ( up.startsWith ( "URL" ) ) {
 			url = new URL ( icalStr, parseMethod );
 		} else {
-			System.err.println ( "Ignoring: " + icalStr );
+			System.err.println ( "Ignoring VJOURNAL line: " + icalStr );
 		}
 	}
 
@@ -338,12 +338,12 @@ public class Journal implements Constants {
 	}
 
 	public Date getCreatedDate () {
-  	return createdDate;
-  }
+		return createdDate;
+	}
 
 	public void setCreatedDate ( Date createdDate ) {
-  	this.createdDate = createdDate;
-  }
+		this.createdDate = createdDate;
+	}
 
 	public Date getStartDate () {
 		return startDate;
@@ -374,20 +374,20 @@ public class Journal implements Constants {
 	}
 
 	public Vector getAttachments () {
-  	return attachments;
-  }
+		return attachments;
+	}
 
 	public void setAttachments ( Vector attachments ) {
-  	this.attachments = attachments;
-  }
+		this.attachments = attachments;
+	}
 
 	public int getStatus () {
-  	return status;
-  }
+		return status;
+	}
 
 	public void setStatus ( int status ) {
-  	this.status = status;
-  }
+		this.status = status;
+	}
 
 	public Object getUserData () {
 		return userData;
