@@ -389,6 +389,27 @@ public class Event implements Constants {
 	}
 
 	/**
+	 * Set the TRANSP setting, which determines if the event shows up in a
+	 * freebusy search.
+	 * 
+	 * @return Ether TRANSP_OPAQUE or TRANSP_TRANSPARENT
+	 */
+	public int getTransp () {
+		return transp;
+	}
+
+	/**
+	 * Set the TRANSP settings, which determines if the event shows up in a
+	 * freebusy search.
+	 * 
+	 * @param transp
+	 *          The new TRANSP setting (TRANSP_OPAQUE, TRANSP_TRANSPARENT)
+	 */
+	public void setTransp ( int transp ) {
+		this.transp = transp;
+	}
+
+	/**
 	 * Get the event status
 	 * 
 	 * @return the event status (STATUS_TENTATIVE, STATUS_CONFIRMED or
