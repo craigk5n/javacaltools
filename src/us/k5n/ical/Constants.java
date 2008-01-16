@@ -68,11 +68,11 @@ public interface Constants {
 
 	/** iCalendar Status not defined */
 	static public final int STATUS_UNDEFINED = -1;
-	/** iCalendar Status tentative (VEVENT only)*/
+	/** iCalendar Status tentative (VEVENT only) */
 	static public final int STATUS_TENTATIVE = 1;
 	/** iCalendar Status confirmed (VEVENT only) */
 	static public final int STATUS_CONFIRMED = 2;
-	/** iCalendar Status confirmed (VEVENT only)*/
+	/** iCalendar Status confirmed (VEVENT only) */
 	static public final int STATUS_CANCELLED = 3;
 	/** iCalendar Status needs action (VTODO only) */
 	static public final int STATUS_NEEDS_ACTION = 4;
@@ -84,6 +84,12 @@ public interface Constants {
 	static public final int STATUS_DRAFT = 7;
 	/** iCalendar Status needs action (VJOURNAL only) */
 	static public final int STATUS_FINAL = 8;
+
+	/** iCalendar transparent (event does not show up in freebusy searches) */
+	static public final int TRANSP_TRANSPARENT = 1;
+	/** iCalendar opaque (event does show up in freebusy searches) */
+	static public final int TRANSP_OPAQUE = 1; // default value in RFC2445 is
+																							// OPAQUE
 
 	/* iCalendar version (in N.N String format) */
 	static public final String ICAL_VERSION = ICAL_VERSION_MAJOR + "."

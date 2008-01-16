@@ -3,6 +3,8 @@ Version 0.4.6 (14 Jan 2008)
  - Added support for reading/writing ATTENDEE
  - Bug fix: proper handling of "floating" date-times. Added new Date.setFloating
    and Date.isFloating methods.
+ - Added support for CREATED field.
+ - Added support for TRANSP field in VEVENT.
  - Bug fix: CalendarPanel header area was not resizing on font changes
 Version 0.4.5 (03 Jan 2008)
  - Bug fix: weekly repeating events not saved correctly

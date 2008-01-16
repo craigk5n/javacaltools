@@ -179,6 +179,27 @@ public class StringUtils implements Constants {
 	}
 
 	/**
+	 * Parse a TRANSP field.
+	 */
+	static public int parseTransp ( String icalStr, int parseMethod )
+	    throws BogusDataException, ParseException {
+		Property p = new Property ( icalStr, parseMethod );
+		if ( icalStr == null || icalStr.trim ().length () == 0 || p == null
+		    || p.getValue () == null ) {
+			throw new BogusDataException ( "Missing value for TRANSP", icalStr );
+		}
+		String str = p.getValue ();
+		str = str.toUpperCase ().trim ();
+		if ( str.equals ( "OPAQUE" ) ) {
+			return TRANSP_OPAQUE;
+		} else if ( str.equals ( "TRANSPARENT" ) ) {
+			return TRANSP_TRANSPARENT;
+		} else {
+			throw new BogusDataException ( "Invalid TRANSP value", str );
+		}
+	}
+
+	/**
 	 * Parse a status field.
 	 */
 	static public int parseStatus ( String icalStr, int parseMethod )

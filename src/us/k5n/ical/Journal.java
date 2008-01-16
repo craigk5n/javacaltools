@@ -47,6 +47,8 @@ public class Journal implements Constants {
 	protected Classification classification = null;
 	/** List of categories (comma-separated) */
 	protected Categories categories = null;
+	/** Date created */
+	protected Date createdDate = null;
 	/** Primary start date */
 	protected Date startDate = null;
 	/** Time created */
@@ -127,6 +129,7 @@ public class Journal implements Constants {
 			sequence = new Sequence ( 0 );
 		// Set DTSTAMP, which is the original creation date
 		this.dtstamp = Date.getCurrentDateTime ( "DTSTAMP" );
+		this.createdDate = Date.getCurrentDateTime ( "CREATED" );
 	}
 
 	/**
@@ -157,6 +160,8 @@ public class Journal implements Constants {
 			description = new Description ( icalStr );
 		} else if ( up.startsWith ( "SUMMARY" ) ) {
 			summary = new Summary ( icalStr );
+		} else if ( up.startsWith ( "CREATED" ) ) {
+			createdDate = new Date ( icalStr );
 		} else if ( up.startsWith ( "DTSTART" ) ) {
 			startDate = new Date ( icalStr );
 		} else if ( up.startsWith ( "DTSTAMP" ) ) {
@@ -229,6 +234,8 @@ public class Journal implements Constants {
 			ret.append ( summary.toICalendar () );
 		if ( description != null )
 			ret.append ( description.toICalendar () );
+		if ( createdDate != null )
+			ret.append ( createdDate.toICalendar () );
 		if ( startDate != null )
 			ret.append ( startDate.toICalendar () );
 		if ( dtstamp != null )
@@ -329,6 +336,14 @@ public class Journal implements Constants {
 	public void setSequence ( Sequence sequence ) {
 		this.sequence = sequence;
 	}
+
+	public Date getCreatedDate () {
+  	return createdDate;
+  }
+
+	public void setCreatedDate ( Date createdDate ) {
+  	this.createdDate = createdDate;
+  }
 
 	public Date getStartDate () {
 		return startDate;

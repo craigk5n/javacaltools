@@ -45,6 +45,8 @@ public class Event implements Constants {
 	protected Classification classification = null;
 	/** List of categories (comma-separated) */
 	protected Categories categories = null;
+	/** Date created */
+	protected Date createdDate = null;
 	/** Primary start date */
 	protected Date startDate = null;
 	/** End date */
@@ -68,6 +70,8 @@ public class Event implements Constants {
 	protected Location location = null;
 	/** Event status */
 	protected int status = STATUS_UNDEFINED;
+	/** Transparent status (TRANSP_OPAQUE or TRANSP_TRANSPARENT) */
+	protected int transp = TRANSP_OPAQUE;
 	/** Attachments */
 	protected Vector attachments = null;
 	/** Private user object for caller to set/get */
@@ -150,6 +154,7 @@ public class Event implements Constants {
 		this.startDate = startDate;
 		this.duration = new Duration ( duration );
 		// TODO: calculate endDate from duration
+		this.startDate = Date.getCurrentDateTime ( "CREATED" );
 	}
 
 	/**
@@ -183,6 +188,8 @@ public class Event implements Constants {
 			summary = new Summary ( icalStr );
 		} else if ( up.startsWith ( "COMMENT" ) ) {
 			comment = new Comment ( icalStr );
+		} else if ( up.startsWith ( "CREATED" ) ) {
+			createdDate = new Date ( icalStr );
 		} else if ( up.startsWith ( "DTSTART" ) ) {
 			startDate = new Date ( icalStr );
 		} else if ( up.startsWith ( "DTEND" ) ) {
@@ -203,6 +210,8 @@ public class Event implements Constants {
 			sequence = new Sequence ( icalStr );
 		} else if ( up.startsWith ( "RRULE" ) ) {
 			rrule = new Rrule ( icalStr, parseMethod );
+		} else if ( up.startsWith ( "TRANSP" ) ) {
+			transp = StringUtils.parseStatus ( icalStr, parseMethod );
 		} else if ( up.startsWith ( "STATUS" ) ) {
 			status = StringUtils.parseStatus ( icalStr, parseMethod );
 			// Only allow VEVENT status types
@@ -289,6 +298,14 @@ public class Event implements Constants {
 
 	public void setComment ( Comment comment ) {
 		this.comment = comment;
+	}
+
+	public Date getCreatedDate () {
+		return createdDate;
+	}
+
+	public void setCreatedDate ( Date createdDate ) {
+		this.createdDate = createdDate;
 	}
 
 	public Date getDtstamp () {
@@ -445,6 +462,8 @@ public class Event implements Constants {
 			ret.append ( summary.toICalendar () );
 		if ( description != null )
 			ret.append ( description.toICalendar () );
+		if ( createdDate != null )
+			ret.append ( createdDate.toICalendar () );
 		if ( startDate != null )
 			ret.append ( startDate.toICalendar () );
 		if ( endDate != null )
@@ -469,6 +488,9 @@ public class Event implements Constants {
 				ret.append ( attach.toICalendar () );
 			}
 		}
+		ret.append ( transp == TRANSP_OPAQUE ? "TRANSP:OPAQUE"
+		    : "TRANSP:TRANSPARENT" );
+		ret.append ( CRLF );
 		if ( this.attendees != null ) {
 			for ( int i = 0; i < this.attendees.size (); i++ ) {
 				Attendee attendee = (Attendee) this.attendees.elementAt ( i );
