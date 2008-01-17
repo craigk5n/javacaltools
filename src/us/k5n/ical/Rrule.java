@@ -528,9 +528,9 @@ public class Rrule extends Property implements Constants {
 	/**
 	 * Generate a Vector of Date objects indicating when this event will repeat.
 	 * This DOES NOT include the original event date specified by DTSTART. The
-	 * Google RFC2445 package is used to generate recurrances. See the following
+	 * Google RFC2445 package is used to generate recurrences. See the following
 	 * URL for more info: <a
-	 * ref="http://code.google.com/p/google-rfc-2445/">http://code.google.com/p/google-rfc-2445/</a>
+	 * href="http://code.google.com/p/google-rfc-2445/">http://code.google.com/p/google-rfc-2445/</a>
 	 */
 	public Vector generateRecurrances ( Date startDate, String tzid ) {
 		Vector ret = new Vector ();
