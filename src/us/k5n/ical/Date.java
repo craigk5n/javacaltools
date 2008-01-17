@@ -720,7 +720,6 @@ public class Date extends Property implements Constants, Comparable {
 		if ( this.second > d2.second )
 			return 1;
 		return 0;
-
 	}
 
 }

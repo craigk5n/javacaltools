@@ -1,4 +1,5 @@
 Version 0.4.6 (14 Jan 2008)
+ - Added support for EXDATE and RDATE in VEVENT.
  - Bug fix: new events can have empty UID
  - Added support for reading/writing ATTENDEE
  - Bug fix: proper handling of "floating" date-times. Added new Date.setFloating

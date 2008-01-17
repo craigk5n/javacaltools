@@ -20,6 +20,9 @@
 
 package us.k5n.ical;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Vector;
 
 import com.google.ical.iter.RecurrenceIterator;
@@ -176,11 +179,6 @@ public class Rrule extends Property implements Constants {
 	/** Month event falls on (1,2 etc.) */
 	public int[] bymonth = null;
 	public int[] bysetpos = null;
-
-	/** Days where event should not occur (Vector of Date) */
-	public Vector exceptions;
-	/** Days where event should occur (Vector of Date) */
-	public Vector inclusions;
 
 	public static final int FREQ_NOT_SPECIFIED = -1;
 	public static final int FREQ_YEARLY = 1;
@@ -531,9 +529,37 @@ public class Rrule extends Property implements Constants {
 	 * Google RFC2445 package is used to generate recurrences. See the following
 	 * URL for more info: <a
 	 * href="http://code.google.com/p/google-rfc-2445/">http://code.google.com/p/google-rfc-2445/</a>
+	 * 
+	 * @param startDate
+	 *          the start date of the recurrence
+	 * @param tzid
+	 *          the timezone ID
 	 */
-	public Vector generateRecurrances ( Date startDate, String tzid ) {
-		Vector ret = new Vector ();
+	public Vector<Date> generateRecurrances ( Date startDate, String tzid ) {
+		return generateRecurrances ( startDate, tzid, null, null );
+	}
+
+	/**
+	 * Generate a Vector of Date objects indicating when this event will repeat.
+	 * This DOES NOT include the original event date specified by DTSTART. The
+	 * Google RFC2445 package is used to generate recurrences. See the following
+	 * URL for more info: <a
+	 * href="http://code.google.com/p/google-rfc-2445/">http://code.google.com/p/google-rfc-2445/</a>
+	 * 
+	 * @param startDate
+	 *          the start date of the recurrence
+	 * @param tzid
+	 *          the timezone ID
+	 * @param exdates
+	 *          exception dates that should not be included in the series (from
+	 *          the EXDATE iCalendar field)
+	 * @param rdates
+	 *          inclusion dates that should be added to the series (from the RDATE
+	 *          iCalendar field)
+	 */
+	public Vector<Date> generateRecurrances ( Date startDate, String tzid,
+	    Vector<Date> exdates, Vector<Date> rdates ) {
+		Vector<Date> ret = new Vector<Date> ();
 		com.google.ical.values.DateValue dtStart = null;
 		if ( startDate.dateOnly ) {
 			dtStart = new DateValueImpl ( startDate.getYear (),
@@ -579,7 +605,7 @@ public class Rrule extends Property implements Constants {
 		if ( this.bymonthday != null && this.bymonthday.length > 0 )
 			rrule.setByMonthDay ( this.bymonthday );
 		if ( this.byday != null && this.byday.length > 0 ) {
-			Vector<WeekdayNum> weekdays = new Vector ();
+			Vector<WeekdayNum> weekdays = new Vector<WeekdayNum> ();
 			for ( int i = 0; i < this.byday.length; i++ ) {
 				WeekdayNum weekday = this.byday[i].toWeekdayNum ();
 				weekdays.addElement ( weekday );
@@ -625,27 +651,27 @@ public class Rrule extends Property implements Constants {
 				try {
 					Date newDateTime = new Date ( "XXX", dt.year (), dt.month (), dt
 					    .day (), dt.hour (), dt.minute (), dt.second () );
-					// HACK! The google RRULE code does not seem to support
-					// the "UNTIL=" setting, so we will enforce it here.
-					/*
-					 * if ( this.untilDate != null && newDateTime.isAfter ( this.untilDate ) ) {
-					 * break; }
-					 */
-					if ( !newDateTime.equals ( startDate ) )
+					boolean isException = false;
+					for ( int i = 0; exdates != null && i < exdates.size (); i++ ) {
+						Date exdate = exdates.elementAt ( i );
+						if ( newDateTime.compareTo ( exdate ) == 0 )
+							isException = true;
+					}
+					if ( !newDateTime.equals ( startDate ) && !isException )
 						ret.addElement ( newDateTime );
 				} catch ( BogusDataException e1 ) {
 					e1.printStackTrace ();
 				}
 			} else {
 				try {
-					Date newDate = new Date ( "XXX", d.year (), d.month (), d.day () );
-					// HACK! The google RRULE code does not seem to support
-					// the "UNTIL=" setting, so we will enforce it here.
-					/*
-					 * if ( this.untilDate != null && newDate.isAfter ( this.untilDate ) ) {
-					 * break; }
-					 */
-					if ( !newDate.equals ( startDate ) )
+					Date newDate = new Date ( "EXDATE", d.year (), d.month (), d.day () );
+					boolean isException = false;
+					for ( int i = 0; exdates != null && i < exdates.size (); i++ ) {
+						Date exdate = exdates.elementAt ( i );
+						if ( newDate.compareTo ( exdate ) == 0 )
+							isException = true;
+					}
+					if ( !newDate.equals ( startDate ) && !isException )
 						ret.addElement ( newDate );
 				} catch ( BogusDataException e1 ) {
 					e1.printStackTrace ();
@@ -655,6 +681,24 @@ public class Rrule extends Property implements Constants {
 			// TODO: make this configurable
 			if ( d.year () >= thisYear + 100 )
 				break;
+		}
+		// Add in inclusion dates (from RDATE field)
+		// If the recurrence already has the date, don't re-add it (which could
+		// happen if the RRULE was changed after the RDATE field was set).
+		if ( rdates != null ) {
+			for ( int i = 0; i < rdates.size (); i++ ) {
+				Date d = rdates.elementAt ( i );
+				boolean alreadyThere = false;
+				for ( int j = 0; j < ret.size (); j++ ) {
+					Date cur = ret.elementAt ( j );
+					if ( cur.compareTo ( d ) == 0 )
+						alreadyThere = true;
+				}
+				if ( !alreadyThere )
+					ret.add ( d );
+			}
+			// Sort the Vector since they might be out of order now.
+			Collections.sort ( ret );
 		}
 		return ret;
 	}

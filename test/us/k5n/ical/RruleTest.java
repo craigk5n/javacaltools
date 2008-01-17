@@ -46,7 +46,7 @@ public class RruleTest extends TestCase implements Constants {
 			Date dtStart = new Date ( "DTSTART;TZID=" + tzid + ":19970310T090000" );
 			Rrule rrule = new Rrule ( str, PARSE_STRICT );
 			assertNotNull ( "Null RRULE", rrule );
-			Vector dates = rrule.generateRecurrances ( dtStart, tzid );
+			Vector<Date> dates = rrule.generateRecurrances ( dtStart, tzid );
 			for ( int i = 0; i < dates.size (); i++ ) {
 				Date d = (Date) dates.elementAt ( i );
 				String ymd = Utils.DateToYYYYMMDD ( d );
@@ -72,13 +72,13 @@ public class RruleTest extends TestCase implements Constants {
 			Date dtStart = new Date ( "DTSTART;TZID=" + tzid + ":19970101T090000" );
 			Rrule rrule = new Rrule ( str, PARSE_STRICT );
 			assertNotNull ( "Null RRULE", rrule );
-			Vector dates = rrule.generateRecurrances ( dtStart, tzid );
+			Vector<Date> dates = rrule.generateRecurrances ( dtStart, tzid );
 			for ( int i = 0; i < dates.size (); i++ ) {
-				Date d = (Date) dates.elementAt ( i );
+				Date d = dates.elementAt ( i );
 				String ymd = Utils.DateToYYYYMMDD ( d );
 				System.out.println ( "testYearly2)Date#" + i + ": "
 				    + Utils.DateToYYYYMMDD ( d ) );
-				assertTrue ( "Unexpected date, got " + ymd + " instead of "
+				assertTrue ( "Unexpected date#" + i + ", got " + ymd + " instead of "
 				    + results[i], ymd.equals ( results[i] ) );
 			}
 		} catch ( Exception e ) {
@@ -97,9 +97,9 @@ public class RruleTest extends TestCase implements Constants {
 			Date dtStart = new Date ( "DTSTART;TZID=" + tzid + ":19970519T090000" );
 			Rrule rrule = new Rrule ( str, PARSE_STRICT );
 			assertNotNull ( "Null RRULE", rrule );
-			Vector dates = rrule.generateRecurrances ( dtStart, tzid );
+			Vector<Date> dates = rrule.generateRecurrances ( dtStart, tzid );
 			for ( int i = 0; i < dates.size () && i < results.length; i++ ) {
-				Date d = (Date) dates.elementAt ( i );
+				Date d = dates.elementAt ( i );
 				String ymd = Utils.DateToYYYYMMDD ( d );
 				System.out.println ( "testYearly3)Date#" + i + ": "
 				    + Utils.DateToYYYYMMDD ( d ) );
@@ -124,9 +124,9 @@ public class RruleTest extends TestCase implements Constants {
 			Date dtStart = new Date ( "DTSTART;TZID=" + tzid + ":19970313T090000" );
 			Rrule rrule = new Rrule ( str, PARSE_STRICT );
 			assertNotNull ( "Null RRULE", rrule );
-			Vector dates = rrule.generateRecurrances ( dtStart, tzid );
+			Vector<Date> dates = rrule.generateRecurrances ( dtStart, tzid );
 			for ( int i = 0; i < dates.size () && i < results.length; i++ ) {
-				Date d = (Date) dates.elementAt ( i );
+				Date d = dates.elementAt ( i );
 				String ymd = Utils.DateToYYYYMMDD ( d );
 				System.out.println ( "testYearly4)Date#" + i + ": "
 				    + Utils.DateToYYYYMMDD ( d ) );
@@ -150,9 +150,9 @@ public class RruleTest extends TestCase implements Constants {
 			Date dtStart = new Date ( "DTSTART;TZID=" + tzid + ":19970913T090000" );
 			Rrule rrule = new Rrule ( str, PARSE_STRICT );
 			assertNotNull ( "Null RRULE", rrule );
-			Vector dates = rrule.generateRecurrances ( dtStart, tzid );
+			Vector<Date> dates = rrule.generateRecurrances ( dtStart, tzid );
 			for ( int i = 0; i < dates.size () && i < results.length; i++ ) {
-				Date d = (Date) dates.elementAt ( i );
+				Date d = dates.elementAt ( i );
 				String ymd = Utils.DateToYYYYMMDD ( d );
 				System.out.println ( "testMonthly1)Date#" + i + ": "
 				    + Utils.DateToYYYYMMDD ( d ) );
@@ -176,9 +176,9 @@ public class RruleTest extends TestCase implements Constants {
 			Date dtStart = new Date ( "DTSTART:19961105T090000" );
 			Rrule rrule = new Rrule ( str, PARSE_STRICT );
 			assertNotNull ( "Null RRULE", rrule );
-			Vector dates = rrule.generateRecurrances ( dtStart, tzid );
+			Vector<Date> dates = rrule.generateRecurrances ( dtStart, tzid );
 			for ( int i = 0; i < dates.size () && i < results.length; i++ ) {
-				Date d = (Date) dates.elementAt ( i );
+				Date d = dates.elementAt ( i );
 				String ymd = Utils.DateToYYYYMMDD ( d );
 				System.out.println ( "testMonthly2)Date#" + i + ": "
 				    + Utils.DateToYYYYMMDD ( d ) );
@@ -202,9 +202,9 @@ public class RruleTest extends TestCase implements Constants {
 			Date dtStart = new Date ( "DTSTART:19970929T090000" );
 			Rrule rrule = new Rrule ( str, PARSE_STRICT );
 			assertNotNull ( "Null RRULE", rrule );
-			Vector dates = rrule.generateRecurrances ( dtStart, tzid );
+			Vector<Date> dates = rrule.generateRecurrances ( dtStart, tzid );
 			for ( int i = 0; i < dates.size () && i < results.length; i++ ) {
-				Date d = (Date) dates.elementAt ( i );
+				Date d = dates.elementAt ( i );
 				String ymd = Utils.DateToYYYYMMDD ( d );
 				System.out.println ( "testMonthly3)Date#" + i + ": "
 				    + Utils.DateToYYYYMMDD ( d ) );
@@ -228,9 +228,9 @@ public class RruleTest extends TestCase implements Constants {
 			Date dtStart = new Date ( "DTSTART:19970922T090000" );
 			Rrule rrule = new Rrule ( str, PARSE_STRICT );
 			assertNotNull ( "Null RRULE", rrule );
-			Vector dates = rrule.generateRecurrances ( dtStart, tzid );
+			Vector<Date> dates = rrule.generateRecurrances ( dtStart, tzid );
 			for ( int i = 0; i < dates.size () && i < results.length; i++ ) {
-				Date d = (Date) dates.elementAt ( i );
+				Date d = dates.elementAt ( i );
 				String ymd = Utils.DateToYYYYMMDD ( d );
 				System.out.println ( "testMonthly4)Date#" + i + ": "
 				    + Utils.DateToYYYYMMDD ( d ) );
@@ -254,9 +254,9 @@ public class RruleTest extends TestCase implements Constants {
 			Date dtStart = new Date ( "DTSTART:19970902T090000" );
 			Rrule rrule = new Rrule ( str, PARSE_STRICT );
 			assertNotNull ( "Null RRULE", rrule );
-			Vector dates = rrule.generateRecurrances ( dtStart, tzid );
+			Vector<Date> dates = rrule.generateRecurrances ( dtStart, tzid );
 			for ( int i = 0; i < dates.size () && i < results.length; i++ ) {
-				Date d = (Date) dates.elementAt ( i );
+				Date d = dates.elementAt ( i );
 				String ymd = Utils.DateToYYYYMMDD ( d );
 				System.out.println ( "testWeekly1)Date#" + i + ": "
 				    + Utils.DateToYYYYMMDD ( d ) );
@@ -280,9 +280,9 @@ public class RruleTest extends TestCase implements Constants {
 			Date dtStart = new Date ( "DTSTART;VALUE=DATE:20060915" );
 			Rrule rrule = new Rrule ( str, PARSE_STRICT );
 			assertNotNull ( "Null RRULE", rrule );
-			Vector dates = rrule.generateRecurrances ( dtStart, tzid );
+			Vector<Date> dates = rrule.generateRecurrances ( dtStart, tzid );
 			for ( int i = 0; i < dates.size () && i < results.length; i++ ) {
-				Date d = (Date) dates.elementAt ( i );
+				Date d = dates.elementAt ( i );
 				String ymd = Utils.DateToYYYYMMDD ( d );
 				System.out.println ( "testWeekly2)Date#" + i + ": "
 				    + Utils.DateToYYYYMMDD ( d ) );
@@ -306,9 +306,9 @@ public class RruleTest extends TestCase implements Constants {
 			Date dtStart = new Date ( "DTSTART:20070501T090000" );
 			Rrule rrule = new Rrule ( str, PARSE_STRICT );
 			assertNotNull ( "Null RRULE", rrule );
-			Vector dates = rrule.generateRecurrances ( dtStart, tzid );
+			Vector<Date> dates = rrule.generateRecurrances ( dtStart, tzid );
 			for ( int i = 0; i < dates.size () && i < results.length; i++ ) {
-				Date d = (Date) dates.elementAt ( i );
+				Date d = dates.elementAt ( i );
 				String ymd = Utils.DateToYYYYMMDD ( d );
 				System.out.println ( "testDaily1)Date#" + i + ": "
 				    + Utils.DateToYYYYMMDD ( d ) );
@@ -320,6 +320,173 @@ public class RruleTest extends TestCase implements Constants {
 		} catch ( Exception e ) {
 			e.printStackTrace ();
 			fail ( "Failed: " + e.toString () );
+		}
+	}
+
+	// Daily for until May 10, witch EXDATE of May 5
+	public void testDailyWithExdate1 () {
+		String[] results = { "20070502", "20070503", "20070504", "20070506",
+		    "20070507", "20070508", "20070509", "20070510" };
+		Vector<String> lines = new Vector<String> ();
+		lines.addElement ( "BEGIN:VEVENT" );
+		lines.addElement ( "UID: xxx@1234" );
+		lines.addElement ( "SUMMARY:Test1" );
+		lines.addElement ( "DTSTART:20070501" );
+		lines.addElement ( "RRULE:FREQ=DAILY;UNTIL=20070511T000000Z" );
+		lines.addElement ( "EXDATE:20070505" );
+		lines.addElement ( "END:VEVENT" );
+
+		try {
+			ICalendarParser parser = new ICalendarParser ( Constants.PARSE_STRICT );
+			Event e = new Event ( parser, 0, lines );
+			assertNotNull ( "Null Event", e );
+			Vector<Date> dates = e.getRecurranceDates ();
+			for ( int i = 0; i < dates.size () && i < results.length; i++ ) {
+				Date d = dates.elementAt ( i );
+				String ymd = Utils.DateToYYYYMMDD ( d );
+				System.out.println ( "testDailyWithExdate1)Date#" + i + ": "
+				    + Utils.DateToYYYYMMDD ( d ) );
+				assertTrue ( "Unexpected date#" + i + ", got " + ymd + " instead of "
+				    + results[i], ymd.equals ( results[i] ) );
+			}
+			assertTrue ( "More than " + results.length + " events returned: "
+			    + dates.size (), dates.size () == results.length );
+
+			// Generate the iCalendar and do it all over...
+			String icalOut = e.toICalendar ();
+			String[] icalLines = icalOut.split ( "[\r\n]+" );
+			Vector<String> icalLinesV = new Vector<String> ();
+			for ( int i = 0; i < icalLines.length; i++ ) {
+				icalLinesV.addElement ( icalLines[i] );
+			}
+			e = new Event ( parser, 0, lines );
+			assertNotNull ( "Null Event", e );
+			dates = e.getRecurranceDates ();
+			for ( int i = 0; i < dates.size () && i < results.length; i++ ) {
+				Date d = dates.elementAt ( i );
+				String ymd = Utils.DateToYYYYMMDD ( d );
+				System.out.println ( "testDailyWithExdate1)Date#" + i + ": "
+				    + Utils.DateToYYYYMMDD ( d ) );
+				assertTrue ( "Unexpected date#" + i + ", got " + ymd + " instead of "
+				    + results[i], ymd.equals ( results[i] ) );
+			}
+			assertTrue ( "More than " + results.length + " events returned: "
+			    + dates.size (), dates.size () == results.length );
+		} catch ( Exception e ) {
+			e.printStackTrace ();
+			fail ( "Failed: " + e.toString () );
+		}
+	}
+
+	// Daily for until May 10, witch EXDATE of May 5, May 7
+	public void testDailyWithExdate2 () {
+		String[] results = { "20070502", "20070503", "20070504", "20070506",
+		    "20070508", "20070509", "20070510" };
+		Vector<String> lines = new Vector<String> ();
+		lines.addElement ( "BEGIN:VEVENT" );
+		lines.addElement ( "UID: xxx@1234" );
+		lines.addElement ( "SUMMARY:Test1" );
+		lines.addElement ( "DTSTART:20070501" );
+		lines.addElement ( "RRULE:FREQ=DAILY;UNTIL=20070511T000000Z" );
+		lines.addElement ( "EXDATE:20070505,20070507" );
+		lines.addElement ( "END:VEVENT" );
+
+		try {
+			ICalendarParser parser = new ICalendarParser ( Constants.PARSE_STRICT );
+			Event e = new Event ( parser, 0, lines );
+			assertNotNull ( "Null Event", e );
+			Vector<Date> dates = e.getRecurranceDates ();
+			for ( int i = 0; i < dates.size () && i < results.length; i++ ) {
+				Date d = dates.elementAt ( i );
+				String ymd = Utils.DateToYYYYMMDD ( d );
+				System.out.println ( "testDailyWithExdate2)Date#" + i + ": "
+				    + Utils.DateToYYYYMMDD ( d ) );
+				assertTrue ( "Unexpected date#" + i + ", got " + ymd + " instead of "
+				    + results[i], ymd.equals ( results[i] ) );
+			}
+			assertTrue ( "More than " + results.length + " events returned: "
+			    + dates.size (), dates.size () == results.length );
+
+			// Generate the iCalendar and do it all over...
+			String icalOut = e.toICalendar ();
+			String[] icalLines = icalOut.split ( "[\r\n]+" );
+			Vector<String> icalLinesV = new Vector<String> ();
+			for ( int i = 0; i < icalLines.length; i++ ) {
+				icalLinesV.addElement ( icalLines[i] );
+			}
+			e = new Event ( parser, 0, lines );
+			assertNotNull ( "Null Event", e );
+			dates = e.getRecurranceDates ();
+			for ( int i = 0; i < dates.size () && i < results.length; i++ ) {
+				Date d = dates.elementAt ( i );
+				String ymd = Utils.DateToYYYYMMDD ( d );
+				System.out.println ( "testDailyWithExdate2)Date#" + i + ": "
+				    + Utils.DateToYYYYMMDD ( d ) );
+				assertTrue ( "Unexpected date#" + i + ", got " + ymd + " instead of "
+				    + results[i], ymd.equals ( results[i] ) );
+			}
+			assertTrue ( "More than " + results.length + " events returned: "
+			    + dates.size (), dates.size () == results.length );
+		} catch ( Exception e ) {
+			e.printStackTrace ();
+			fail ( "Failed: " + e.toString () );
+		}
+	}
+
+	// Test the RDATE support. Create a weekly repeating event. Add two extra
+	// dates in the middle of the series.
+	public void testWeeklyWithRdate1 () {
+		String[] results = { "20080114", "20080121", "20080122", "20080124",
+		    "20080128", "20080204", "20080211", "20080218" };
+		Vector<String> lines = new Vector<String> ();
+		lines.addElement ( "BEGIN:VEVENT" );
+		lines.addElement ( "UID: xxx@1234" );
+		lines.addElement ( "SUMMARY:Test1" );
+		lines.addElement ( "DTSTART:20080107" ); // Mon, 1/7/2008
+		lines.addElement ( "RRULE:FREQ=WEEKLY;UNTIL=20080225T000000Z" );
+		lines.addElement ( "RDATE:20080122,20080124" );
+		lines.addElement ( "END:VEVENT" );
+
+		try {
+			ICalendarParser parser = new ICalendarParser ( Constants.PARSE_STRICT );
+			Event e = new Event ( parser, 0, lines );
+			assertNotNull ( "Null Event", e );
+			Vector<Date> dates = e.getRecurranceDates ();
+			for ( int i = 0; i < dates.size () && i < results.length; i++ ) {
+				Date d = dates.elementAt ( i );
+				String ymd = Utils.DateToYYYYMMDD ( d );
+				System.out.println ( "testWeeklyWithRdate1)Date#" + i + ": "
+				    + Utils.DateToYYYYMMDD ( d ) );
+				assertTrue ( "Unexpected date#" + i + ", got " + ymd + " instead of "
+				    + results[i], ymd.equals ( results[i] ) );
+			}
+			assertTrue ( "More than " + results.length + " events returned: "
+			    + dates.size (), dates.size () == results.length );
+
+			// Generate the iCalendar and do it all over...
+			String icalOut = e.toICalendar ();
+			String[] icalLines = icalOut.split ( "[\r\n]+" );
+			Vector<String> icalLinesV = new Vector<String> ();
+			for ( int i = 0; i < icalLines.length; i++ ) {
+				icalLinesV.addElement ( icalLines[i] );
+			}
+			e = new Event ( parser, 0, lines );
+			assertNotNull ( "Null Event", e );
+			dates = e.getRecurranceDates ();
+			for ( int i = 0; i < dates.size () && i < results.length; i++ ) {
+				Date d = dates.elementAt ( i );
+				String ymd = Utils.DateToYYYYMMDD ( d );
+				System.out.println ( "testWeeklyWithRdate1)Date#" + i + ": "
+				    + Utils.DateToYYYYMMDD ( d ) );
+				assertTrue ( "Unexpected date#" + i + ", got " + ymd + " instead of "
+				    + results[i], ymd.equals ( results[i] ) );
+			}
+			assertTrue ( "More than " + results.length + " events returned: "
+			    + dates.size (), dates.size () == results.length );
+		} catch ( Exception e ) {
+			e.printStackTrace ();
+			fail ( "Failed: " + e.toString () );
+			e.printStackTrace ();
 		}
 	}
 

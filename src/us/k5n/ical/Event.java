@@ -61,9 +61,13 @@ public class Event implements Constants {
 	/** Contact for the event */
 	// public Individual contact;
 	/** Participants for the event (Vector of Attendee) */
-	protected Vector attendees = null;
+	protected Vector<Attendee> attendees = null;
 	/** Recurrence rule (RRULE) */
 	protected Rrule rrule = null;
+	/** Exception dates (EXDATE) */
+	protected Vector<Date> exdates = null;
+	/** Inclusion dates (RDATE) */
+	protected Vector<Date> rdates = null;
 	/** URL */
 	protected URL url = null;
 	/** Location */
@@ -73,15 +77,14 @@ public class Event implements Constants {
 	/** Transparent status (TRANSP_OPAQUE or TRANSP_TRANSPARENT) */
 	protected int transp = TRANSP_OPAQUE;
 	/** Attachments */
-	protected Vector attachments = null;
+	protected Vector<Attachment> attachments = null;
 	/** Private user object for caller to set/get */
 	private Object userData = null;
 
 	// TODO: multiple summaries, descriptions with different LANGUAGE values
 	// TODO: auto-change transp if either all-day or no duration
 	// TODO: alarms/triggers
-	// TODO: RDATE - recurrance dates
-	// TODO: EXDATE - exception dates
+	// TODO: support VALUE=PERIOD types (RDATE, EXDATE)
 	// TODO: EXRULE - exception rule
 	// TODO: RELATED-TO
 
@@ -95,9 +98,9 @@ public class Event implements Constants {
 	 * @Param textLines
 	 *          Vector of iCalendar text lines
 	 */
-	public Event(CalendarParser parser, int initialLine, Vector textLines) {
+	public Event(CalendarParser parser, int initialLine, Vector<String> textLines) {
 		for ( int i = 0; i < textLines.size (); i++ ) {
-			String line = (String) textLines.elementAt ( i );
+			String line = textLines.elementAt ( i );
 			try {
 				parseLine ( line, parser.getParseMethod () );
 			} catch ( BogusDataException bde ) {
@@ -211,6 +214,46 @@ public class Event implements Constants {
 			sequence = new Sequence ( icalStr );
 		} else if ( up.startsWith ( "RRULE" ) ) {
 			rrule = new Rrule ( icalStr, parseMethod );
+		} else if ( up.startsWith ( "EXDATE" ) ) {
+			// We could implement a class for EXDATE, but it's really just a Date
+			// modified to have mulitple date values.
+			// Since EXDATE supports multiple date values, we will create temporary
+			// iCalendar string values for each date.
+			// Note: this could will allow for multiple EXDATE lines.
+			String[] args = icalStr.split ( ":" );
+			if ( args.length != 2 ) {
+				if ( parseMethod == PARSE_STRICT ) {
+					throw new BogusDataException ( "Invalid EXDATE", icalStr );
+				}
+			} else {
+				if ( this.exdates == null )
+					this.exdates = new Vector<Date> ();
+				String[] dateVals = args[1].split ( "," );
+				for ( int i = 0; i < dateVals.length; i++ ) {
+					String newIcalStr = args[0] + ':' + dateVals[i];
+					System.out.println ( "Temp EXDATE str=" + newIcalStr );
+					Date exdate = new Date ( newIcalStr );
+					this.exdates.addElement ( exdate );
+				}
+			}
+		} else if ( up.startsWith ( "RDATE" ) ) {
+			// Handle this the same way we handled EXDATE
+			String[] args = icalStr.split ( ":" );
+			if ( args.length != 2 ) {
+				if ( parseMethod == PARSE_STRICT ) {
+					throw new BogusDataException ( "Invalid RDATE", icalStr );
+				}
+			} else {
+				String[] dateVals = args[1].split ( "," );
+				if ( this.rdates == null )
+					this.rdates = new Vector<Date> ();
+				for ( int i = 0; i < dateVals.length; i++ ) {
+					String newIcalStr = args[0] + ':' + dateVals[i];
+					System.out.println ( "Temp RDATE str=" + newIcalStr );
+					Date rdate = new Date ( newIcalStr );
+					this.rdates.addElement ( rdate );
+				}
+			}
 		} else if ( up.startsWith ( "TRANSP" ) ) {
 			transp = StringUtils.parseStatus ( icalStr, parseMethod );
 		} else if ( up.startsWith ( "STATUS" ) ) {
@@ -230,12 +273,12 @@ public class Event implements Constants {
 		} else if ( up.startsWith ( "ATTACH" ) ) {
 			Attachment attach = new Attachment ( icalStr );
 			if ( this.attachments == null )
-				this.attachments = new Vector ();
+				this.attachments = new Vector<Attachment> ();
 			this.attachments.addElement ( attach );
 		} else if ( up.startsWith ( "ATTENDEE" ) ) {
 			Attendee attendee = new Attendee ( icalStr );
 			if ( this.attendees == null )
-				this.attendees = new Vector ();
+				this.attendees = new Vector<Attendee> ();
 			this.attendees.addElement ( attendee );
 		} else {
 			System.out.println ( "Ignoring VEVENT line: " + icalStr );
@@ -261,11 +304,11 @@ public class Event implements Constants {
 		return summary;
 	}
 
-	public Vector getAttendees () {
+	public Vector<Attendee> getAttendees () {
 		return attendees;
 	}
 
-	public void setAttendees ( Vector attendees ) {
+	public void setAttendees ( Vector<Attendee> attendees ) {
 		this.attendees = attendees;
 	}
 
@@ -435,11 +478,11 @@ public class Event implements Constants {
 		this.summary = summary;
 	}
 
-	public Vector getAttachments () {
+	public Vector<Attachment> getAttachments () {
 		return attachments;
 	}
 
-	public void setAttachments ( Vector attachments ) {
+	public void setAttachments ( Vector<Attachment> attachments ) {
 		this.attachments = attachments;
 	}
 
@@ -457,7 +500,7 @@ public class Event implements Constants {
 	 * 
 	 * @return
 	 */
-	public Vector getRecurranceDates () {
+	public Vector<Date> getRecurranceDates () {
 		String tzid = null;
 		// TODO: add support for exceptions
 		if ( this.rrule == null )
@@ -465,7 +508,8 @@ public class Event implements Constants {
 		if ( this.startDate == null )
 			return null;
 		tzid = this.startDate.tzid;
-		return rrule.generateRecurrances ( this.startDate, tzid );
+		return rrule.generateRecurrances ( this.startDate, tzid, this.exdates,
+		    this.rdates );
 	}
 
 	/**
@@ -498,6 +542,36 @@ public class Event implements Constants {
 			ret.append ( rrule.toICalendar () );
 		if ( classification != null )
 			ret.append ( classification.toICalendar () );
+		if ( this.exdates != null && this.exdates.size () > 0 ) {
+			if ( this.exdates.size () == 1 ) {
+				ret.append ( this.exdates.elementAt ( 0 ).toICalendar () );
+			} else {
+				StringBuffer sb = new StringBuffer ( 25 );
+				sb.append ( this.exdates.elementAt ( 0 ).toICalendar ().trim () );
+				for ( int i = 1; i < this.exdates.size (); i++ ) {
+					sb.append ( ',' );
+					String s = this.exdates.elementAt ( i ).toICalendar ().trim ();
+					String[] args = s.split ( ":" );
+					sb.append ( args[1] );
+				}
+				sb.append ( CRLF );
+			}
+		}
+		if ( this.rdates != null && this.rdates.size () > 0 ) {
+			if ( this.rdates.size () == 1 ) {
+				ret.append ( this.rdates.elementAt ( 0 ).toICalendar () );
+			} else {
+				StringBuffer sb = new StringBuffer ( 25 );
+				sb.append ( this.rdates.elementAt ( 0 ).toICalendar ().trim () );
+				for ( int i = 1; i < this.rdates.size (); i++ ) {
+					sb.append ( ',' );
+					String s = this.rdates.elementAt ( i ).toICalendar ().trim ();
+					String[] args = s.split ( ":" );
+					sb.append ( args[1] );
+				}
+				sb.append ( CRLF );
+			}
+		}
 		if ( categories != null )
 			ret.append ( categories.toICalendar () );
 		if ( url != null )
