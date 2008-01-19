@@ -486,6 +486,50 @@ public class Event implements Constants {
 		this.attachments = attachments;
 	}
 
+	public void addException ( Date date ) {
+		if ( this.exdates != null )
+			this.exdates = new Vector<Date> ();
+		date.setName ( "EXDATE" ); // make sure the user had it correct
+		this.exdates.addElement ( date );
+	}
+
+	public void removeException ( Date date ) {
+		for ( int i = 0; this.exdates != null && i < this.exdates.size (); i++ ) {
+			Date d = this.exdates.elementAt ( i );
+			if ( d.compareTo ( date ) == 0 ) {
+				this.exdates.remove ( i );
+				return;
+			}
+		}
+		// not found
+	}
+
+	public Vector<Date> getExceptions () {
+		return this.exdates;
+	}
+	
+	public void addRdate ( Date date ) {
+		if ( this.rdates != null )
+			this.rdates = new Vector<Date> ();
+		date.setName ( "RDATE" ); // make sure the user had it correct
+		this.rdates.addElement ( date );
+	}
+
+	public void removeRdate ( Date date ) {
+		for ( int i = 0; this.rdates != null && i < this.rdates.size (); i++ ) {
+			Date d = this.rdates.elementAt ( i );
+			if ( d.compareTo ( date ) == 0 ) {
+				this.rdates.remove ( i );
+				return;
+			}
+		}
+		// not found
+	}
+
+	public Vector<Date> getRdates () {
+		return this.rdates;
+	}
+
 	public Object getUserData () {
 		return userData;
 	}
