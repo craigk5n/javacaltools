@@ -40,8 +40,9 @@ Build targets:
     <mkdir dir="${build}"/>
   </target>
 
-  <target name="compile" depends="init,compile-ical,compile-calendarpanel"
-        description="compile the source"/>
+  <target name="compile"
+    depends="init,compile-ical,compile-calendarpanel,compile-k5njournal"
+    description="compile the source"/>
 
   <target name="compile-ical" depends="init">
     <!-- Compile the java code from ${src} into ${build} -->
@@ -60,6 +61,13 @@ Build targets:
     <!-- Compile: calendarpanel with 1.2 -->
     <javac srcdir="${src}" destdir="${build}" source="1.2" target="1.2"
       includes="us/k5n/ui/calendar/**">
+    </javac>
+  </target>
+
+  <target name="compile-k5njournal" depends="init">
+    <!-- Compile: k5njournal with 1.5 -->
+    <javac srcdir="${src}" destdir="${build}" source="1.5" target="1.5"
+      includes="us/k5n/journal/**">
     </javac>
   </target>
 
@@ -87,10 +95,12 @@ Build targets:
 
     <!-- Put all the lib and k5njournal files into a single jar
          and designate the main class -->
-    <jar jarfile="${dist}/k5n-journal-${version}.jar" basedir="${build}">
+    <jar jarfile="${dist}/k5n-journal-${version}.jar" basedir="${build}"
+      includes="**/journal/*.class">
     <manifest>
        <attribute name="Main-Class" value="us.k5n.journal.Main"/>
     </manifest>
+    <zipfileset src="${dist}/lib/k5n-ical-${version}.jar" />
     <zipfileset src="${jodatime-jar}" />
     <zipfileset src="${google-rrule-jar}" />
     <zipfileset src="${javacsv-jar}" />
