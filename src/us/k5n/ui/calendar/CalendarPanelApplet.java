@@ -59,14 +59,16 @@ import us.k5n.ical.Utils;
  * <pre>
  * &lt;param name=&quot;file1&quot; value=&quot;http://ical.mac.com/ical/US32Holidays.ics&quot;/&gt;
  * &lt;param name=&quot;color1&quot; value=&quot;#ff0000&quot;/&gt;
+ * &lt;param name=&quot;file2&quot; value=&quot;http://localhost/outlook-export.csv&quot;/&gt;
+ * &lt;param name=&quot;color2&quot; value=&quot;#ffff00&quot;/&gt;
  * </pre>
  * 
- * By default, the file parameter will be treated as in iCalendar file. However,
- * if the parameter ends with ".csv", then the file will be parsed as a
+ * By default, the file parameters will be treated as in iCalendar file.
+ * However, if the parameter ends with ".csv", then the file will be parsed as a
  * comma-separated values (CSV) file exported from Microsoft Outlook.
  * 
  * <br/> <b>Note:</b> The applet <b>must be signed</b> if you want to load
- * iCalendar files from any URL that is not on the same server as the applet.
+ * calendar files from any URL that is not on the same server as the applet.
  * 
  * <br/> Unlike the CalendarPanel class, this class requires Java 1.5 since it
  * makes use of the JavaCalTools ical library (which requires Java 1.5). The
