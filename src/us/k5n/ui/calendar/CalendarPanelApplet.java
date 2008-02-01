@@ -556,8 +556,8 @@ class AppletDataRepository implements CalendarDataRepository {
 							se.setEvent ( event );
 							se.bg = rc.color;
 							se.border = rc.color.brighter ();
-							if ( rc.color.getRed () > 200 && rc.color.getBlue () > 200
-							    && rc.color.getGreen () > 200 ) {
+							if ( rc.color.getRed () > 180 && rc.color.getBlue () > 180
+							    && rc.color.getGreen () > 180 ) {
 								// Color is very light, so don't use white as foreground
 								se.fg = se.bg.darker ().darker ();
 							} else {
@@ -587,8 +587,8 @@ class AppletDataRepository implements CalendarDataRepository {
 								se.setEvent ( event );
 								se.bg = rc.color;
 								se.border = rc.color.brighter ();
-								if ( rc.color.getRed () > 200 && rc.color.getBlue () > 200
-								    && rc.color.getGreen () > 200 ) {
+								if ( rc.color.getRed () > 180 && rc.color.getBlue () > 180
+								    && rc.color.getGreen () > 180 ) {
 									// Color is very light, so don't use white as foreground
 									se.fg = se.bg.darker ().darker ();
 								} else {
