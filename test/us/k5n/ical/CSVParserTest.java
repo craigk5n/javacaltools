@@ -70,6 +70,26 @@ public class CSVParserTest extends TestCase implements Constants {
 		assertTrue ( "Did not set date-only correctly", e.startDate.isDateOnly () );
 	}
 
+	// Test parsing of ISO 8601 standard dates.
+	public void testSimpleDate2 () {
+		parseCsvFile ( new File ( "test/data/SimpleDate2.csv" ) );
+		Vector errors = parser.getAllErrors ();
+		Vector events = ds.getAllEvents ();
+		if ( errors.size () > 0 ) {
+			showErrors ( errors );
+			fail ( "Found errors in valid CSV file" );
+		}
+		assertTrue ( "Did not load valid event", events.size () == 1 );
+		Event e = (Event) events.elementAt ( 0 );
+		assertNotNull ( "Null event start date", e.startDate );
+		assertTrue ( "Wrong event year: " + e.startDate.year,
+		    e.startDate.year == 2007 );
+		assertTrue ( "Wrong event month: " + e.startDate.month,
+		    e.startDate.month == 4 );
+		assertTrue ( "Wrong event day: " + e.startDate.day, e.startDate.day == 1 );
+		assertTrue ( "Did not set date-only correctly", e.startDate.isDateOnly () );
+	}
+
 	public static Test suite () {
 		return new TestSuite ( CSVParserTest.class );
 	}

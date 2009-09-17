@@ -1,4 +1,5 @@
 Version X.X.X (?? ??? ????)
+ - Patch 2860537: Added ISO 8601 date parsing to CSVParser, including a unit test to verify.
  - Patch 2859626: Fixed bug in CSVParser class in parser method
 Version 0.4.7 (31 Jan 2008)
  - Added new CalendarPanelApplet class that will load remote iCalendar files and

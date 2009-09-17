@@ -168,8 +168,8 @@ public class CSVParser extends CalendarParser {
 			if ( endDate != null ) {
 				event.setEndDate ( endDate );
 			}
-			if( startDate != null ) {
-				event.setStartDate( startDate );
+			if ( startDate != null ) {
+				event.setStartDate ( startDate );
 			}
 			// Add event to all DataStore objects
 			for ( int i = 0; i < super.numDataStores (); i++ ) {
@@ -188,18 +188,36 @@ public class CSVParser extends CalendarParser {
 		String[] args = null;
 		Date ret = null;
 		args = date.split ( "[/-]" );
-		if ( args == null || args.length != 3 ) {
+		if ( args == null || args.length == 2 || args.length < 1 || args.length > 3 ) {
+			throw new ParseException ( "Invalid date", date );
+		}
+		if ( args.length == 1 && args[0].length () != 8 ) {
+			// We are using ISO 8601 standard dates, without separators,
+			// therefore length must be 8.
 			throw new ParseException ( "Invalid date", date );
 		}
 		try {
-			Y = Integer.parseInt ( args[2] );
-			// hack: handle 2-digit years
-			if ( Y < 100 && Y < 70 )
-				Y += 1900;
-			else if ( Y < 100 )
-				Y += 2000;
-			M = Integer.parseInt ( args[0] );
-			D = Integer.parseInt ( args[1] );
+			if ( args.length == 1 ) {
+				// Assume we are using ISO 8601 date standard in the form YYYYMMDD
+				Y = Integer.parseInt ( args[0].substring ( 0, 4 ) );
+				M = Integer.parseInt ( args[0].substring ( 4, 6 ) );
+				D = Integer.parseInt ( args[0].substring ( 6, 8 ) );
+			} else if ( args[0].length () == 4 ) {
+				// Assume we are using ISO 8601 date standard in the form YYYY-MM-DD
+				Y = Integer.parseInt ( args[0] );
+				M = Integer.parseInt ( args[1] );
+				D = Integer.parseInt ( args[2] );
+			} else {
+				// Assume we are using dates in the form MM/DD/YYYY or MM/DD/YY
+				Y = Integer.parseInt ( args[2] );
+				// hack: handle 2-digit years
+				if ( Y < 100 && Y < 70 )
+					Y += 1900;
+				else if ( Y < 100 )
+					Y += 2000;
+				M = Integer.parseInt ( args[0] );
+				D = Integer.parseInt ( args[1] );
+			}
 		} catch ( NumberFormatException e1 ) {
 			throw new ParseException ( "Invalid date: " + e1.getMessage (), date );
 		}
