@@ -168,6 +168,9 @@ public class CSVParser extends CalendarParser {
 			if ( endDate != null ) {
 				event.setEndDate ( endDate );
 			}
+			if( startDate != null ) {
+				event.setStartDate( startDate );
+			}
 			// Add event to all DataStore objects
 			for ( int i = 0; i < super.numDataStores (); i++ ) {
 				DataStore ds = super.getDataStoreAt ( i );
