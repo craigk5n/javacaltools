@@ -33,6 +33,10 @@ Build targets:
   <property name="javacsv-jar"  value="lib/javacsv.jar"/>
   <property name="commons-code-jar"  value="lib/commons-codec-1.3.jar"/>
 
+  <!-- Specify location of ydoc.  URL for ydoc is:
+    http://www.yworks.com/en/products_ydoc.html  -->
+  <property name="ydoc-path" value="/usr/local/ydoc-3.0_01-jdk1.5" />
+
   <target name="init">
     <!-- Create the time stamp -->
     <tstamp/>
@@ -52,7 +56,7 @@ Build targets:
         <pathelement path="${jodatime-jar}"/>
         <pathelement path="${google-rrule-jar}"/>
         <pathelement path="${javacsv-jar}"/>
-      	<pathelement path="${commons-code-jar}"/>
+        <pathelement path="${commons-code-jar}"/>
       </classpath>
     </javac>
   </target>
@@ -182,5 +186,44 @@ Build targets:
         <fileset dir='${testbuild}' includes='**/*Test.class'/>
       </batchtest>
     </junit>
+  </target>
+  
+  <!-- help: list important targets -->
+  <target name="help">
+    <echo>dist (default): compile and build jar files</echo>
+    <echo>javadoc: build javadoc-based HTML documentation</echo>
+    <echo>test: run the JUnit-based unit tests</echo>
+    <echo>source-zip: create zip files of the source code</echo>
+    <echo>clean: remove compiled/generated files</echo>
+    <echo>ydoc: builds documentation using yDoc</echo>
+    <echo>all: abbreviation for dist, javadoc, source-zip</echo>
+  </target>
+  
+  <target name="ydoc">
+    <property name="ps" value="${path.separator}"/>
+    <javadoc
+       source="1.5"
+       destdir="${doc}/ical/api"
+       additionalparam="-breakiterator">
+      <packageset dir="src">
+        <include name="us/k5n/ical/**"/>
+      </packageset>
+      <doclet
+        name="ydoc.doclets.YStandard"
+        path="${ydoc-path}/lib/ydoc.jar${ps}${ydoc-path}/resources">
+        <param name="-author"/>
+        <param name="-generic"/>
+        <param name="-umlautogen"/>
+        <param name="-filterpath" value="${ydoc-path}/lib/ydoc.jar"/>
+        <param name="-filter" value="ydoc.filters.ExcludeFilter"/>
+        <param name="-tag" value="y.precondition"/>
+        <param name="-tag" value="y.postcondition"/>
+        <param name="-tag" value="y.complexity"/>
+        <param name="-tag" value="param"/>
+        <param name="-tag" value="return"/>
+        <param name="-tag" value="see"/>
+        <param name="-tag" value="y.uml"/>
+      </doclet>
+    </javadoc>
   </target>
 </project>
