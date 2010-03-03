@@ -20,9 +20,7 @@
 
 package us.k5n.ical;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Vector;
 
 import com.google.ical.iter.RecurrenceIterator;

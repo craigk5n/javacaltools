@@ -158,7 +158,7 @@ public class Event implements Constants {
 		this.startDate = startDate;
 		this.duration = new Duration ( duration );
 		// TODO: calculate endDate from duration
-		this.startDate = Date.getCurrentDateTime ( "CREATED" );
+		this.createdDate = Date.getCurrentDateTime ( "CREATED" );
 	}
 
 	/**
