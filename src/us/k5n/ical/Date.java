@@ -632,7 +632,7 @@ public class Date extends Property implements Constants, Comparable {
 	 */
 	public int getDaysInMonth () {
 		if ( this.year % 4 == 0 )
-			return this.leapMonthDays[this.month - 1];
+			return leapMonthDays[this.month - 1];
 		else
 			return monthDays[this.month - 1];
 	}

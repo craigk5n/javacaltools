@@ -28,9 +28,9 @@ import java.util.Vector;
  * stored internally. However, you can specify that:
  * <ul>
  * <li>the data should be stored internally and a new DataStore should also
- * receive the events </li>
+ * receive the events</li>
  * <li>the data should <em>not</em> be stored internally and a new DataStore
- * should receive the events </li>
+ * should receive the events</li>
  * </ul>
  * See the IcalParser interface for how to change these settings.
  * 
@@ -43,40 +43,40 @@ public interface DataStore {
 	/**
 	 * This method will be called the parser finds a VTIMEZONE object.
 	 */
-	public void storeTimezone(Timezone timezone);
+	public void storeTimezone ( Timezone timezone );
 
 	/**
 	 * This method will be called the parser finds a VEVENT object.
 	 */
-	public void storeEvent(Event event);
+	public void storeEvent ( Event event );
 
 	/**
 	 * This method will be called the parser finds a VTODO object.
 	 */
-	public void storeTodo(Todo todo);
+	public void storeTodo ( Todo todo );
 
 	/**
 	 * This method will be called the parser finds a VJOURNAL object.
 	 */
-	public void storeJournal(Journal journal);
+	public void storeJournal ( Journal journal );
 
 	/**
 	 * This method will be called the parser finds a VFREEBUSY object.
 	 */
-	public void storeFreebusy(Freebusy freebusy);
+	public void storeFreebusy ( Freebusy freebusy );
 
 	/**
 	 * Get all Event objects.
 	 * 
 	 * @return A Vector if Event objects
 	 */
-	public Vector getAllEvents();
+	public Vector<Event> getAllEvents ();
 
 	/**
 	 * Get all Journal objects.
 	 * 
 	 * @return A Vector of Journal objects
 	 */
-	public Vector getAllJournals();
+	public Vector<Journal> getAllJournals ();
 
 }

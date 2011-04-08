@@ -26,7 +26,7 @@ package us.k5n.ical;
  * @version $Id$
  * @author Craig Knudsen, craig@k5n.us
  */
-interface ParseErrorListener {
+public interface ParseErrorListener {
 
 	/**
 	 * This method will be called when a iCalendar parse error is encountered.

@@ -27,6 +27,7 @@ package us.k5n.ical;
  * @author Craig Knudsen, craig@k5n.us
  */
 public class ParseException extends Exception {
+  private static final long serialVersionUID = 1L;
 	public String error;
 	public String icalText;
 

@@ -31,17 +31,21 @@ import java.util.Vector;
  * @see CalendarParser
  */
 public class DefaultDataStore implements DataStore {
-	Vector timezones, events, todos, journals, freebusys;
+	Vector<Timezone> timezones;
+	Vector<Event> events;
+	Vector<Todo> todos;
+	Vector<Journal> journals;
+	Vector<Freebusy> freebusys;
 
 	/**
 	 * Constructor
 	 */
 	public DefaultDataStore() {
-		timezones = new Vector ();
-		events = new Vector ();
-		todos = new Vector ();
-		journals = new Vector ();
-		freebusys = new Vector ();
+		timezones = new Vector<Timezone> ();
+		events = new Vector<Event> ();
+		todos = new Vector<Todo> ();
+		journals = new Vector<Journal> ();
+		freebusys = new Vector<Freebusy> ();
 	}
 
 	/**
@@ -82,7 +86,7 @@ public class DefaultDataStore implements DataStore {
 	/**
 	 * Get a Vector of all Event objects
 	 */
-	public Vector getAllEvents () {
+	public Vector<Event> getAllEvents () {
 		return events;
 	}
 
@@ -91,7 +95,7 @@ public class DefaultDataStore implements DataStore {
 	 * 
 	 * @return A Vector of Journal objects
 	 */
-	public Vector getAllJournals () {
+	public Vector<Journal> getAllJournals () {
 		return journals;
 	}
 

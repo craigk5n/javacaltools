@@ -28,7 +28,8 @@ package us.k5n.ical;
   */
 public class BogusDataException extends Exception
 {
-  public String error;
+  private static final long serialVersionUID = 1L;
+	public String error;
   public String icalText;
 
   public BogusDataException ( String error, String icalText) 

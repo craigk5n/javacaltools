@@ -138,12 +138,11 @@ public abstract class CalendarParser implements Constants {
 	 */
 	public void reportParseError ( ParseError error ) {
 		errors.addElement ( error );
-		for ( int i = 0; i < errorListeners.size (); i++ ) {
-			ParseErrorListener pel = errorListeners.elementAt ( i );
+		for ( ParseErrorListener pel : errorListeners ) {
 			pel.reportParseError ( error );
 		}
 	}
-	
+
 	/**
 	 * Get a Vector of all errors encountered;.
 	 * 
@@ -171,13 +170,14 @@ public abstract class CalendarParser implements Constants {
 		ret.append ( CRLF );
 
 		// Include events
-		Vector events = ( (DataStore) getDataStoreAt ( 0 ) ).getAllEvents ();
+		Vector<Event> events = ( (DataStore) getDataStoreAt ( 0 ) ).getAllEvents ();
 		for ( int i = 0; i < events.size (); i++ ) {
 			Event ev = (Event) events.elementAt ( i );
 			ret.append ( ev.toICalendar () );
 		}
 		// Include journal entries
-		Vector journals = ( (DataStore) getDataStoreAt ( 0 ) ).getAllJournals ();
+		Vector<Journal> journals = ( (DataStore) getDataStoreAt ( 0 ) )
+		    .getAllJournals ();
 		for ( int i = 0; i < journals.size (); i++ ) {
 			Journal j = (Journal) journals.elementAt ( i );
 			ret.append ( j.toICalendar () );

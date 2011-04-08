@@ -27,8 +27,8 @@ import java.io.IOException;
 /**
  * iCalendar Parser class - This object is required for most parsing methods and
  * can be thought of as the main entry point into this package. It can serve as
- * a DataStore to store events/todos/etc when a custom DataStore is not needed.
- * <br/> Example usage: <blockquote>
+ * a DataStore to store events/todos/etc when a custom DataStore is not needed. <br/>
+ * Example usage: <blockquote>
  * 
  * <pre>
  * ICalendarParser parser = new ICalendarParser ();
@@ -120,7 +120,7 @@ public class ICalendarParser extends CalendarParser implements Constants {
 		int state = STATE_NONE;
 		int ln = 0; // line number
 		int startLineNo = 0;
-		Vector textLines;
+		Vector<String> textLines;
 		boolean done = false;
 
 		// Because iCalendar allows lines to be "folded" (continued) onto
@@ -131,7 +131,7 @@ public class ICalendarParser extends CalendarParser implements Constants {
 		// variable contains the next line of text to be processed.
 		// TODO: line numbers in errors may be off for folded lines since the
 		// last line number of the text will be reported.
-		textLines = new Vector ();
+		textLines = new Vector<String> ();
 		nextLine = r.readLine ();
 		notYetParsed = new StringBuffer ();
 		if ( nextLine == null ) {
@@ -286,10 +286,10 @@ public class ICalendarParser extends CalendarParser implements Constants {
 							// Send the Todo object to all DataStore objects
 							/*****************************************************************
 							 * * TODO - not yet implemented Uncomment this when Todo.java is
-							 * implemented Todo todo = new Todo ( this, startLineNo, textLines );
-							 * if ( todo.isValid() ) { for ( int i = 0; i < dataStores.size();
-							 * i++ ) { DataStore ds = (DataStore) dataStores.elementAt ( i );
-							 * ds.storeTodo ( todo ); } }
+							 * implemented Todo todo = new Todo ( this, startLineNo, textLines
+							 * ); if ( todo.isValid() ) { for ( int i = 0; i <
+							 * dataStores.size(); i++ ) { DataStore ds = (DataStore)
+							 * dataStores.elementAt ( i ); ds.storeTodo ( todo ); } }
 							 ****************************************************************/
 							textLines.removeAllElements (); // truncate Vector
 						}

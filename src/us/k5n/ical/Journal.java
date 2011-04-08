@@ -56,13 +56,13 @@ public class Journal implements Constants {
 	/** Time last modified */
 	protected Date lastModified = null;
 	/** Participants for the journal entry (Vector of Attendee) */
-	protected Vector attendees = null;
+	protected Vector<Attendee> attendees = null;
 	/** Recurrence rule (RRULE) */
 	protected Rrule rrule = null;
 	/** URL */
 	protected URL url = null;
 	/** Attachments */
-	protected Vector attachments = null;
+	protected Vector<Attachment> attachments = null;
 	/** Journal status */
 	protected int status = STATUS_UNDEFINED;
 	/** Private user object for caller to set/get */
@@ -82,12 +82,12 @@ public class Journal implements Constants {
 	 *          The IcalParser object
 	 * @param initialLine
 	 *          The starting line number
-	 * @Param textLines
-	 *          Vector of iCalendar text lines
+	 * @Param textLines Vector of iCalendar text lines
 	 */
-	public Journal(CalendarParser parser, int initialLine, Vector textLines) {
+	public Journal(CalendarParser parser, int initialLine,
+	    Vector<String> textLines) {
 		for ( int i = 0; i < textLines.size (); i++ ) {
-			String line = (String) textLines.elementAt ( i );
+			String line = textLines.elementAt ( i );
 			try {
 				parseLine ( line, parser.getParseMethod () );
 			} catch ( BogusDataException bde ) {
@@ -181,7 +181,7 @@ public class Journal implements Constants {
 		} else if ( up.startsWith ( "ATTACH" ) ) {
 			Attachment attach = new Attachment ( icalStr );
 			if ( this.attachments == null )
-				this.attachments = new Vector ();
+				this.attachments = new Vector<Attachment> ();
 			this.attachments.addElement ( attach );
 		} else if ( up.startsWith ( "STATUS" ) ) {
 			status = StringUtils.parseStatus ( icalStr, parseMethod );
@@ -273,11 +273,11 @@ public class Journal implements Constants {
 		return ret.toString ();
 	}
 
-	public Vector getAttendees () {
+	public Vector<Attendee> getAttendees () {
 		return attendees;
 	}
 
-	public void setAttendees ( Vector attendees ) {
+	public void setAttendees ( Vector<Attendee> attendees ) {
 		this.attendees = attendees;
 	}
 
@@ -373,11 +373,11 @@ public class Journal implements Constants {
 		this.url = url;
 	}
 
-	public Vector getAttachments () {
+	public Vector<Attachment> getAttachments () {
 		return attachments;
 	}
 
-	public void setAttachments ( Vector attachments ) {
+	public void setAttachments ( Vector<Attachment> attachments ) {
 		this.attachments = attachments;
 	}
 

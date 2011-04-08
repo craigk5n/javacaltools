@@ -38,12 +38,12 @@ public class Property implements Constants {
 	 * commas.
 	 */
 	protected String value;
-	protected Vector attributeList;
+	protected Vector<Attribute> attributeList;
 
 	public Property(String name, String value) {
 		this.name = name.toUpperCase ();
 		this.value = value;
-		attributeList = new Vector ();
+		attributeList = new Vector<Attribute> ();
 	}
 
 	/**
@@ -72,7 +72,7 @@ public class Property implements Constants {
 	 *          PARSE_STRICT or PARSE_LOOSE
 	 */
 	public Property(String line, int parseMode) throws ParseException {
-		attributeList = new Vector ();
+		attributeList = new Vector<Attribute> ();
 		String s = StringUtils.unfoldLine ( line, parseMode );
 
 		// Find first ':'
@@ -149,12 +149,11 @@ public class Property implements Constants {
 	}
 
 	public Attribute attributeAt ( int i ) {
-		return (Attribute) attributeList.elementAt ( i );
+		return attributeList.elementAt ( i );
 	}
 
 	public Attribute getNamedAttribute ( String attributeName ) {
-		for ( int i = 0; i < this.attributeList.size (); i++ ) {
-			Attribute a = this.attributeAt ( i );
+		for ( Attribute a : this.attributeList ) {
 			if ( a.name.equalsIgnoreCase ( attributeName ) )
 				return a;
 		}
