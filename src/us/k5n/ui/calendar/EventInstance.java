@@ -29,9 +29,7 @@ import java.awt.Color;
  * 
  * @see CalendarDataRepository
  * @see CalendarPanel
- * @author Craig Knudsen
- * @version $Id$
- * 
+ * @author Craig Knudsen, craig@k5n.us
  */
 public interface EventInstance extends Comparable {
 

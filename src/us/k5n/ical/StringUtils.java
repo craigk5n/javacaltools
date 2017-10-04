@@ -23,7 +23,6 @@ package us.k5n.ical;
 /**
  * iCalendar StringFormatter utility class
  * 
- * @version $Id$
  * @author Craig Knudsen, craig@k5n.us
  */
 public class StringUtils implements Constants {

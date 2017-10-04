@@ -18,7 +18,6 @@ import us.k5n.ical.Utils;
  * data if it is written back out.
  * 
  * @author Craig Knudsen, craig@k5n.us
- * @version $Id$
  */
 public class Repository {
 	File directory;

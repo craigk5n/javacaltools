@@ -44,7 +44,6 @@ package us.k5n.ical;
  * location.
  * </quote>
  * 
- * @version $Id$
  * @author Craig Knudsen, craig@k5n.us
  */
 public class Location extends Property {

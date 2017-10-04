@@ -29,8 +29,6 @@ import java.util.Vector;
  * 
  * @see CalendarPanel
  * @author Craig Knudsen, craig@k5n.us
- * @version $Id: CalendarDataRepository.java,v 1.1 2007/06/05 12:39:27 cknudsen
- *          Exp $
  * 
  */
 public interface CalendarDataRepository {

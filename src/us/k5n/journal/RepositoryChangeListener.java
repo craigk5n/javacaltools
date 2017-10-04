@@ -6,7 +6,6 @@ import us.k5n.ical.Journal;
  * Interface for receiving updates from Repository.
  * 
  * @author Craig Knudsen, craig@k5n.us
- * @version $Id$
  */
 public interface RepositoryChangeListener {
 

@@ -11,8 +11,6 @@ import junit.framework.TestSuite;
  * Test cases for Journal.
  * 
  * @author Craig Knudsen, craig@k5n.us
- * @version $Id$
- * 
  */
 public class JournalTest extends TestCase implements Constants {
 	ICalendarParser parser;

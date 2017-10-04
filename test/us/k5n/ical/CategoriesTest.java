@@ -8,8 +8,6 @@ import junit.framework.TestSuite;
  * Test cases for Categories.
  * 
  * @author Craig Knudsen, craig@k5n.us
- * @version $Id$
- * 
  */
 public class CategoriesTest extends TestCase implements Constants {
 

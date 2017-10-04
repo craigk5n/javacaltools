@@ -17,8 +17,6 @@ import com.google.ical.values.Frequency;
  * Test cases for Rrule.
  * 
  * @author Craig Knudsen, craig@k5n.us
- * @version $Id$
- * 
  */
 public class RruleTest extends TestCase implements Constants {
 

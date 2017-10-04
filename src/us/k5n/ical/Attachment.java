@@ -48,7 +48,6 @@ import org.apache.commons.codec.binary.Base64;
  * specified multiple times within an iCalendar object.
  * </quote>
  * 
- * @version $Id$
  * @author Craig Knudsen, craig@k5n.us
  */
 public class Attachment extends Property {

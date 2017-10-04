@@ -19,8 +19,6 @@ import javax.swing.JPanel;
  * CalendarPanel class.
  * 
  * @author Craig Knudsen, craig@k5n.us
- * @version $Id$
- * 
  */
 public class CalendarPanelTest extends JFrame implements CalendarDataRepository {
 	private static final long serialVersionUID = 1000L;

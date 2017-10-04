@@ -27,7 +27,6 @@ package us.k5n.ical;
   * iCalendar Attribute class.  Can be used to store an attribute such as
   * LANGUAGE as in: <br/>
   * <tt>LOCATION;LANGUAGE=en:Germany</tt>
-  * @version $Id$
   * @author Craig Knudsen, craig@k5n.us
   */
 public class Attribute

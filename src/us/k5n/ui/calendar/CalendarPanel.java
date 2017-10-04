@@ -62,7 +62,6 @@ import javax.swing.Timer;
  * 
  * @see CalendarDataRepository
  * @author Craig Knudsen, craig@k5n.us
- * @version $Id$
  */
 public class CalendarPanel extends JPanel implements MouseWheelListener {
 	private static final long serialVersionUID = 1000L;

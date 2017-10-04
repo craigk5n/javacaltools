@@ -30,7 +30,6 @@ import java.util.Calendar;
 /**
  * iCalendar Utility class
  * 
- * @version $Id$
  * @author Craig Knudsen, craig@k5n.us
  */
 public class Utils implements Constants {

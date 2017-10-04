@@ -20,7 +20,6 @@ import us.k5n.ical.ParseError;
  * duplicates.
  * 
  * @author Craig Knudsen, craig@k5n.us
- * @version $Id$
  */
 public class DataFile extends File implements Constants {
 	ICalendarParser parser;

@@ -34,7 +34,6 @@ import java.util.Vector;
  * </ul>
  * See the IcalParser interface for how to change these settings.
  * 
- * @version $Id$
  * @author Craig Knudsen, craig@k5n.us
  * @see CalendarParser
  */

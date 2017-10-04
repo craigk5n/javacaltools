@@ -24,7 +24,6 @@ package us.k5n.ical;
  * iCalendar Categories class - This object represents a category list and
  * corresponds to the CATEGORIES iCalendar property.
  * 
- * @version $Id$
  * @author Craig Knudsen, craig@k5n.us
  */
 public class Categories extends Property {

@@ -32,7 +32,6 @@ package us.k5n.ical;
  * MUST point to the same resource.
  * </quote>
  * 
- * @version $Id$
  * @author Craig Knudsen, craig@k5n.us
  */
 public class URL extends Property {

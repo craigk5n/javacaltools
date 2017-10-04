@@ -29,7 +29,6 @@ import java.util.Vector;
  * "VJOURNAL" calendar component does not take up time on, so it has no affect
  * on free or busy time (just like TRANSPARENT entries).
  * 
- * @version $Id$
  * @author Craig Knudsen, craig@k5n.us
  */
 public class Journal implements Constants {

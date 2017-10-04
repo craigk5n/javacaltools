@@ -26,8 +26,6 @@ package us.k5n.ui.calendar;
  * 
  * @see CalendarPanel
  * @author Craig Knudsen, craig@k5n.us
- * @version $Id: CalendarPanelSelectionListener.java,v 1.1 2007/06/05 12:39:27
- *          cknudsen Exp $
  */
 public interface CalendarPanelSelectionListener {
 

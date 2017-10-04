@@ -14,8 +14,6 @@ import junit.framework.TestSuite;
  * Test cases for CSVParser.
  * 
  * @author Craig Knudsen, craig@k5n.us
- * @version $Id$
- * 
  */
 public class CSVParserTest extends TestCase implements Constants {
 	CSVParser parser;

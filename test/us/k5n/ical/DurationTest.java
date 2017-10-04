@@ -8,8 +8,6 @@ import junit.framework.TestSuite;
  * Test cases for Duration.
  * 
  * @author Craig Knudsen, craig@k5n.us
- * @version $Id$
- * 
  */
 public class DurationTest extends TestCase implements Constants {
 

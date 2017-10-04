@@ -8,8 +8,6 @@ import junit.framework.TestSuite;
  * Test cases for Description.
  * 
  * @author Craig Knudsen, craig@k5n.us
- * @version $Id$
- * 
  */
 public class DescriptionTest extends TestCase implements Constants {
 

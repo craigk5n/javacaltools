@@ -17,7 +17,6 @@ import javax.swing.table.TableModel;
  * Overide methods of JTable to customize: no cell editing, alternating
  * background colors for odd/even rows, resize to fit
  * 
- * @version $Id$
  * @author Craig Knudsen, craig@k5n.us
  */
 public class ReadOnlyTable extends JTable {

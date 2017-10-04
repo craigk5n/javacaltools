@@ -27,7 +27,6 @@ import java.util.Vector;
  * data (ATTENDEE, DTSTART, SUMMARY, etc.) A Property can contain multiple
  * attributes. See section 4.1.1 of RFC 2445 for details.
  * 
- * @version $Id$
  * @author Craig Knudsen, craig@k5n.us
  */
 public class Property implements Constants {

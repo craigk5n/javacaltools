@@ -25,7 +25,6 @@ import java.util.Vector;
 /**
  * iCalendar Event class that corresponds to the VEVENT iCalendarendar object.
  * 
- * @version $Id$
  * @author Craig Knudsen, craig@k5n.us
  */
 public class Event implements Constants {

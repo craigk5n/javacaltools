@@ -75,8 +75,6 @@ import us.k5n.ical.Utils;
  * main CalendarPanel class by itself only requires Java 1.2.
  * 
  * @author Craig Knudsen, craig@k5n.us
- * @version $Id$
- * 
  */
 public class CalendarPanelApplet extends JApplet {
 	public final Color[] defaultColors = { Color.BLUE, Color.RED, Color.GREEN,

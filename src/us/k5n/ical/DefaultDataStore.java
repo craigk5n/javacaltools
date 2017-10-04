@@ -26,7 +26,6 @@ import java.util.Vector;
  * A simple implementation of the DataStore interface. This is the default
  * implementation used by the IcalParser class.
  * 
- * @version $Id$
  * @author Craig Knudsen, craig@k5n.us
  * @see CalendarParser
  */

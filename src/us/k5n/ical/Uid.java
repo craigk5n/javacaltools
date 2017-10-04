@@ -24,7 +24,6 @@ package us.k5n.ical;
  * iCalendar Uid class - This object represents a uid and corresponds to the UID
  * iCalendar property.
  * 
- * @version $Id$
  * @author Craig Knudsen, craig@k5n.us
  */
 public class Uid extends Property {

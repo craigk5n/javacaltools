@@ -8,8 +8,6 @@ import junit.framework.TestSuite;
  * Test cases for Summary.
  * 
  * @author Craig Knudsen, craig@k5n.us
- * @version $Id$
- * 
  */
 public class SummaryTest extends TestCase implements Constants {
 

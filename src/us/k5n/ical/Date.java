@@ -35,7 +35,6 @@ import org.joda.time.DateTimeZone;
  * class will assume the user's local timezone unless they specifically set the
  * object to be floating.
  * 
- * @version $Id$
  * @author Craig Knudsen, craig@k5n.us
  */
 public class Date extends Property implements Constants, Comparable {

@@ -23,7 +23,6 @@ import org.xml.sax.SAXException;
  * from the RSS format.
  * 
  * @author Craig Knudsen, craig@k5n.us
- * @version $Id$
  */
 public class RSSImporter extends CalendarParser {
 

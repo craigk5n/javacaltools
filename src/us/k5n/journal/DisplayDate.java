@@ -9,8 +9,6 @@ import us.k5n.ical.Date;
  * display using SimpleDateFormat.
  * 
  * @author Craig Knudsen, craig@k5n.us
- * @version $Id$
- * 
  */
 public class DisplayDate implements Comparable {
 	// Date formats are specified in the Java API doc.

@@ -8,8 +8,6 @@ import junit.framework.TestSuite;
  * Test cases for Classification.
  * 
  * @author Craig Knudsen, craig@k5n.us
- * @version $Id$
- * 
  */
 public class ClassificationTest extends TestCase implements Constants {
 

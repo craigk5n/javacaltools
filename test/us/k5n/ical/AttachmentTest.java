@@ -15,8 +15,6 @@ import org.apache.commons.codec.binary.Base64;
  * Test cases for Attachment.
  * 
  * @author Craig Knudsen, craig@k5n.us
- * @version $Id$
- * 
  */
 public class AttachmentTest extends TestCase implements Constants {
 

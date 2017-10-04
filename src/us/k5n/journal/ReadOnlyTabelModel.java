@@ -7,7 +7,6 @@ import javax.swing.table.AbstractTableModel;
  * header.
  * 
  * @author Craig Knudsen, craig@kn.us.
- * @version $Id$
  */
 public class ReadOnlyTabelModel extends AbstractTableModel {
 	private String[] columnNames = null;

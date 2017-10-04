@@ -8,8 +8,6 @@ import junit.framework.TestSuite;
  * Test cases for Attendee.
  * 
  * @author Craig Knudsen, craig@k5n.us
- * @version $Id$
- * 
  */
 public class AttendeeTest extends TestCase implements Constants {
 

@@ -31,7 +31,6 @@ import us.k5n.ical.Summary;
  * Create a Journal entry edit window.
  * 
  * @author Craig Knudsen, craig@k5n.us
- * @version $Id$
  */
 public class EditWindow extends JDialog {
 	Repository repo;

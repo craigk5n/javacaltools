@@ -46,7 +46,6 @@ import java.io.IOException;
  * 
  * </blockquote>
  * 
- * @version $Id$
  * @author Craig Knudsen, craig@k5n.us
  */
 public class ICalendarParser extends CalendarParser implements Constants {

@@ -44,7 +44,6 @@ package us.k5n.ical;
  * component. </blockquote>
  * 
  * 
- * @version $Id$
  * @author Craig Knudsen, craig@k5n.us
  */
 public class Classification extends Property implements Constants {

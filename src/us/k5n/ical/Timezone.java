@@ -25,7 +25,6 @@ import java.util.Vector;
 /**
  * iCalendar Timezone class NOTE: not yet implemented!
  * 
- * @version $Id$
  * @author Craig Knudsen, craig@k5n.us
  */
 public class Timezone {

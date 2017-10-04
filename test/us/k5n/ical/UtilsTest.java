@@ -10,8 +10,6 @@ import junit.framework.TestSuite;
  * Test cases for Utils.
  * 
  * @author Craig Knudsen, craig@k5n.us
- * @version $Id$
- * 
  */
 public class UtilsTest extends TestCase implements Constants {
 

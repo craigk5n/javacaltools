@@ -9,7 +9,6 @@ import java.util.Vector;
  * a specific parser (iCalendar, CSV, etc.)
  * 
  * @author Craig Knudsen, craig@k5n.us
- * @version $Id$
  */
 public abstract class CalendarParser implements Constants {
 	protected Vector<ParseErrorListener> errorListeners;

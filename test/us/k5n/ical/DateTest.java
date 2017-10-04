@@ -10,8 +10,6 @@ import junit.framework.TestSuite;
  * Test cases for Date.
  * 
  * @author Craig Knudsen, craig@k5n.us
- * @version $Id$
- * 
  */
 public class DateTest extends TestCase implements Constants {
 

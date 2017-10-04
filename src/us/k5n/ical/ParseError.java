@@ -23,7 +23,6 @@ package us.k5n.ical;
 /**
  * A single parse error.
  * 
- * @version $Id$
  * @author Craig Knudsen, craig@k5n.us
  */
 public class ParseError {

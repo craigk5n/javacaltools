@@ -8,8 +8,6 @@ import junit.framework.TestSuite;
  * Test cases for Sequence.
  * 
  * @author Craig Knudsen, craig@k5n.us
- * @version $Id$
- * 
  */
 public class SequenceTest extends TestCase implements Constants {
 

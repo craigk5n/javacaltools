@@ -46,7 +46,6 @@ package us.k5n.ical;
  * P15DT5H0M20S <br/><br/> A duration of 7 weeks would be: <br/><br/> P7W
  * </blockquote>
  * 
- * @version $Id$
  * @author Craig Knudsen, craig@k5n.us
  */
 public class Duration extends Property implements Constants {

@@ -150,7 +150,6 @@ class RruleByday {
  * URL for more info: <a
  * href="http://code.google.com/p/google-rfc-2445/">http://code.google.com/p/google-rfc-2445/</a>
  * 
- * @version $Id$
  * @author Craig Knudsen, craig@k5n.us
  */
 public class Rrule extends Property implements Constants {

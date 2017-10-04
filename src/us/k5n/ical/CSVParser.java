@@ -11,7 +11,6 @@ import com.csvreader.CsvReader;
  * if you set the header field names/locations properly.
  * 
  * @author Craig Knudsen, craig@k5n.us
- * @version $Id$
  */
 public class CSVParser extends CalendarParser {
 	private String titleName = "Subject";
