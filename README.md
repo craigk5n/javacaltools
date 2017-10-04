@@ -1,17 +1,15 @@
 # k5n Java Calendar Tools
-
-Version:      0.4.7
-URL:          https://github.com/craigk5n/javacaltools
-Author:       Craig Knudsen, craig [< at >] k5n.us
-License:      GNU GPL
-Requires:     Java 1.5 for ical library
-              Java 1.2 for CalendarPanel
+- Version: 0.4.7
+- URL: https://github.com/craigk5n/javacaltools
+- Author: Craig Knudsen, craig [< at >] k5n.us
+- License: GNU GPL
+- Requires: Java 1.5 for ical library, Java 1.2 for CalendarPanel
 
 ## About
 The k5n Java Calendar Tools package contains various calendar-related
 libraries written in Java.  See the URL above for more information.
 
-## BuildinG
+## Building
 To build the source, you will need to use ant with the provided build.xml
 file.  (Ant 1.6 and or later is required.  Java 1.5 or later is required.)
 
@@ -78,18 +76,18 @@ these packages are bundled into the ical jar file, so you do not need
 to download them separately.
 
 - Joda Time
-  URL: http://joda-time.sourceforge.net/index.html
-  License: Apache License 2.0
-  License URL: http://joda-time.sourceforge.net/license.html
+  - URL: http://joda-time.sourceforge.net/index.html
+  - License: Apache License 2.0
+  - License URL: http://joda-time.sourceforge.net/license.html
 - Google RFC2445
-  URL: http://code.google.com/p/google-rfc-2445/
-  License: Apache License 2.0
-  License URL: http://www.apache.org/licenses/
+  - URL: http://code.google.com/p/google-rfc-2445/
+  - License: Apache License 2.0
+  - License URL: http://www.apache.org/licenses/
 - Java CSV Library:
-  URL: http://sourceforge.net/projects/javacsv/
-  License: LGPL
-  License URL: http://www.gnu.org/licenses/lgpl.html
+  - URL: http://sourceforge.net/projects/javacsv/
+  - License: LGPL
+  - License URL: http://www.gnu.org/licenses/lgpl.html
 - Apache Commons Codec:
-  URL: http://commons.apache.org/codec/
-  License: Apache License Version 2.0
-  License URL: http://www.apache.org/licenses/LICENSE-2.0.html
+  - URL: http://commons.apache.org/codec/
+  - License: Apache License Version 2.0
+  - License URL: http://www.apache.org/licenses/LICENSE-2.0.html
