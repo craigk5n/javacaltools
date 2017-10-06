@@ -27,7 +27,7 @@ Build targets:
   <property name="test" location="test"/>
   <property name="testbuild" location="testbuild"/>
 
-  <property name="version"  value="0.4.7"/>
+  <property name="version"  value="0.4.8"/>
   <property name="jodatime-jar"  value="lib/joda-time-1.4.jar"/>
   <property name="google-rrule-jar"  value="lib/google-rfc2445.jar"/>
   <property name="javacsv-jar"  value="lib/javacsv.jar"/>
@@ -50,7 +50,7 @@ Build targets:
 
   <target name="compile-ical" depends="init">
     <!-- Compile the java code from ${src} into ${build} -->
-    <javac srcdir="${src}" destdir="${build}" source="1.5" target="1.5"
+    <javac srcdir="${src}" destdir="${build}" source="1.7" target="1.7"
       includes="us/k5n/ical/**">
       <classpath>
         <pathelement path="${jodatime-jar}"/>
@@ -63,14 +63,14 @@ Build targets:
 
   <target name="compile-calendarpanel" depends="init">
     <!-- Compile: calendarpanel with 1.2 -->
-    <javac srcdir="${src}" destdir="${build}" source="1.2" target="1.2"
+    <javac srcdir="${src}" destdir="${build}" source="1.7" target="1.7"
       includes="us/k5n/ui/calendar/**">
     </javac>
   </target>
 
   <target name="compile-k5njournal" depends="init">
-    <!-- Compile: k5njournal with 1.5 -->
-    <javac srcdir="${src}" destdir="${build}" source="1.5" target="1.5"
+    <!-- Compile: k5njournal with 1.7 -->
+    <javac srcdir="${src}" destdir="${build}" source="1.7" target="1.7"
       includes="us/k5n/journal/**">
     </javac>
   </target>
@@ -202,7 +202,7 @@ Build targets:
   <target name="ydoc">
     <property name="ps" value="${path.separator}"/>
     <javadoc
-       source="1.5"
+       source="1.7"
        destdir="${doc}/ical/api"
        additionalparam="-breakiterator">
       <packageset dir="src">
