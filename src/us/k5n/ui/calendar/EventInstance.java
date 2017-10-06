@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2008 Craig Knudsen and other authors
+ * Copyright (C) 2005-2017 Craig Knudsen and other authors
  * (see AUTHORS for a complete list)
  *
  * JavaCalTools is free software; you can redistribute it and/or modify

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2008 Craig Knudsen and other authors
+ * Copyright (C) 2005-2017 Craig Knudsen and other authors
  * (see AUTHORS for a complete list)
  *
  * JavaCalTools is free software; you can redistribute it and/or modify
@@ -38,9 +38,11 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Vector;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -57,44 +59,39 @@ import javax.swing.Timer;
  * an efficient methods for the CalendarDataRepository interfance. (For example,
  * it would be a bad idea to query a database each time.)
  * 
- * Note: this class is coded using Java 1.2. So, don't add any Java 1.4/1.5/1.6
- * dependencies in here without good reason.
- * 
  * @see CalendarDataRepository
  * @author Craig Knudsen, craig@k5n.us
  */
 public class CalendarPanel extends JPanel implements MouseWheelListener {
 	private static final long serialVersionUID = 1000L;
-	CalendarDataRepository repository;
-	JLabel title;
-	JPanel drawArea;
-	JScrollBar scrollBar;
-	Calendar startDate; // Date of first day displayed
-	int firstDayOfWeek; // Day of week that week starts on (SUNDAY, MONDAY, etc.)
-	Color backgroundColor1, backgroundColor2;
-	Color todayBackgroundColor;
-	Color gridColor;
-	Color selectionColor;
-	Color headerForeground, headerBackground;
-	Color hintBackground, hintForeground;
-	Font headerFont = null, eventFont = null;
-	Font hintFont = null;
-	int lastWidth = -1, lastHeight = -1;
-	double cellWidth = 100, cellHeight = 100;
-	int headerHeight = 10;
-	int[] columnX;
-	int[] rowY;
-	final static int NUM_WEEKS_TO_DISPLAY = 5;
-	// TODO: I18N
-	final static String[] weekdays = { "Sunday", "Monday", "Tuesday",
-	    "Wednesday", "Thursday", "Friday", "Saturday" };
-	// TODO: I18N
-	final static String[] monthNames = { "Jan", "Feb", "Mar", "Apr", "May",
-	    "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
-	boolean changingScrollbar = false;
-	int CELL_MARGIN = 2;
-	Vector displayedEvents;
-	Vector displayedDates;
+	private CalendarDataRepository repository;
+	private JLabel title;
+	private JPanel drawArea;
+	private JScrollBar scrollBar;
+	private Calendar startDate; // Date of first day displayed
+	private int firstDayOfWeek; // Day of week that week starts on (SUNDAY, MONDAY, etc.)
+	private Color backgroundColor1, backgroundColor2;
+	private Color todayBackgroundColor;
+	private Color gridColor;
+	private Color selectionColor;
+	private Color headerForeground, headerBackground;
+	private Color hintBackground, hintForeground;
+	private Font headerFont = null, eventFont = null;
+	private Font hintFont = null;
+	private int lastWidth = -1, lastHeight = -1;
+	private double cellWidth = 100, cellHeight = 100;
+	private int headerHeight = 10;
+	private int[] columnX;
+	private int[] rowY;
+	public final static int DEFAULT_NUM_WEEKS_TO_DISPLAY = 5;
+	private int numWeeksToDisplay = DEFAULT_NUM_WEEKS_TO_DISPLAY;
+	private boolean forceLayout = false;
+	private String[] weekdays = null;
+	private String[] monthNames = null;
+	private boolean changingScrollbar = false;
+	private int CELL_MARGIN = 2;
+	private List<DisplayedEvent> displayedEvents;
+	private List<DisplayedDate> displayedDates;
 	private Timer timer = null;
 	private boolean drawDateHint = false;
 	private int fadeStep = 0;
@@ -108,10 +105,10 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 	// that date.
 	private Date selectedDate = null;
 	private int selectedItemInd = -1;// 0=first event of day selected
-	private Vector selectionListeners;
-	DisplayedEvent currentMouseOverEvent = null;
+	private List<CalendarPanelSelectionListener> selectionListeners;
+	private DisplayedEvent currentMouseOverEvent = null;
 
-	class Date {
+	private class Date {
 		public int year, month, day;
 
 		public Date(int year, int month, int day) {
@@ -121,7 +118,7 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 		}
 	}
 
-	class DisplayedEvent {
+	private class DisplayedEvent {
 		EventInstance event;
 		Rectangle rect;
 		int eventNoForDay;
@@ -140,7 +137,7 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 		}
 	}
 
-	class DisplayedDate {
+	private class DisplayedDate {
 		Date date;
 		Rectangle rect;
 
@@ -150,7 +147,8 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 		}
 	}
 
-	class MonthPanel extends JPanel implements MouseListener, MouseMotionListener {
+	// We use the MonthPanel to do our custom drawing to display the events on.
+	private class MonthPanel extends JPanel implements MouseListener, MouseMotionListener {
 		private static final long serialVersionUID = 1000L;
 		DisplayedEvent lastMouseEvent = null;
 
@@ -161,8 +159,7 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 		}
 
 		protected DisplayedEvent getEventForPosition ( int x, int y ) {
-			for ( int i = 0; displayedEvents != null && i < displayedEvents.size (); i++ ) {
-				DisplayedEvent de = (DisplayedEvent) displayedEvents.elementAt ( i );
+			for ( DisplayedEvent de : displayedEvents ) {
 				if ( x >= de.rect.x && x <= de.rect.x + de.rect.width && y >= de.rect.y
 				    && y <= de.rect.y + de.rect.height ) {
 					return de;
@@ -181,8 +178,7 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 		}
 
 		private DisplayedEvent getEventForMouseEvent ( MouseEvent e1 ) {
-			for ( int i = 0; displayedEvents != null && i < displayedEvents.size (); i++ ) {
-				DisplayedEvent de = (DisplayedEvent) displayedEvents.elementAt ( i );
+			for ( DisplayedEvent de : displayedEvents ) {
 				if ( e1.getX () >= de.rect.x && e1.getX () <= de.rect.x + de.rect.width
 				    && e1.getY () >= de.rect.y
 				    && e1.getY () <= de.rect.y + de.rect.height ) {
@@ -202,8 +198,7 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 			if ( currentMouseOverEvent != null )
 				doRepaint = true;
 			currentMouseOverEvent = null; // Don't display event popup
-			for ( int i = 0; displayedEvents != null && i < displayedEvents.size (); i++ ) {
-				DisplayedEvent de = (DisplayedEvent) displayedEvents.elementAt ( i );
+			for ( DisplayedEvent de : displayedEvents ) {
 				if ( e1.getX () >= de.rect.x && e1.getX () <= de.rect.x + de.rect.width
 				    && e1.getY () >= de.rect.y
 				    && e1.getY () <= de.rect.y + de.rect.height ) {
@@ -218,8 +213,7 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 				}
 			}
 			if ( selectedEvent == null ) {
-				for ( int i = 0; displayedDates != null && i < displayedDates.size (); i++ ) {
-					DisplayedDate dd = (DisplayedDate) displayedDates.elementAt ( i );
+				for ( DisplayedDate dd : displayedDates ) {
 					if ( e1.getX () >= dd.rect.x
 					    && e1.getX () <= dd.rect.x + dd.rect.width
 					    && e1.getY () >= dd.rect.y
@@ -230,38 +224,26 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 				}
 			}
 			if ( wasSelected ) {
-				for ( int i = 0; i < selectionListeners.size (); i++ ) {
-					CalendarPanelSelectionListener l = (CalendarPanelSelectionListener) selectionListeners
-					    .elementAt ( i );
+				for ( CalendarPanelSelectionListener l : selectionListeners )
 					l.eventUnselected ();
-				}
 				doRepaint = true;
 			}
 			if ( selectedDate != null && selectedEvent != null ) {
-				for ( int i = 0; i < selectionListeners.size (); i++ ) {
-					CalendarPanelSelectionListener l = (CalendarPanelSelectionListener) selectionListeners
-					    .elementAt ( i );
+				for ( CalendarPanelSelectionListener l : selectionListeners )
 					l.eventSelected ( selectedEvent.event );
-				}
 				doRepaint = true;
 			}
 			// If this is a double-click, then invoke the l.eventDoubleClicked method
 			if ( e1.getClickCount () == 2 && selectedDate != null
 			    && selectedEvent != null ) {
-				for ( int i = 0; i < selectionListeners.size (); i++ ) {
-					CalendarPanelSelectionListener l = (CalendarPanelSelectionListener) selectionListeners
-					    .elementAt ( i );
+				for ( CalendarPanelSelectionListener l : selectionListeners )
 					l.eventDoubleClicked ( selectedEvent.event );
-				}
 			} else if ( e1.getClickCount () == 2 && selectedDate != null
 			    && selectedEvent == null ) {
 				// Date double-clicked
-				for ( int i = 0; i < selectionListeners.size (); i++ ) {
-					CalendarPanelSelectionListener l = (CalendarPanelSelectionListener) selectionListeners
-					    .elementAt ( i );
+				for ( CalendarPanelSelectionListener l : selectionListeners )
 					l.dateDoubleClicked ( selectedDate.year, selectedDate.month,
 					    selectedDate.day );
-				}
 			}
 			// System.out.println ( "sel event: " + selectedEvent.event
 			// + ", selectedItemInd=" + selectedItemInd );
@@ -313,6 +295,8 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 		}
 	}
 
+	// Get the first day of the week for the current locale, typically Sunday in
+	// the US.
 	private static int getFirstDayOfWeek () {
 		switch ( Calendar.getInstance ().getFirstDayOfWeek () ) {
 			case Calendar.SUNDAY:
@@ -337,7 +321,7 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 		super ();
 		this.repository = repository;
 		this.firstDayOfWeek = CalendarPanel.getFirstDayOfWeek ();
-		this.selectionListeners = new Vector ();
+		this.selectionListeners = new ArrayList<CalendarPanelSelectionListener> ();
 
 		this.backgroundColor1 = new Color ( 232, 232, 232 );
 		this.backgroundColor2 = new Color ( 212, 212, 212 );
@@ -348,8 +332,27 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 		this.selectionColor = Color.RED;
 		this.hintBackground = Color.DARK_GRAY;
 		this.hintForeground = Color.white;
-		this.displayedEvents = new Vector ();
-		this.displayedDates = new Vector ();
+		this.displayedEvents = new ArrayList<DisplayedEvent> ();
+		this.displayedDates = new ArrayList<DisplayedDate> ();
+		
+		monthNames = new String[12];
+		Calendar c = Calendar.getInstance ();
+		// Use "MMM" for the short month name.
+		SimpleDateFormat monthFormat = new SimpleDateFormat ( "MMM" );
+		for ( int i = 0; i < 12; i++ ) {
+			c.set ( Calendar.MONTH, i );
+			monthNames[i] = monthFormat.format ( c.getTime () );
+		}
+		// Use "EEE" for short weekday names
+		int[] weekdayTranslation = { Calendar.SUNDAY, Calendar.MONDAY,
+		    Calendar.TUESDAY, Calendar.WEDNESDAY, Calendar.THURSDAY,
+		    Calendar.FRIDAY, Calendar.SATURDAY };
+		weekdays = new String[7];
+		SimpleDateFormat weekdayFormat = new SimpleDateFormat ( "EEE" );
+		for ( int i = 0; i < 7; i++ ) {
+			c.set ( Calendar.DAY_OF_WEEK, weekdayTranslation[i] );
+			weekdays[i] = weekdayFormat.format ( c.getTime () );
+		}
 
 		createUI ();
 
@@ -436,6 +439,36 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 		this.add ( drawArea, BorderLayout.CENTER );
 		this.addMouseWheelListener ( this );
 	}
+	
+	/**
+	 * Force a scroll ahead the specified number of weeks.
+	 * 
+	 * @param numWeeksToIncrement
+	 */
+	public void incrementWeek ( int numWeeksToIncrement ) {
+		int val = scrollBar.getValue ();
+		val += numWeeksToIncrement;
+		if ( val <= scrollBar.getMinimum () ) {
+			scrollBar.setMinimum ( scrollBar.getMinimum () - 1 );
+			scrollBar.setMaximum ( scrollBar.getMaximum () - 1 );
+		}
+		if ( val >= scrollBar.getMaximum () - 5 ) {
+			scrollBar.setMinimum ( scrollBar.getMinimum () + 1 );
+			scrollBar.setMaximum ( scrollBar.getMaximum () + 1 );
+		}
+		// The scrollbar adjustment listener will take care of adjusting the date
+		// and repainting.
+		scrollBar.setValue ( val );
+	}
+	
+	/**
+	 * Force a scroll back the specified number of weeks.
+	 * 
+	 * @param numWeeksToDecrement
+	 */
+	public void decementWeek ( int numWeeksToDecrement ) {
+		incrementWeek ( - numWeeksToDecrement );
+	}
 
 	/**
 	 * Set the Font for the CalendarPanel. This will apply to the title font
@@ -445,12 +478,12 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 	 * be 8 points larger).
 	 */
 	public void setFont ( Font newFont ) {
-		// We need to recalculate dimensions since the header height is dependent
+		// We may need to recalculate dimensions since the header height is dependent
 		// on the header font height.
 		if ( newFont != null ) {
 			super.setFont ( newFont );
 			if ( this.drawArea != null ) {
-				this.title.setFont ( newFont );
+				//this.title.setFont ( newFont );
 				this.drawArea.setFont ( newFont );
 				this.headerFont = newFont;
 				this.eventFont = new Font ( newFont.getFamily (), newFont.getStyle (),
@@ -488,12 +521,53 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 		String label = monthNames[c.get ( Calendar.MONTH )] + " "
 		    + c.get ( Calendar.DAY_OF_MONTH ) + " " + c.get ( Calendar.YEAR )
 		    + " - ";
-		c.add ( Calendar.DAY_OF_YEAR, 34 );
+		c.add ( Calendar.DAY_OF_YEAR, 7 * numWeeksToDisplay - 1 );
 		label += monthNames[c.get ( Calendar.MONTH )] + " "
 		    + c.get ( Calendar.DAY_OF_MONTH ) + " " + c.get ( Calendar.YEAR );
 		this.title.setText ( label );
 
 		this.repaint ();
+	}
+	
+	private void updateTitle () {
+		int[] weekdayTranslation = { Calendar.SUNDAY, Calendar.MONDAY,
+		    Calendar.TUESDAY, Calendar.WEDNESDAY, Calendar.THURSDAY,
+		    Calendar.FRIDAY, Calendar.SATURDAY };
+		Calendar c = Calendar.getInstance ();
+		c.setLenient ( true );
+		this.firstDayOfWeek = CalendarPanel.getFirstDayOfWeek ();
+		int currentWeek = c.get ( Calendar.WEEK_OF_YEAR );
+		// Set c to first day of the week
+		c.set ( Calendar.DAY_OF_WEEK, weekdayTranslation[this.firstDayOfWeek] );
+		// Now move weekOffset weeks
+		c.set ( Calendar.WEEK_OF_YEAR, currentWeek );
+
+		this.startDate = Calendar.getInstance ();
+		this.startDate.setTimeInMillis ( c.getTimeInMillis () );
+		// Update title to show dates displayed
+		String label = monthNames[c.get ( Calendar.MONTH )] + " "
+		    + c.get ( Calendar.DAY_OF_MONTH ) + " " + c.get ( Calendar.YEAR )
+		    + " - ";
+		c.add ( Calendar.DAY_OF_YEAR, 7 * numWeeksToDisplay - 1 );
+		label += monthNames[c.get ( Calendar.MONTH )] + " "
+		    + c.get ( Calendar.DAY_OF_MONTH ) + " " + c.get ( Calendar.YEAR );
+		this.title.setText ( label );
+	}
+	
+	public int getNumWeeksToDisplay () {
+		return numWeeksToDisplay;
+	}
+
+	/**
+	 * Set the number of weeks to display at once in the view (default is 5
+	 * weeks).
+	 * 
+	 * @param numWeeksToDisplay
+	 */
+	public void setNumWeeksToDisplay ( int numWeeksToDisplay ) {
+		this.numWeeksToDisplay = numWeeksToDisplay;
+		updateTitle ();
+		forceLayout = true;
 	}
 
 	/**
@@ -541,7 +615,7 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 
 		this.cellWidth = (double) this.lastWidth / (double) 7;
 		this.cellHeight = (double) ( this.lastHeight - this.headerHeight )
-		    / (double) NUM_WEEKS_TO_DISPLAY;
+		    / (double) numWeeksToDisplay;
 
 		columnX = new int[7];
 		rowY = new int[5];
@@ -559,25 +633,12 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 
 	public static String formattedTime ( int hour, int minute ) {
 		// TODO: support alternate time formats
-		StringBuffer ret = new StringBuffer ();
-		String ampm = null;
-		if ( hour < 12 ) {
-			// AM
-			ampm = "am";
-		} else {
-			// PM
-			hour %= 12;
-			ampm = "pm";
-		}
-		if ( hour == 0 )
-			hour = 12;
-		ret.append ( hour );
-		ret.append ( ':' );
-		if ( minute < 10 )
-			ret.append ( '0' );
-		ret.append ( minute );
-		ret.append ( ampm );
-		return ret.toString ();
+		String strDateFormat = minute == 0 ? "ha" : "h:mma";
+		SimpleDateFormat sdf = new SimpleDateFormat ( strDateFormat );
+		Calendar c = Calendar.getInstance ();
+		c.set ( Calendar.HOUR_OF_DAY, hour );
+		c.set ( Calendar.MINUTE, minute );
+		return sdf.format ( c.getTime () );
 	}
 
 	public void paintMonth ( Graphics g ) {
@@ -604,9 +665,10 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 		}
 
 		if ( this.lastWidth != drawArea.getWidth ()
-		    || this.lastHeight != drawArea.getHeight () ) {
+		    || this.lastHeight != drawArea.getHeight () || forceLayout ) {
 			// component was resized. recalculate dimensions
 			handleResize ( g );
+			forceLayout = false;
 		}
 
 		// Draw header
@@ -642,7 +704,7 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 		c.setLenient ( true );
 		c.setTimeInMillis ( startDate.getTimeInMillis () );
 		g.setFont ( eventFont );
-		for ( int week = 0; week < 5; week++ ) {
+		for ( int week = 0; week < numWeeksToDisplay; week++ ) {
 			for ( int col = 0; col < 7; col++ ) {
 				int w = ( col < 6 ) ? columnX[col + 1] - columnX[col] : (int) cellWidth;
 				int h = ( week < 4 ) ? rowY[week + 1] - rowY[week] : (int) cellHeight;
@@ -650,7 +712,7 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 				    || ( week == 0 && col == 0 );
 				Date d = new Date ( c.get ( Calendar.YEAR ),
 				    c.get ( Calendar.MONTH ) + 1, c.get ( Calendar.DAY_OF_MONTH ) );
-				this.displayedDates.addElement ( new DisplayedDate ( d, new Rectangle (
+				this.displayedDates.add ( new DisplayedDate ( d, new Rectangle (
 				    columnX[col], rowY[week], w, h ) ) );
 				drawDayOfMonth ( g, c, includeMonthName, columnX[col], rowY[week], w, h );
 				c.set ( Calendar.DAY_OF_YEAR, c.get ( Calendar.DAY_OF_YEAR ) + 1 );
@@ -710,7 +772,7 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 		if ( this.currentMouseOverEvent != null ) {
 			EventInstance evInst = this.currentMouseOverEvent.event;
 			// Get event details to include in popup.
-			Vector textLines = new Vector ();
+			List<String> textLines = new ArrayList<String> ();
 			String header = null;
 			// If event is in upper half of panel, put popup above. Otherwise,
 			// put it below.
@@ -723,7 +785,7 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 				header = evInst.getTitle ();
 			}
 			if ( evInst.getLocation () != null ) {
-				textLines.addElement ( "Location: " + evInst.getLocation () );
+				textLines.add ( "Location: " + evInst.getLocation () );
 			}
 			if ( evInst.getDescription () != null ) {
 				// wrap long lines
@@ -732,8 +794,7 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 			FontMetrics fm = g.getFontMetrics ();
 			int w = 0, h = 0, x = 0, y = 0;
 			w = fm.stringWidth ( header );
-			for ( int i = 0; i < textLines.size (); i++ ) {
-				String s = (String) textLines.elementAt ( i );
+			for ( String s : textLines ) {
 				if ( fm.stringWidth ( s ) > w )
 					w = fm.stringWidth ( s );
 			}
@@ -746,8 +807,9 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 				y = this.currentMouseOverEvent.rect.y - h - 15;
 				// If too tall, then remove some lines at the end...
 				while ( y < 1 && textLines.size () >= 2 ) {
-					textLines.setSize ( textLines.size () - 2 );
-					textLines.addElement ( "..." );
+					textLines.remove ( textLines.size () -1 );
+					textLines.remove ( textLines.size () -1 );
+					textLines.add ( "..." );
 					h = fm.getHeight () * ( 1 + textLines.size () ) + 4;
 					y = this.currentMouseOverEvent.rect.y - h - 15;
 					recalcW = true;
@@ -758,8 +820,9 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 				// If too tall, then remove some lines at the end...
 				while ( ( y + h + 8 ) > ( this.getHeight () - 25 )
 				    && textLines.size () >= 2 ) {
-					textLines.setSize ( textLines.size () - 2 );
-					textLines.addElement ( "..." );
+					textLines.remove ( textLines.size () -1 );
+					textLines.remove ( textLines.size () -1 );
+					textLines.add ( "..." );
 					h = fm.getHeight () * ( 1 + textLines.size () ) + 4;
 					recalcW = true;
 				}
@@ -767,8 +830,7 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 			// Recalculate width if we removed text above
 			if ( recalcW ) {
 				w = fm.stringWidth ( header );
-				for ( int i = 0; i < textLines.size (); i++ ) {
-					String s = (String) textLines.elementAt ( i );
+				for ( String s : textLines ) {
 					if ( fm.stringWidth ( s ) > w )
 						w = fm.stringWidth ( s );
 				}
@@ -821,7 +883,7 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 			g.setClip ( null );
 			g.setColor ( color );
 			for ( int i = 0; i < textLines.size (); i++ ) {
-				String s = (String) textLines.elementAt ( i );
+				String s = textLines.get ( i );
 				g.drawString ( s, x + 2, y + ( i + 2 ) * fm.getHeight () );
 			}
 		}
@@ -869,7 +931,7 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 		g.drawString ( label, x + w - labelW - 1, y + fm.getAscent () );
 
 		if ( this.repository != null ) {
-			Vector events = this.repository.getEventInstancesForDate ( day
+			List<EventInstance> events = this.repository.getEventInstancesForDate ( day
 			    .get ( Calendar.YEAR ), day.get ( Calendar.MONTH ) + 1, day
 			    .get ( Calendar.DAY_OF_MONTH ) );
 			if ( events != null ) {
@@ -892,7 +954,7 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 				for ( int i = 0; i < events.size (); i++ ) {
 					int thisCol = cols == 1 ? 0 : ( i % cols );
 					int thisRow = cols == 1 ? i : ( i / cols );
-					EventInstance e = (EventInstance) events.elementAt ( i );
+					EventInstance e = events.get ( i );
 					Rectangle rect = new Rectangle ( x + CELL_MARGIN
 					    + ( thisCol * colWidth ), startY
 					    + ( ( fm.getHeight () + CELL_MARGIN ) * thisRow ), colWidth
@@ -900,14 +962,27 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 					drawMonthViewEvent ( g, rect, e, dateIsSelected
 					    && i == this.selectedItemInd );
 					DisplayedEvent de = new DisplayedEvent ( e, rect, i );
-					this.displayedEvents.addElement ( de );
+					this.displayedEvents.add ( de );
 				}
 			}
 		}
 		g.setColor ( fg );
 	}
 
-	protected String formatTime ( int hour, int minute, int second ) {
+	protected static String formatTime ( int hour, int minute, int second ) {
+		String strDateFormat = null;
+		if ( second > 0)
+			strDateFormat = "h:mm:ssa";
+		else if ( minute > 0 )
+			strDateFormat = "h:mma";
+		else
+			strDateFormat = "ha";
+		SimpleDateFormat sdf = new SimpleDateFormat ( strDateFormat );
+		Calendar c = Calendar.getInstance ();
+		c.set ( Calendar.HOUR_OF_DAY, hour );
+		c.set ( Calendar.MINUTE, minute );
+		return sdf.format ( c.getTime () );
+		/*
 		StringBuffer sb = new StringBuffer ();
 		if ( hour == 0 || hour == 12 )
 			sb.append ( "12" );
@@ -924,6 +999,7 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 		else
 			sb.append ( "pm" );
 		return sb.toString ();
+		*/
 	}
 
 	public void drawDayOfMonthBackground ( Graphics g, int x, int y, int w,
@@ -988,8 +1064,9 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 	public EventInstance getSelectedEvent () {
 		if ( this.selectedDate == null )
 			return null;
-		Vector eventsForDate = this.repository.getEventInstancesForDate (
-		    this.selectedDate.year, this.selectedDate.month, this.selectedDate.day );
+		List<EventInstance> eventsForDate = this.repository
+		    .getEventInstancesForDate ( this.selectedDate.year,
+		        this.selectedDate.month, this.selectedDate.day );
 		if ( eventsForDate != null )
 			Collections.sort ( eventsForDate );
 		// System.out.println ( "Found " + eventsForDate.size ()
@@ -997,8 +1074,8 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 		// + this.selectedDate.getDay () );
 		if ( this.selectedItemInd >= 0
 		    && this.selectedItemInd < eventsForDate.size () ) {
-			EventInstance eventInstance = (EventInstance) eventsForDate
-			    .elementAt ( this.selectedItemInd );
+			EventInstance eventInstance = eventsForDate
+			    .get ( this.selectedItemInd );
 			return eventInstance;
 		}
 		return null;
@@ -1025,4 +1102,5 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 		int notches = e1.getWheelRotation ();
 		this.scrollBar.setValue ( this.scrollBar.getValue () + notches );
 	}
+
 }

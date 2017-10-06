@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2008 Craig Knudsen and other authors
+ * Copyright (C) 2005-2017 Craig Knudsen and other authors
  * (see AUTHORS for a complete list)
  *
  * JavaCalTools is free software; you can redistribute it and/or modify
@@ -32,7 +32,9 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JApplet;
@@ -51,7 +53,7 @@ import us.k5n.ical.Utils;
  * by using the CalendarPanel class. Calendar data is specified as applet
  * parameters.
  * 
- * Applet iCalendar URLs are specified as applets parameters <code>file1</code>,
+ * Applet iCalendar URLs are specified as applet parameters <code>file1</code>,
  * <code>file2</code>, etc. While corresponding colors (optional) are
  * specified as <code>color1</code>, <code>color2</code>, etc. Below is an
  * example:
@@ -70,10 +72,6 @@ import us.k5n.ical.Utils;
  * <br/> <b>Note:</b> The applet <b>must be signed</b> if you want to load
  * calendar files from any URL that is not on the same server as the applet.
  * 
- * <br/> Unlike the CalendarPanel class, this class requires Java 1.5 since it
- * makes use of the JavaCalTools ical library (which requires Java 1.5). The
- * main CalendarPanel class by itself only requires Java 1.2.
- * 
  * @author Craig Knudsen, craig@k5n.us
  */
 public class CalendarPanelApplet extends JApplet {
@@ -88,7 +86,7 @@ public class CalendarPanelApplet extends JApplet {
 	 * interface.
 	 */
 	public void init () {
-		Vector calendars = new Vector ();
+		List<RemoteCalendar> calendars = new ArrayList<RemoteCalendar> ();
 
 		try {
 			for ( int i = 1; true; i++ ) {
@@ -120,7 +118,7 @@ public class CalendarPanelApplet extends JApplet {
 						color = parseColor ( getParameter ( param ) );
 					}
 					RemoteCalendar rc = new RemoteCalendar ( parser, color );
-					calendars.addElement ( rc );
+					calendars.add ( rc );
 				} else {
 					break;
 				}
@@ -470,13 +468,13 @@ class RemoteCalendar {
  * iCalendar data loaded by the applet.
  */
 class AppletDataRepository implements CalendarDataRepository {
-	Vector remoteCalendars;
+	List<RemoteCalendar> remoteCalendars;
 	int parseErrorCount = 0;
 	int eventCount = 0;
 	private HashMap cachedEvents;
 	private boolean needsRebuilding = true;
 
-	public AppletDataRepository(Vector remoteCalendars, boolean strictParsing) {
+	public AppletDataRepository(List<RemoteCalendar> remoteCalendars, boolean strictParsing) {
 		this.remoteCalendars = remoteCalendars;
 		this.cachedEvents = new HashMap ();
 		this.needsRebuilding = true;
@@ -491,7 +489,7 @@ class AppletDataRepository implements CalendarDataRepository {
 	public Vector getAllEntries () {
 		Vector ret = new Vector ();
 		for ( int i = 0; i < this.remoteCalendars.size (); i++ ) {
-			RemoteCalendar rc = (RemoteCalendar) this.remoteCalendars.elementAt ( i );
+			RemoteCalendar rc = (RemoteCalendar) this.remoteCalendars.get ( i );
 			DataStore ds = rc.parser.getDataStoreAt ( 0 );
 			ret.addAll ( ds.getAllEvents () );
 		}
@@ -519,9 +517,9 @@ class AppletDataRepository implements CalendarDataRepository {
 		this.cachedEvents = new HashMap ();
 		for ( int i = 0; this.remoteCalendars != null
 		    && i < this.remoteCalendars.size (); i++ ) {
-			RemoteCalendar rc = (RemoteCalendar) this.remoteCalendars.elementAt ( i );
+			RemoteCalendar rc = (RemoteCalendar) this.remoteCalendars.get ( i );
 			DataStore ds = rc.parser.getDataStoreAt ( 0 );
-			Vector events = ds.getAllEvents ();
+			Vector<Event> events = ds.getAllEvents ();
 			for ( int j = 0; j < events.size (); j++ ) {
 				Event event = (Event) events.elementAt ( j );
 				if ( event.getStartDate () != null ) {

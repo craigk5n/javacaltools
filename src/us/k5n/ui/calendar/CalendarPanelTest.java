@@ -7,11 +7,14 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URL;
 import java.util.Vector;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
 /**
  * Simple test/demo class for CalendarPanel that illustrates how to use the
@@ -60,14 +63,15 @@ public class CalendarPanelTest extends JFrame implements CalendarDataRepository 
 		contentPane.setLayout ( new BorderLayout () );
 
 		JPanel buttonPanel = new JPanel ( new FlowLayout () );
-		JButton larger = new JButton ( "+" );
+		JButton larger = createButton ( "larger.png", "+" );
 		larger.addActionListener ( new ActionListener () {
 			public void actionPerformed ( ActionEvent event ) {
 				larger ();
 			}
 		} );
 		buttonPanel.add ( larger );
-		JButton smaller = new JButton ( "-" );
+		
+		JButton smaller = createButton ( "smaller.png", "-" );
 		smaller.addActionListener ( new ActionListener () {
 			public void actionPerformed ( ActionEvent event ) {
 				smaller ();
@@ -75,11 +79,68 @@ public class CalendarPanelTest extends JFrame implements CalendarDataRepository 
 		} );
 		buttonPanel.add ( smaller );
 
+		JButton up = createButton ( "up.png", "<" );
+		up.addActionListener ( new ActionListener () {
+			public void actionPerformed ( ActionEvent event ) {
+				cpanel.decementWeek ( 1 );
+			}
+		} );
+		buttonPanel.add ( up );
+
+		JButton down = createButton ( "down.png", ">" );
+		down.addActionListener ( new ActionListener () {
+			public void actionPerformed ( ActionEvent event ) {
+				cpanel.incrementWeek ( 1 );
+			}
+		} );
+		buttonPanel.add ( down );
+		
+		JButton oneRow = createButton ( "1-row.png", "1" );
+		oneRow.addActionListener ( new ActionListener () {
+			public void actionPerformed ( ActionEvent event ) {
+				cpanel.setNumWeeksToDisplay ( 1 );
+				cpanel.repaint ();
+			}
+		} );
+		buttonPanel.add ( oneRow );
+		
+		JButton twoRows = createButton ( "2-rows.png", "2" );
+		twoRows.addActionListener ( new ActionListener () {
+			public void actionPerformed ( ActionEvent event ) {
+				cpanel.setNumWeeksToDisplay ( 2 );
+				cpanel.repaint ();
+			}
+		} );
+		buttonPanel.add ( twoRows );
+		
+		JButton fiveRows = createButton ( "5-rows.png", "2" );
+		fiveRows.addActionListener ( new ActionListener () {
+			public void actionPerformed ( ActionEvent event ) {
+				cpanel.setNumWeeksToDisplay ( 5 );
+				cpanel.repaint ();
+			}
+		} );
+		buttonPanel.add ( fiveRows );
+
 		contentPane.add ( buttonPanel, BorderLayout.NORTH );
 
 		cpanel = new CalendarPanel ( this );
 		contentPane.add ( cpanel, BorderLayout.CENTER );
 		this.setVisible ( true );
+	}
+	
+	private JButton createButton ( String filename, String backupLabel ) {
+		URL url = this.getClass ().getResource ( filename );
+		ImageIcon icon = null;
+		if ( url != null )
+			icon = new ImageIcon ( url, "+" );
+		JButton ret = icon == null ? new JButton ( backupLabel ) : new JButton ();
+		if ( url != null ) {
+			ret.setHorizontalTextPosition ( SwingConstants.CENTER );
+			ret.setVerticalTextPosition ( SwingConstants.BOTTOM );
+			ret.setIcon ( icon );
+		}
+		return ret;
 	}
 
 	void larger () {
@@ -105,39 +166,41 @@ public class CalendarPanelTest extends JFrame implements CalendarDataRepository 
 	 * @return Vector of EventInstance objects.
 	 */
 	public Vector getEventInstancesForDate ( int year, int month, int day ) {
-		Vector ret = new Vector ();
-		ret.addElement ( new Event ( "Test event",
+		Vector<Event> ret = new Vector<Event> ();
+		ret.add ( new Event ( "Test event",
 		    "This is a test event.\nTest description", year, month, day ) );
 		if ( day % 3 == 0 ) {
-			ret
-			    .addElement ( new Event ( "Test 9:15",
-			        "This is a test event.\nTest description", year, month, day, 9,
-			        15, 0 ) );
+			ret.add (
+			    new Event ( "Test 9:15", "This is a test event.\nTest description",
+			        year, month, day, 9, 15, 0 ) );
+		} else if ( day % 3 == 1 ) {
+			ret.add (
+			    new Event ( "Test 6PM", "This is a test event.\nTest description",
+			        year, month, day, 18, 00, 0 ) );
 		} else if ( day % 3 == 2 ) {
-			ret
-			    .addElement ( new Event ( "Test 12:30",
-			        "This is a test event.\nTest description", year, month, day, 0,
-			        30, 0 ) );
-			ret.addElement ( new Event ( "Test 3:30pm",
-			    "This is a test event.\nTest description", year, month, day, 15, 15,
-			    0 ) );
+			ret.add (
+			    new Event ( "Test 12:30", "This is a test event.\nTest description",
+			        year, month, day, 0, 30, 0 ) );
+			ret.add (
+			    new Event ( "Test 3:30pm", "This is a test event.\nTest description",
+			        year, month, day, 15, 30, 0 ) );
 		}
 		if ( day % 5 == 0 ) {
-			ret.addElement ( new Event ( "Long Description Event", longDescr, year,
-			    month, day ) );
+			ret.add (
+			    new Event ( "Long Description Event", longDescr, year, month, day ) );
 		}
 		if ( day % 4 == 0 ) {
-			ret.addElement ( new Event ( "Word Wrap Test", wordWrapTest, year, month,
-			    day ) );
+			ret.add (
+			    new Event ( "Word Wrap Test", wordWrapTest, year, month, day ) );
 		}
 		if ( day == 15 ) {
-			for ( int i = 0; i < 10; i++ ) {
-				ret
-				    .addElement ( new Event (
-				        "Event#" + ( i + 1 ),
-				        "This is a test event.\n"
-				            + "We're checking to see how the calendar renders when you put a whole bunch of "
-				            + "events on the same day.", year, month, day ) );
+			// Add 20 events for the 15th
+			for ( int i = 0; i < 20; i++ ) {
+				ret.add ( new Event ( "Event#" + ( i + 1 ),
+				    "This is a test event.\n"
+				        + "We're checking to see how the calendar renders when you put a whole bunch of "
+				        + "events on the same day.",
+				    year, month, day ) );
 			}
 
 		}

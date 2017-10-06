@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2008 Craig Knudsen and other authors
+ * Copyright (C) 2005-2017 Craig Knudsen and other authors
  * (see AUTHORS for a complete list)
  *
  * JavaCalTools is free software; you can redistribute it and/or modify
@@ -19,24 +19,48 @@
  */
 package us.k5n.ui.calendar;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
+/**
+ * Convenience utility methods used by CalendarPanel.
+ * 
+ * @author Craig Knudsen, craig@k5n.us
+ */
 public class Utils {
 
-	public static Vector wrapLines ( String inStr, int maxLength ) {
-		Vector ret = new Vector ();
+	/**
+	 * Given the provided multiline input, split any lines that are longer than
+	 * maxLength into additional lines of text.
+	 * 
+	 * @param inStr
+	 *          One or more lines of text to be word-wrapped.
+	 * @param maxLength
+	 * @return
+	 */
+	public static List<String> wrapLines ( String inStr, int maxLength ) {
+		List<String> ret = new ArrayList<String> ();
 		String[] lines = inStr.split ( "[\r\n]+" );
 		for ( int i = 0; i < lines.length; i++ ) {
-			Vector lines2 = wrapLine ( lines[i], maxLength );
+			List<String> lines2 = wrapLine ( lines[i], maxLength );
 			ret.addAll ( lines2 );
 		}
 		return ret;
 	}
 
-	public static Vector wrapLine ( String inStr, int maxLength ) {
-		Vector ret = new Vector ();
+	/**
+	 * Given the provided single-line input, split any lines that are longer than
+	 * maxLength into additional lines of text.
+	 * 
+	 * @param inStr
+	 *          A single-line of text to be word-wrapped
+	 * @param maxLength
+	 * @return
+	 */
+	public static List<String> wrapLine ( String inStr, int maxLength ) {
+		List<String> ret = new ArrayList<String> ();
 		if ( inStr.length () <= maxLength ) {
-			ret.addElement ( inStr );
+			ret.add ( inStr );
 			return ret;
 		}
 		String[] words = inStr.split ( "[ \t]+" );
@@ -44,7 +68,7 @@ public class Utils {
 		for ( int i = 0; i < words.length; i++ ) {
 			if ( cur.length () + 1 + words[i].length () >= maxLength ) {
 				if ( cur.length () > 0 )
-					ret.addElement ( cur.toString () );
+					ret.add ( cur.toString () );
 				cur.setLength ( 0 );
 				cur.append ( words[i] );
 			} else {
@@ -54,7 +78,7 @@ public class Utils {
 			}
 		}
 		if ( cur.length () > 0 )
-			ret.addElement ( cur.toString () );
+			ret.add ( cur.toString () );
 		return ret;
 	}
 
