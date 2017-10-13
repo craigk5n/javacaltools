@@ -62,7 +62,7 @@ Build targets:
   </target>
 
   <target name="compile-calendarpanel" depends="init">
-    <!-- Compile: calendarpanel with 1.2 -->
+    <!-- Compile: calendarpanel with 1.7 -->
     <javac srcdir="${src}" destdir="${build}" source="1.7" target="1.7"
       includes="us/k5n/ui/calendar/**">
     </javac>
@@ -90,8 +90,13 @@ Build targets:
     </jar>
 
     <!-- Build jar for calendarpanel -->
-    <jar jarfile="${dist}/lib/k5n-calendarpanel-${version}.jar" basedir="${build}"
-      includes="**/ui/calendar/*.class">
+    <jar jarfile="${dist}/lib/k5n-calendarpanel-${version}.jar" basedir="${build}">
+      <fileset dir="${build}">
+        <include name="us/k5n/ui/calendar/*.class" />
+      </fileset>
+      <fileset dir="${src}">
+        <include name="us/k5n/ui/calendar/*.png" />
+      </fileset>
       <manifest>
         <attribute name="Main-Class" value="us.k5n.ui.calendar.CalendarPanelTest"/>
       </manifest>
