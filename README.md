@@ -1,5 +1,5 @@
 # k5n Java Calendar Tools
-- Version: 0.4.7
+- Version: 0.5.0
 - URL: https://github.com/craigk5n/javacaltools
 - Author: Craig Knudsen, craig [< at >] k5n.us
 - License: GNU GPL
