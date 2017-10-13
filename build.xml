@@ -27,7 +27,7 @@ Build targets:
   <property name="test" location="test"/>
   <property name="testbuild" location="testbuild"/>
 
-  <property name="version"  value="0.4.8"/>
+  <property name="version"  value="0.5.0"/>
   <property name="jodatime-jar"  value="lib/joda-time-1.4.jar"/>
   <property name="google-rrule-jar"  value="lib/google-rfc2445.jar"/>
   <property name="javacsv-jar"  value="lib/javacsv.jar"/>
