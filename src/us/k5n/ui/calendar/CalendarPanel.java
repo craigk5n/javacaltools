@@ -59,6 +59,9 @@ import javax.swing.Timer;
  * an efficient methods for the CalendarDataRepository interfance. (For example,
  * it would be a bad idea to query a database each time.)
  * 
+ * The default display will include 5 weeks, but by calling setNumWeeksToDisplay
+ * you can change the view to a single week, two weeks, etc.
+ * 
  * @see CalendarDataRepository
  * @author Craig Knudsen, craig@k5n.us
  */
