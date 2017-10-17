@@ -8,6 +8,7 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
+import java.util.Calendar;
 import java.util.Vector;
 
 import javax.swing.ImageIcon;
@@ -82,7 +83,7 @@ public class CalendarPanelTest extends JFrame implements CalendarDataRepository 
 		JButton up = createButton ( "up.png", "<" );
 		up.addActionListener ( new ActionListener () {
 			public void actionPerformed ( ActionEvent event ) {
-				cpanel.decementWeek ( 1 );
+				cpanel.decrementWeek ( 1 );
 			}
 		} );
 		buttonPanel.add ( up );
@@ -113,7 +114,7 @@ public class CalendarPanelTest extends JFrame implements CalendarDataRepository 
 		} );
 		buttonPanel.add ( twoRows );
 		
-		JButton fiveRows = createButton ( "5-rows.png", "2" );
+		JButton fiveRows = createButton ( "5-rows.png", "5" );
 		fiveRows.addActionListener ( new ActionListener () {
 			public void actionPerformed ( ActionEvent event ) {
 				cpanel.setNumWeeksToDisplay ( 5 );
@@ -125,6 +126,28 @@ public class CalendarPanelTest extends JFrame implements CalendarDataRepository 
 		contentPane.add ( buttonPanel, BorderLayout.NORTH );
 
 		cpanel = new CalendarPanel ( this );
+		Calendar startOf2015 = Calendar.getInstance ();
+		startOf2015.setLenient ( true );
+		startOf2015.set ( Calendar.YEAR, 2015 );
+		startOf2015.set ( Calendar.MONTH, 0 );
+		startOf2015.set ( Calendar.DAY_OF_MONTH, 1 );
+		startOf2015.set ( Calendar.HOUR_OF_DAY, 0 );
+		startOf2015.set ( Calendar.MINUTE, 0 );
+		startOf2015.set ( Calendar.SECOND, 0 );
+		startOf2015.set ( Calendar.MILLISECOND, 0 );
+		cpanel.setAbsoluteStartDay ( startOf2015 );
+		
+		Calendar endOf2018 = Calendar.getInstance ();
+		endOf2018.setLenient ( true );
+		endOf2018.set ( Calendar.YEAR, 2018 );
+		endOf2018.set ( Calendar.MONTH, 11 );
+		endOf2018.set ( Calendar.DAY_OF_MONTH, 31 );
+		endOf2018.set ( Calendar.HOUR_OF_DAY, 23 );
+		endOf2018.set ( Calendar.MINUTE, 59 );
+		endOf2018.set ( Calendar.SECOND, 59 );
+		endOf2018.set ( Calendar.MILLISECOND, 999 );
+		cpanel.setAbsoluteEndDay ( endOf2018 );
+
 		contentPane.add ( cpanel, BorderLayout.CENTER );
 		this.setVisible ( true );
 	}
