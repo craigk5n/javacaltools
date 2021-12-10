@@ -20,30 +20,26 @@ To build with maven:
 This build process will create the following jar files:
 
 - target/javacaltools-1.0.0.jar
-- dist/lib/k5n-calendarpanel-0.4.7.jar
-- dist/k5njournal-0.4.7.jar
 
 # Overview of Contents
 
-- k5n-ical:
+- iCalendar parser
   The k5n-ical jar is the iCalendar library that can be used by
   other applications.
-- k5n-calendarpanel:
+- Swing CalendarPanel
   A Java Swing component for displaying a calendar with events by
   extending the Swing JPanel class.
-- k5n-journal:
+- Simple Swing-based Journalling app
   An earlier release of the k5nJournal application includes as an
   example of how to use the k5n-ical library.  (The most recent
   version of this application can be found at k5njournal.sourceforge.net)
 
 
-# Running The SampleS
-The k5nJournal jar file contains a usable sample application for the
+# Running The Samples
+The jar file contains a usable sample application for the
 iCalendar library.  This jar file contains the files for both the iCalendar
 library and the k5nJournal application.  To run the k5njournal application,
-you can either double-click on the jar file in your file viewer (Windows
-Explorer or Mac OS X Finder), or you can use the following command from a
-command prompt:
+use the following command from a command prompt:
 
     java -cp javaltools-1.0.0.jar us.k5n.journal.Main
 
