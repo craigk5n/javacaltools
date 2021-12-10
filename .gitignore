@@ -1,3 +1,7 @@
 build
 dist
 /bin/
+target
+.vscode
+dependency-reduced-pom.xml
+.settings
