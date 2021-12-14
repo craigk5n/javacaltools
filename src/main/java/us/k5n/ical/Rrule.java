@@ -599,9 +599,9 @@ public class Rrule extends Property implements Constants {
 
 		// TODO: does this conflict with Joda's own Timezone stuff?
 		// should we be using a Joda timezone object here?
-		java.util.TimeZone timezone = null;
-		if (tzid != null)
-			timezone = java.util.TimeZone.getTimeZone(tzid);
+		if (tzid==null)
+		  tzid="GMT";
+		java.util.TimeZone timezone = java.util.TimeZone.getTimeZone(tzid);
 		RecurrenceIterator iter = RecurrenceIteratorFactory.createRecurrenceIterator(rrule, dtStart, timezone);
 		int num = 0;
 		int thisYear = java.util.Calendar.getInstance().get(java.util.Calendar.YEAR);

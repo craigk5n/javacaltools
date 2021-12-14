@@ -58,10 +58,11 @@ public class RruleTest implements Constants {
   }
 
   // Every 3rd year on the 1st, 100th and 200th day for 10 occurrences:
-  // TODO: Fix this broken test. Some kind of problem with RRULE.
-  //@Test
+  // 100th day of non-leapyear is April 10, April 11 in leapyear
+  // 200th day of non-leapyear is July 19, July 20 in leapyear
+  @Test
   public void testYearly2() {
-    String[] results = {"19970101", "19970410", "19970719", "20000101", "20000410", "20000719",
+    String[] results = {"19970101", "19970410", "19970719", "20000101", "20000409", "20000718",
         "20030101", "20030410", "20030719", "20060101"};
     String str = "RRULE:FREQ=YEARLY;INTERVAL=3;COUNT=10;BYYEARDAY=1,100,200";
     try {
@@ -307,9 +308,10 @@ public class RruleTest implements Constants {
     }
   }
 
-  // Daily for until May 10, witch EXDATE of May 5
-  // TODO: Fix this broken test. Some kind of problem with RRULE.
-  //@Test
+  // Daily from May 1 until May 10, with EXDATE of May 5
+  // TODO: Fix this broken test. Some kind of internal problem with RRULE.
+  // Maybe try updating?
+  @Test
   public void testDailyWithExdate1() {
     String[] results = {"20070502", "20070503", "20070504", "20070506", "20070507", "20070508",
         "20070509", "20070510"};
