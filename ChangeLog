@@ -1,10 +1,12 @@
-Version 1.0.0 (10 Dec 2021)
+Version 1.0.0 (14 Dec 2021)
  - Converted from ant to maven (finally)
  - Restructured directories to be consistent with maven
  - Ugraded from JUnit 3 to Junit 5 (some tests for RRULE still failing)
  - Reformated code to be consistent with standard Java code formatting
  - Refactored some code.  Stop using Vector and use List and ArrayList.
    Use simpler for loops.
+ - Fix for RRULE code that would cause Google code to throw exception
+   when no TZ info provided.
 Version 0.4.8 (?? ??? ????)
  - Bug fix: Creating Event would lose start date setting.
  - Patch 2864816: Build documentation with yDoc
