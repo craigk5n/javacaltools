@@ -39,8 +39,10 @@ public class CSVParserTest implements Constants {
   private void parseCsvFile(File f) {
     BufferedReader reader = null;
     if (f.exists()) {
+      System.out.println("File path: " + f.getAbsolutePath());
       try {
         reader = new BufferedReader(new FileReader(f));
+        assertNotNull(reader);
         parser.parse(reader);
         reader.close();
       } catch (IOException e) {
