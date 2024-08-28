@@ -231,7 +231,6 @@ public class Event implements Constants {
 				String[] dateVals = args[1].split(",");
 				for (int i = 0; i < dateVals.length; i++) {
 					String newIcalStr = args[0] + ':' + dateVals[i];
-					System.out.println("Temp EXDATE str=" + newIcalStr);
 					Date exdate = new Date(newIcalStr);
 					this.exdates.add(exdate);
 				}

@@ -44,18 +44,20 @@ public class RruleTest implements Constants {
 				"20030110", "20030210", "20030310" };
 		String str = "RRULE:FREQ=YEARLY;INTERVAL=2;COUNT=10;BYMONTH=1,2,3";
 		try {
-			TimeZone tz = TimeZone.getDefault();
+			TimeZone tz = TimeZone.getTimeZone("UTC"); // Explicitly set to UTC
 			String tzid = tz.getID();
 			Date dtStart = new Date("DTSTART;TZID=" + tzid + ":19970310T090000");
 			Rrule rrule = new Rrule(str, PARSE_STRICT);
 			assertNotNull(rrule, "RRULE should not be null");
 
+			// This will generate the repeating event dates and does not include the original event date.
+			// So it should be 9 dates.
 			List<Date> dates = rrule.generateRecurrances(dtStart, tzid);
+			assertEquals(9, dates.size());
 			for (int i = 0; i < dates.size(); i++) {
 				Date d = dates.get(i);
 				String ymd = Utils.DateToYYYYMMDD(d);
-				assertTrue(ymd.equals(expectedResults[i]),
-						"Unexpected date: got " + ymd + " instead of " + expectedResults[i]);
+				assertEquals(expectedResults[i+1], ymd);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -186,7 +188,7 @@ public class RruleTest implements Constants {
 		}
 	}
 
-	//@Test
+	// @Test
 	public void testMonthlyRruleWithSecondToLastWeekday() {
 		String[] expectedResults = { "19970929", "19971030", "19971127", "19971230", "19980129", "19980226",
 				"19980330" };
@@ -380,7 +382,7 @@ public class RruleTest implements Constants {
 
 			List<Date> dates = event.getRecurranceDates();
 			for (int i = 0; i < dates.size() && i < expectedResults.length; i++) {
-				System.out.println("Date #" +i+": " + Utils.DateToYYYYMMDD(dates.get(i)));
+				System.out.println("Date #" + i + ": " + Utils.DateToYYYYMMDD(dates.get(i)));
 			}
 			for (int i = 0; i < dates.size() && i < expectedResults.length; i++) {
 				Date d = dates.get(i);
