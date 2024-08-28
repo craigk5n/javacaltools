@@ -8,15 +8,18 @@ jobs:
     name: Unit-Test
     runs-on: ubuntu-latest
     steps:
+      - name: Set timezone to UTC
+        run: echo "TZ='UTC'; export TZ" >> $GITHUB_ENV
+
       - uses: actions/checkout@v2
 
       - uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
-      
+
       - name: Maven Package
         run: mvn -B clean package
-      
+
       - name: Maven Verify
         run: mvn -B clean verify -DskipTests
