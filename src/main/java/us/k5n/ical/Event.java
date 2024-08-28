@@ -61,13 +61,13 @@ public class Event implements Constants {
 	/** Contact for the event */
 	// public Individual contact;
 	/** Participants for the event (List of Attendee) */
-	protected ArrayList<Attendee> attendees = null;
+	protected List<Attendee> attendees = null;
 	/** Recurrence rule (RRULE) */
 	protected Rrule rrule = null;
 	/** Exception dates (EXDATE) */
-	protected ArrayList<Date> exdates = null;
+	protected List<Date> exdates = null;
 	/** Inclusion dates (RDATE) */
-	protected ArrayList<Date> rdates = null;
+	protected List<Date> rdates = null;
 	/** URL */
 	protected URL url = null;
 	/** Location */
@@ -77,7 +77,7 @@ public class Event implements Constants {
 	/** Transparent status (TRANSP_OPAQUE or TRANSP_TRANSPARENT) */
 	protected int transp = TRANSP_OPAQUE;
 	/** Attachments */
-	protected ArrayList<Attachment> attachments = null;
+	protected List<Attachment> attachments = null;
 	/** Private user object for caller to set/get */
 	private Object userData = null;
 
@@ -91,9 +91,12 @@ public class Event implements Constants {
 	/**
 	 * Create an Event object based on the specified iCalendar data
 	 * 
-	 * @param parser      The IcalParser object
-	 * @param initialLine The starting line number
-	 * @Param textLines List of iCalendar text lines
+	 * @param parser
+	 *                    The IcalParser object
+	 * @param initialLine
+	 *                    The starting line number
+	 * @Param textLines
+	 *        List of iCalendar text lines
 	 */
 	public Event(CalendarParser parser, int initialLine, List<String> textLines) {
 		for (int i = 0; i < textLines.size(); i++) {
@@ -101,9 +104,11 @@ public class Event implements Constants {
 			try {
 				parseLine(line, parser.getParseMethod());
 			} catch (BogusDataException bde) {
-				parser.reportParseError(new ParseError(initialLine + i, bde.error, line));
+				parser.reportParseError(new ParseError(initialLine + i, bde.error,
+						line));
 			} catch (ParseException pe) {
-				parser.reportParseError(new ParseError(initialLine + i, pe.error, line));
+				parser.reportParseError(new ParseError(initialLine + i, pe.error,
+						line));
 			}
 		}
 		// must have UID
@@ -119,9 +124,12 @@ public class Event implements Constants {
 	/**
 	 * Create an event that is timeless (no duration)
 	 * 
-	 * @param summary     Brief summary of event
-	 * @param description Full description of the event
-	 * @param startDate   The date of the event in ISO 8601 format (19991231,
+	 * @param summary
+	 *                    Brief summary of event
+	 * @param description
+	 *                    Full description of the event
+	 * @param startDate
+	 *                    The date of the event in ISO 8601 format (19991231,
 	 *                    199912310T115900, etc.)
 	 */
 	public Event(String summary, String description, Date startDate) {
@@ -131,11 +139,15 @@ public class Event implements Constants {
 	/**
 	 * Create an event with the specified duration
 	 * 
-	 * @param summary     Brief summary of event
-	 * @param description Full description of the event
-	 * @param startDate   The date of the event in ISO 8601 format (19991231,
+	 * @param summary
+	 *                    Brief summary of event
+	 * @param description
+	 *                    Full description of the event
+	 * @param startDate
+	 *                    The date of the event in ISO 8601 format (19991231,
 	 *                    199912310T115900, etc.)
-	 * @param duration    The event duration in seconds
+	 * @param duration
+	 *                    The event duration in seconds
 	 */
 	public Event(String summary, String description, Date startDate, int duration) {
 		uid = new Uid(); // Generate unique Id
@@ -162,10 +174,13 @@ public class Event implements Constants {
 	/**
 	 * Parse a line of iCalendar test.
 	 * 
-	 * @param line        The line of text
-	 * @param parseMethod PARSE_STRICT or PARSE_LOOSE
+	 * @param line
+	 *                    The line of text
+	 * @param parseMethod
+	 *                    PARSE_STRICT or PARSE_LOOSE
 	 */
-	public void parseLine(String icalStr, int parseMethod) throws ParseException, BogusDataException {
+	public void parseLine(String icalStr, int parseMethod)
+			throws ParseException, BogusDataException {
 		String up = icalStr.toUpperCase();
 		if (up.equals("BEGIN:VEVENT") || up.equals("END:VEVENT")) {
 			// ignore
@@ -244,9 +259,11 @@ public class Event implements Constants {
 		} else if (up.startsWith("STATUS")) {
 			status = StringUtils.parseStatus(icalStr, parseMethod);
 			// Only allow VEVENT status types
-			if (status != STATUS_TENTATIVE && status != STATUS_CONFIRMED && status != STATUS_CANCELLED) {
+			if (status != STATUS_TENTATIVE && status != STATUS_CONFIRMED
+					&& status != STATUS_CANCELLED) {
 				if (parseMethod == PARSE_STRICT) {
-					throw new BogusDataException("Status type not allowed in VEVENT", icalStr);
+					throw new BogusDataException("Status type not allowed in VEVENT",
+							icalStr);
 				}
 			}
 		} else if (up.startsWith("URL")) {
@@ -276,10 +293,11 @@ public class Event implements Constants {
 	}
 
 	/**
-	 * Get the event summary for the specified language. If not available, then the
-	 * primary summary will be returned.
+	 * Get the event summary for the specified language. If not available, then
+	 * the primary summary will be returned.
 	 * 
-	 * @param langage The language ("EN", "FR", etc.)
+	 * @param langage
+	 *                The language ("EN", "FR", etc.)
 	 */
 	public Summary getSummary(String language) {
 		// TODO: handle language param
@@ -291,7 +309,7 @@ public class Event implements Constants {
 	}
 
 	public void setAttendees(List<Attendee> attendees) {
-		this.attendees = new ArrayList<Attendee>(attendees);
+		this.attendees = attendees;
 	}
 
 	public Categories getCategories() {
@@ -415,8 +433,8 @@ public class Event implements Constants {
 	}
 
 	/**
-	 * Set the TRANSP setting, which determines if the event shows up in a freebusy
-	 * search.
+	 * Set the TRANSP setting, which determines if the event shows up in a
+	 * freebusy search.
 	 * 
 	 * @return Either TRANSP_OPAQUE or TRANSP_TRANSPARENT
 	 */
@@ -425,10 +443,11 @@ public class Event implements Constants {
 	}
 
 	/**
-	 * Set the TRANSP settings, which determines if the event shows up in a freebusy
-	 * search.
+	 * Set the TRANSP settings, which determines if the event shows up in a
+	 * freebusy search.
 	 * 
-	 * @param transp The new TRANSP setting (TRANSP_OPAQUE, TRANSP_TRANSPARENT)
+	 * @param transp
+	 *               The new TRANSP setting (TRANSP_OPAQUE, TRANSP_TRANSPARENT)
 	 */
 	public void setTransp(int transp) {
 		this.transp = transp;
@@ -447,7 +466,8 @@ public class Event implements Constants {
 	/**
 	 * Set the status
 	 * 
-	 * @param status The new status (STATUS_TENTATIVE, STATUS_CONFIRMED or
+	 * @param status
+	 *               The new status (STATUS_TENTATIVE, STATUS_CONFIRMED or
 	 *               STATUS_CANCELLED)
 	 */
 	public void setStatus(int status) {
@@ -463,7 +483,7 @@ public class Event implements Constants {
 	}
 
 	public void setAttachments(List<Attachment> attachments) {
-		this.attachments = new ArrayList<Attachment>(attachments);
+		this.attachments = attachments;
 	}
 
 	public void addException(Date date) {
@@ -532,7 +552,8 @@ public class Event implements Constants {
 		if (this.startDate == null)
 			return null;
 		tzid = this.startDate.tzid;
-		return rrule.generateRecurrances(this.startDate, tzid, this.exdates, this.rdates);
+		return rrule.generateRecurrances(this.startDate, tzid, this.exdates,
+				this.rdates);
 	}
 
 	/**
@@ -602,14 +623,17 @@ public class Event implements Constants {
 		if (location != null)
 			ret.append(location.toICalendar());
 		if (this.attachments != null) {
-			for (Attachment attach : this.attachments) {
+			for (int i = 0; i < this.attachments.size(); i++) {
+				Attachment attach = (Attachment) this.attachments.get(i);
 				ret.append(attach.toICalendar());
 			}
 		}
-		ret.append(transp == TRANSP_OPAQUE ? "TRANSP:OPAQUE" : "TRANSP:TRANSPARENT");
+		ret.append(transp == TRANSP_OPAQUE ? "TRANSP:OPAQUE"
+				: "TRANSP:TRANSPARENT");
 		ret.append(CRLF);
 		if (this.attendees != null) {
-			for (Attendee attendee : this.attendees) {
+			for (int i = 0; i < this.attendees.size(); i++) {
+				Attendee attendee = (Attendee) this.attendees.get(i);
 				ret.append(attendee.toICalendar());
 			}
 		}

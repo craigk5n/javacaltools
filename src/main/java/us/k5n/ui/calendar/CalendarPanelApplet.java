@@ -35,6 +35,7 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.swing.JApplet;
@@ -465,12 +466,12 @@ class AppletDataRepository implements CalendarDataRepository {
 	List<RemoteCalendar> remoteCalendars;
 	int parseErrorCount = 0;
 	int eventCount = 0;
-	private HashMap cachedEvents;
+	private Map<String,List<EventInstance>> cachedEvents;
 	private boolean needsRebuilding = true;
 
 	public AppletDataRepository(List<RemoteCalendar> remoteCalendars, boolean strictParsing) {
 		this.remoteCalendars = remoteCalendars;
-		this.cachedEvents = new HashMap();
+		this.cachedEvents = new HashMap<String,List<EventInstance>>();
 		this.needsRebuilding = true;
 		rebuildPrivateData();
 	}
@@ -480,10 +481,10 @@ class AppletDataRepository implements CalendarDataRepository {
 	 *
 	 * @return
 	 */
-	public Vector getAllEntries() {
-		Vector ret = new Vector();
+	public List<Event> getAllEntries() {
+		List<Event> ret = new ArrayList<Event>();
 		for (int i = 0; i < this.remoteCalendars.size(); i++) {
-			RemoteCalendar rc = (RemoteCalendar) this.remoteCalendars.get(i);
+			RemoteCalendar rc = this.remoteCalendars.get(i);
 			DataStore ds = rc.parser.getDataStoreAt(0);
 			ret.addAll(ds.getAllEvents());
 		}
@@ -499,7 +500,7 @@ class AppletDataRepository implements CalendarDataRepository {
 
 	/**
 	 * Rebuild internal cached data after one or more calendar. Update the
-	 * EventInstance objects array. Update the Vector of existing categories.
+	 * EventInstance objects array. Update the List of existing categories.
 	 * The following objects will be updated: categories, cachedEvents
 	 */
 	private void rebuildPrivateData() {
@@ -508,12 +509,13 @@ class AppletDataRepository implements CalendarDataRepository {
 		// TODO: handle canceled and tentative events
 		boolean showCancelled = false;
 		boolean showTentative = true;
-		this.cachedEvents = new HashMap();
+		this.cachedEvents = new HashMap<String,List<EventInstance>>();
 		for (int i = 0; this.remoteCalendars != null && i < this.remoteCalendars.size(); i++) {
-			RemoteCalendar rc = (RemoteCalendar) this.remoteCalendars.get(i);
+			RemoteCalendar rc = this.remoteCalendars.get(i);
 			DataStore ds = rc.parser.getDataStoreAt(0);
 			List<Event> events = ds.getAllEvents();
-			for ( Event event : events ) {
+			for (int j = 0; j < events.size(); j++) {
+				Event event = events.get(j);
 				if (event.getStartDate() != null) {
 					boolean display = true;
 					switch (event.getStatus()) {
@@ -550,18 +552,18 @@ class AppletDataRepository implements CalendarDataRepository {
 								se.fg = Color.WHITE;
 							}
 							String YMD = Utils.DateToYYYYMMDD(startDate);
-							List<SingleEvent> dateVector = null;
+							List<EventInstance> dateList = null;
 							if (cachedEvents.containsKey(YMD)) {
-								dateVector = (List<SingleEvent>) cachedEvents.get(YMD);
+								dateList =  cachedEvents.get(YMD);
 							} else {
-								dateVector = new ArrayList<SingleEvent>();
-								cachedEvents.put(YMD, dateVector);
+								dateList = new ArrayList<EventInstance>();
+								cachedEvents.put(YMD, dateList);
 							}
-							dateVector.add(se);
+							dateList.add(se);
 							// Add recurrence events
 							List<Date> more = event.getRecurranceDates();
 							for (int k = 0; more != null && k < more.size(); k++) {
-								Date d2 = (Date) more.get(k);
+								Date d2 = more.get(k);
 								if (startDate.isDateOnly()) {
 									se = new SingleEvent(title, description, d2.getYear(), d2.getMonth(), d2.getDay());
 								} else {
@@ -579,14 +581,14 @@ class AppletDataRepository implements CalendarDataRepository {
 									se.fg = Color.WHITE;
 								}
 								YMD = Utils.DateToYYYYMMDD(d2);
-								dateVector = null;
+								dateList = null;
 								if (cachedEvents.containsKey(YMD)) {
-									dateVector =  (List<SingleEvent>) cachedEvents.get(YMD);
+									dateList = cachedEvents.get(YMD);
 								} else {
-									dateVector = new ArrayList<SingleEvent>();
-									cachedEvents.put(YMD, dateVector);
+									dateList = new ArrayList<EventInstance>();
+									cachedEvents.put(YMD, dateList);
 								}
-								dateVector.add(se);
+								dateList.add(se);
 							}
 						}
 					}
@@ -596,13 +598,13 @@ class AppletDataRepository implements CalendarDataRepository {
 		this.needsRebuilding = false;
 	}
 
-	public Vector getEventInstancesForDate(int year, int month, int day) {
+	public List<EventInstance> getEventInstancesForDate(int year, int month, int day) {
 		if (needsRebuilding)
 			this.rebuildPrivateData();
 		try {
 			Date date = new Date("DTSTART", year, month, day);
 			String YMD = Utils.DateToYYYYMMDD(date);
-			return (Vector) cachedEvents.get(YMD);
+			return cachedEvents.get(YMD);
 		} catch (BogusDataException e1) {
 			e1.printStackTrace();
 			return null;

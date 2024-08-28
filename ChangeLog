@@ -1,3 +1,7 @@
+Version 1.0.1 (28 Aug 2024)
+ - Added new unit tests.
+ - Updating Java 17.
+ - Fixes for many of the tests.  Still have a bunch of broken tests to address.
 Version 1.0.0 (14 Dec 2021)
  - Converted from ant to maven (finally)
  - Restructured directories to be consistent with maven

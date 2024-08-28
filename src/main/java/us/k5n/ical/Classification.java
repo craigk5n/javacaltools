@@ -25,28 +25,30 @@ package us.k5n.ical;
  * Todo and Journal objects.
  * 
  * <br/>
- * From section 4.8.1.3 RFC 2445:<blockquote> This property defines the access
- * classification for a calendar component. <br/>
+ * From section 4.8.1.3 RFC 2445:<blockquote> This property defines the
+ * access classification for a calendar component. <br/>
  * <br/>
- * Property Parameters: Non-standard property parameters can be specified on
- * this property. <br/>
+ * Property
+ * Parameters: Non-standard property parameters can be specified on this
+ * property. <br/>
  * <br/>
- * Conformance: The property can be specified once in a "VEVENT", "VTODO" or
- * "VJOURNAL" calendar components. <br/>
+ * Conformance: The property can be specified once in a
+ * "VEVENT", "VTODO" or "VJOURNAL" calendar components. <br/>
  * <br/>
- * Description: An access classification is only one component of the general
- * security system within a calendar application. It provides a method of
- * capturing the scope of the access the calendar owner intends for information
- * within an individual calendar entry. The access classification of an
- * individual iCalendar component is useful when measured along with the other
- * security components of a calendar system (e.g., calendar user authentication,
- * authorization, access rights, access role, etc.). Hence, the semantics of the
- * individual access classifications cannot be completely defined by this memo
- * alone. Additionally, due to the "blind" nature of most exchange processes
- * using this memo, these access classifications cannot serve as an enforcement
- * statement for a system receiving an iCalendar object. Rather, they provide a
- * method for capturing the intention of the calendar owner for the access to
- * the calendar component. </blockquote>
+ * Description:
+ * An access classification is only one component of the general security system
+ * within a calendar application. It provides a method of capturing the scope of
+ * the access the calendar owner intends for information within an individual
+ * calendar entry. The access classification of an individual iCalendar
+ * component is useful when measured along with the other security components of
+ * a calendar system (e.g., calendar user authentication, authorization, access
+ * rights, access role, etc.). Hence, the semantics of the individual access
+ * classifications cannot be completely defined by this memo alone.
+ * Additionally, due to the "blind" nature of most exchange processes using this
+ * memo, these access classifications cannot serve as an enforcement statement
+ * for a system receiving an iCalendar object. Rather, they provide a method for
+ * capturing the intention of the calendar owner for the access to the calendar
+ * component. </blockquote>
  * 
  * 
  * @author Craig Knudsen, craig@k5n.us
@@ -57,17 +59,20 @@ public class Classification extends Property implements Constants {
 	/**
 	 * Generate an iCalendar classification based on an iCalendar line of text.
 	 * 
-	 * @param icalStr One or more lines of iCalendar that specifies a duration.
+	 * @param icalStr
+	 *                One or more lines of iCalendar that specifies a duration.
 	 *                Durations should follow the ISO 8601 format.
 	 */
-	public Classification(String icalStr) throws ParseException, BogusDataException {
+	public Classification(String icalStr) throws ParseException,
+			BogusDataException {
 		this(icalStr, PARSE_LOOSE);
 	}
 
 	/**
 	 * Constructor
 	 * 
-	 * @param classification The type of classification (PUBLIC, PRIVATE,
+	 * @param classification
+	 *                       The type of classification (PUBLIC, PRIVATE,
 	 *                       CONFIDENTIAL)
 	 */
 	public Classification(int classification) {
@@ -89,10 +94,13 @@ public class Classification extends Property implements Constants {
 	/**
 	 * Constructor
 	 * 
-	 * @param icalStr   One or more lines of iCalendar that specifies a duration
-	 * @param parseMode PARSE_STRICT or PARSE_LOOSE
+	 * @param icalStr
+	 *                  One or more lines of iCalendar that specifies a duration
+	 * @param parseMode
+	 *                  PARSE_STRICT or PARSE_LOOSE
 	 */
-	public Classification(String icalStr, int parseMode) throws ParseException, BogusDataException {
+	public Classification(String icalStr, int parseMode) throws ParseException,
+			BogusDataException {
 		super(icalStr, parseMode);
 
 		for (int i = 0; i < attributeList.size(); i++) {
@@ -127,7 +135,8 @@ public class Classification extends Property implements Constants {
 	/**
 	 * Set the classification (PUBLIC, PRIVATE, CONFIDENTIAL)
 	 * 
-	 * @param classification The classification to set. PUBLIC, PRIVATE,
+	 * @param classification
+	 *                       The classification to set. PUBLIC, PRIVATE,
 	 *                       CONFIDENTIAL)
 	 */
 	public void setClassification(int classification) {

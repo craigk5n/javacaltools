@@ -21,9 +21,10 @@
 package us.k5n.ical;
 
 /**
- * Base class for use with a variety of duration-related iCalendar fields. <br/>
- * From RFC 2445:<blockquote> Formal Definition: The value type is defined by
- * the following notation:
+ * Base class for use with a variety of duration-related iCalendar fields.
+ * <br/>
+ * From RFC 2445:<blockquote> Formal Definition: The value type is defined
+ * by the following notation:
  * <ul>
  * 
  * <li>dur-value = (["+"] / "-") "P" (dur-date / dur-time / dur-week)</li>
@@ -42,8 +43,8 @@ package us.k5n.ical;
  * duration of time. The format can represent durations in terms of weeks, days,
  * hours, minutes, and seconds. <br/>
  * <br/>
- * No additional content value encoding (i.e., BACKSLASH character encoding) are
- * defined for this value type. <br/>
+ * No additional content value encoding
+ * (i.e., BACKSLASH character encoding) are defined for this value type. <br/>
  * <br/>
  * Example: A duration of 15 days, 5 hours and 20 seconds would be: <br/>
  * <br/>
@@ -51,7 +52,8 @@ package us.k5n.ical;
  * <br/>
  * A duration of 7 weeks would be: <br/>
  * <br/>
- * P7W </blockquote>
+ * P7W
+ * </blockquote>
  * 
  * @author Craig Knudsen, craig@k5n.us
  */
@@ -62,7 +64,8 @@ public class Duration extends Property implements Constants {
 	/**
 	 * Constructor
 	 * 
-	 * @param icalStr One or more lines of iCalendar that specifies a duration.
+	 * @param icalStr
+	 *                One or more lines of iCalendar that specifies a duration.
 	 *                Durations should follow the ISO 8601 format.
 	 */
 	public Duration(String icalStr) throws ParseException, BogusDataException {
@@ -72,7 +75,8 @@ public class Duration extends Property implements Constants {
 	/**
 	 * Constructor
 	 * 
-	 * @param seconds The number of seconds for the duration
+	 * @param seconds
+	 *                The number of seconds for the duration
 	 */
 	public Duration(int seconds) {
 		super("DURATION", "");
@@ -82,22 +86,23 @@ public class Duration extends Property implements Constants {
 	/**
 	 * Constructor
 	 * 
-	 * @param icalStr   One or more lines of iCalendar that specifies a duration
-	 * @param parseMode PARSE_STRICT or PARSE_LOOSE
+	 * @param icalStr
+	 *                  One or more lines of iCalendar that specifies a duration
+	 * @param parseMode
+	 *                  PARSE_STRICT or PARSE_LOOSE
 	 */
-	public Duration(String icalStr, int parseMode) throws ParseException, BogusDataException {
+	public Duration(String icalStr, int parseMode) throws ParseException,
+			BogusDataException {
 		super(icalStr, parseMode);
 
-		for (Attribute a : attributeList) {
+		for (int i = 0; i < attributeList.size(); i++) {
+			Attribute a = attributeAt(i);
 			String aval = a.value.toUpperCase();
 			// TODO: not sure if any attributes are allowed here...
 		}
 
 		// Convert value into a duration
 		duration = parseDuration(value);
-
-		if (duration == 0)
-			throw new ParseException("No valid duration found", icalStr);
 	}
 
 	/**
@@ -123,7 +128,8 @@ public class Duration extends Property implements Constants {
 		}
 
 		if (durStr.charAt(start) != 'P') {
-			throw new ParseException("Duration '" + durStr + "' must start with 'P'", durStr);
+			throw new ParseException("Duration '" + durStr
+					+ "' must start with 'P'", durStr);
 		}
 		// skip over 'P'
 		start++;
@@ -142,7 +148,8 @@ public class Duration extends Property implements Constants {
 					case 'T': // week
 						// means we are switching from day duration to H/M/S duration
 						if (sb.length() != 0)
-							throw new ParseException("Duration has leading '" + sb + "' before 'T'", durStr);
+							throw new ParseException("Duration has leading '" + sb
+									+ "' before 'T'", durStr);
 						break;
 					case 'W': // week
 						numSecs += n * 7 * 24 * 3600;
@@ -160,7 +167,8 @@ public class Duration extends Property implements Constants {
 						numSecs += n;
 						break;
 					default: // ???
-						throw new ParseException("Duration has invalid char '" + ch + "'", durStr);
+						throw new ParseException(
+								"Duration has invalid char '" + ch + "'", durStr);
 				}
 				sb.setLength(0); // truncate StringBuffer
 			}

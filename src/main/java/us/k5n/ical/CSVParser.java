@@ -36,14 +36,16 @@ public class CSVParser extends CalendarParser {
 	/**
 	 * Create a CSVParser.
 	 * 
-	 * @param parseMode PARSE_STRICT or PARSE_LOOSE
+	 * @param parseMode
+	 *                  PARSE_STRICT or PARSE_LOOSE
 	 */
 	public CSVParser(int parseMode) {
 		super(parseMode);
 	}
 
-	public void setColumnLocations(int titleColumn, int descriptionColumn, int startDateColumn, int startTimeColumn,
-			int endDateColumn, int endTimeColumn, int locationColumn, int allDayColumn) {
+	public void setColumnLocations(int titleColumn, int descriptionColumn,
+			int startDateColumn, int startTimeColumn, int endDateColumn,
+			int endTimeColumn, int locationColumn, int allDayColumn) {
 		this.titleColumn = titleColumn;
 		this.descriptionColumn = descriptionColumn;
 		this.startDateColumn = startDateColumn;
@@ -60,7 +62,8 @@ public class CSVParser extends CalendarParser {
 
 		CsvReader csv = new CsvReader(reader);
 		if (!csv.readHeaders()) {
-			this.reportParseError(new ParseError(0, "Error parsing 1st line as header"));
+			this.reportParseError(new ParseError(0,
+					"Error parsing 1st line as header"));
 			return true;
 		}
 		// for ( int i = 0; i < csv.getHeaderCount (); i++ ) {
@@ -91,15 +94,18 @@ public class CSVParser extends CalendarParser {
 			}
 			// Make sure we have at least title and date/time
 			if (this.titleColumn < 0) {
-				this.reportParseError(new ParseError(0, "Could not find '" + this.titleName + "' in CSV header"));
+				this.reportParseError(new ParseError(0, "Could not find '"
+						+ this.titleName + "' in CSV header"));
 				nerrors++;
 			}
 			if (this.startDateColumn < 0) {
-				this.reportParseError(new ParseError(0, "Could not find '" + this.startDateName + "' in CSV header"));
+				this.reportParseError(new ParseError(0, "Could not find '"
+						+ this.startDateName + "' in CSV header"));
 				nerrors++;
 			}
 			if (this.startTimeColumn < 0) {
-				this.reportParseError(new ParseError(0, "Could not find '" + this.startTimeName + "' in CSV header"));
+				this.reportParseError(new ParseError(0, "Could not find '"
+						+ this.startTimeName + "' in CSV header"));
 				nerrors++;
 			}
 			if (nerrors > 0)
@@ -130,10 +136,11 @@ public class CSVParser extends CalendarParser {
 				if (this.startTimeColumn >= 0)
 					timeStr = csv.get(this.startTimeColumn);
 				try {
-					startDate = parseDateTime("DTSTART", dateStr, allDay ? null : timeStr);
+					startDate = parseDateTime("DTSTART", dateStr, allDay ? null
+							: timeStr);
 				} catch (ParseException e1) {
-					this.reportParseError(
-							new ParseError(recNum++, "Invalid start date '" + dateStr + "'", csv.getRawRecord()));
+					this.reportParseError(new ParseError(recNum++,
+							"Invalid start date '" + dateStr + "'", csv.getRawRecord()));
 					valid = false;
 				}
 			}
@@ -145,8 +152,8 @@ public class CSVParser extends CalendarParser {
 				try {
 					endDate = parseDateTime("DTEND", dateStr, allDay ? null : timeStr);
 				} catch (ParseException e1) {
-					this.reportParseError(
-							new ParseError(recNum++, "Invalid end date '" + dateStr + "'", csv.getRawRecord()));
+					this.reportParseError(new ParseError(recNum++,
+							"Invalid end date '" + dateStr + "'", csv.getRawRecord()));
 					valid = false;
 				}
 			}
@@ -174,7 +181,8 @@ public class CSVParser extends CalendarParser {
 	}
 
 	// TODO: support date formats other than "12/31/1999" or "12/31/99"
-	private Date parseDateTime(String dateType, String date, String time) throws ParseException {
+	private Date parseDateTime(String dateType, String date, String time)
+			throws ParseException {
 		int Y, M, D, h, m, s;
 		String[] args = null;
 		Date ret = null;
@@ -236,7 +244,8 @@ public class CSVParser extends CalendarParser {
 					}
 				}
 			} catch (NumberFormatException e1) {
-				throw new ParseException("Invalid date time: " + e1.getMessage(), date);
+				throw new ParseException("Invalid date time: " + e1.getMessage(),
+						date);
 			}
 			ret.setHour(h);
 			ret.setMinute(m);
@@ -306,7 +315,8 @@ public class CSVParser extends CalendarParser {
 		return scanHeaderForColumnLocations;
 	}
 
-	public void setScanHeaderForColumnLocations(boolean scanHeaderForColumnLocations) {
+	public void setScanHeaderForColumnLocations(
+			boolean scanHeaderForColumnLocations) {
 		this.scanHeaderForColumnLocations = scanHeaderForColumnLocations;
 	}
 

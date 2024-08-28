@@ -26,18 +26,18 @@ package us.k5n.ical;
  * @author Craig Knudsen, craig@k5n.us
  */
 public class ParseException extends Exception {
-	private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 	public String error;
 	public String icalText;
 
 	public ParseException(String error, String icalText) {
-		super(error);
+		super ( error );
 		this.error = error;
 		this.icalText = icalText;
 	}
 
-	public String toString() {
-		String ret = super.toString();
+	public String toString () {
+		String ret = super.toString ();
 		ret += "\nInput iCalendar data: '" + icalText + "'\n";
 		return ret;
 	}

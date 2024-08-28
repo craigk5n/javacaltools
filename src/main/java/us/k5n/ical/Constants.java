@@ -88,8 +88,9 @@ public interface Constants {
 	static public final int TRANSP_TRANSPARENT = 1;
 	/** iCalendar opaque (event does show up in freebusy searches) */
 	static public final int TRANSP_OPAQUE = 1; // default value in RFC2445 is
-												// OPAQUE
+																							// OPAQUE
 
 	/* iCalendar version (in N.N String format) */
-	static public final String ICAL_VERSION = ICAL_VERSION_MAJOR + "." + ICAL_VERSION_MINOR;
+	static public final String ICAL_VERSION = ICAL_VERSION_MAJOR + "."
+	    + ICAL_VERSION_MINOR;
 }

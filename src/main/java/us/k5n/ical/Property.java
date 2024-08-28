@@ -21,6 +21,7 @@
 package us.k5n.ical;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * iCalendar Property class. A Property represents one field in the iCalendar
@@ -37,38 +38,40 @@ public class Property implements Constants {
 	 * commas.
 	 */
 	protected String value;
-	protected ArrayList<Attribute> attributeList;
-		
+	protected List<Attribute> attributeList;
+
 	public Property(String name, String value) {
-		super();
 		this.name = name.toUpperCase();
 		this.value = value;
 		attributeList = new ArrayList<Attribute>();
 	}
 
 	/**
-	 * Construct a property from iCalendar data. Parse an iCalendar line (or lines)
-	 * into the name, properties and value. This is typically a one-line String, but
-	 * can be multiple lines if iCalendar line folding was used (for Strings longer
-	 * than 75 characters).
+	 * Construct a property from iCalendar data. Parse an iCalendar line (or
+	 * lines) into the name, properties and value. This is typically a one-line
+	 * String, but can be multiple lines if iCalendar line folding was used (for
+	 * Strings longer than 75 characters).
 	 * 
-	 * @param line The iCalendar input String
+	 * @param line
+	 *             The iCalendar input String
 	 */
 	public Property(String line) throws ParseException {
 		this(line, PARSE_LOOSE);
 	}
 
 	/**
-	 * Construct a property from iCalendar data. Parse an iCalendar line (or lines)
-	 * into the name, properties and value. This is typically a one-line String but
-	 * can be multiple lines if iCalendar line folding was used (for Strings longer
-	 * than 75 characters). See section 4.2 of RFC 2445 for details on attributes.
+	 * Construct a property from iCalendar data. Parse an iCalendar line (or
+	 * lines) into the name, properties and value. This is typically a one-line
+	 * String but can be multiple lines if iCalendar line folding was used (for
+	 * Strings longer than 75 characters). See section 4.2 of RFC 2445 for details
+	 * on attributes.
 	 * 
-	 * @param line      The iCalendar input String
-	 * @param parseMode PARSE_STRICT or PARSE_LOOSE
+	 * @param line
+	 *                  The iCalendar input String
+	 * @param parseMode
+	 *                  PARSE_STRICT or PARSE_LOOSE
 	 */
 	public Property(String line, int parseMode) throws ParseException {
-		super();
 		attributeList = new ArrayList<Attribute>();
 		String s = StringUtils.unfoldLine(line, parseMode);
 
@@ -79,7 +82,7 @@ public class Property implements Constants {
 		}
 
 		String nameAndAttr = s.substring(0, loc);
-		value = s.substring(loc + 1, s.length());
+		value = interpretEscapeSequences(s.substring(loc + 1, s.length()));
 
 		// divide nameAndAttr up into the name and the various attributes
 		// we need to be careful since a ';' might also be in quotes in
@@ -107,7 +110,8 @@ public class Property implements Constants {
 					inPName = false;
 				} else if (ch == ',' && !inQuote && parseMode == PARSE_STRICT) {
 					// ',' should be quoted
-					throw new ParseException("Found unquoted comma in attribute value", line);
+					throw new ParseException("Found unquoted comma in attribute value",
+							line);
 				} else if (ch == '"') {
 					inQuote = !inQuote;
 				} else {
@@ -123,11 +127,20 @@ public class Property implements Constants {
 		}
 	}
 
+	private String interpretEscapeSequences(String input) {
+		return input
+				.replace("\\\\", "\\")  // Handle double backslashes first to avoid interference
+				.replace("\\t", "\t")
+				.replace("\\n", "\n")
+				.replace("\\;", ";")
+				.replace("\\,", ",");
+	}
+
 	protected void removeNamedAttribute(String name) {
 		name = name.toUpperCase();
 		// Remove any old attribute with the same name
-		for ( int i = 0; i < attributeList.size(); i++ ) {
-			Attribute a1 = attributeList.get(i);
+		for (int i = 0; i < attributeList.size(); i++) {
+			Attribute a1 = (Attribute) attributeList.get(i);
 			if (a1.name.toUpperCase().equals(name))
 				attributeList.remove(i);
 		}
@@ -168,7 +181,8 @@ public class Property implements Constants {
 	/**
 	 * Set the Property name (DTSTART, SUMMARY, etc.) This is always uppercase
 	 * 
-	 * @param name new Property name
+	 * @param name
+	 *             new Property name
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -191,7 +205,7 @@ public class Property implements Constants {
 		if (attributeList.size() > 0) {
 			for (int i = 0; i < attributeList.size(); i++) {
 				ret.append(';');
-				Attribute a = attributeList.get(i);
+				Attribute a = (Attribute) attributeList.get(i);
 				ret.append(a.name);
 				// Always quote the value just to be safe
 				ret.append("=\"");

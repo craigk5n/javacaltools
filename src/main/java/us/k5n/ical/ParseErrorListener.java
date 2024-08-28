@@ -30,6 +30,6 @@ public interface ParseErrorListener {
 	/**
 	 * This method will be called when a iCalendar parse error is encountered.
 	 */
-	public void reportParseError(ParseError error);
+	public void reportParseError ( ParseError error );
 
 }

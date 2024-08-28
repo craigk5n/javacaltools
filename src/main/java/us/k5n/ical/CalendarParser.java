@@ -3,6 +3,7 @@ package us.k5n.ical;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The CalendarParser is an abstract class that should be extended to implement
@@ -11,9 +12,9 @@ import java.util.ArrayList;
  * @author Craig Knudsen, craig@k5n.us
  */
 public abstract class CalendarParser implements Constants {
-	protected ArrayList<ParseErrorListener> errorListeners;
-	protected ArrayList<ParseError> errors;
-	protected ArrayList<DataStore> dataStores;
+	protected List<ParseErrorListener> errorListeners;
+	protected List<ParseError> errors;
+	protected List<DataStore> dataStores;
 	protected int parseMethod = PARSE_LOOSE;
 
 	/**
@@ -21,12 +22,16 @@ public abstract class CalendarParser implements Constants {
 	 * default DataStore object. To remove the default DataStore, you can call
 	 * removeDataStoreAt(0).
 	 * 
-	 * @param parseMethod Specifies the parsing method, which should be either
-	 *                    PARSE_STRICT or PARSE_LOOSE. The PARSE_STRICT method will
-	 *                    follow the RFC 2445 specification strictly and is intended
-	 *                    to be used to validate iCalendar data. Most clients should
-	 *                    specify PARSE_LOOSE to capture as much of the data as
-	 *                    possible.
+	 * @param parseMethod
+	 *                    Specifies the parsing method, which should be either
+	 *                    PARSE_STRICT
+	 *                    or PARSE_LOOSE. The PARSE_STRICT method will follow the
+	 *                    RFC 2445
+	 *                    specification strictly and is intended to be used to
+	 *                    validate
+	 *                    iCalendar data. Most clients should specify PARSE_LOOSE to
+	 *                    capture
+	 *                    as much of the data as possible.
 	 */
 	public CalendarParser(int parseMethod) {
 		this.parseMethod = parseMethod;
@@ -47,10 +52,11 @@ public abstract class CalendarParser implements Constants {
 	}
 
 	/**
-	 * Add a DataStore. Each DataStore will be called during the parsing process as
-	 * each timezone, event, todo, or journal object is discovered.
+	 * Add a DataStore. Each DataStore will be called during the parsing process
+	 * as each timezone, event, todo, or journal object is discovered.
 	 * 
-	 * @param dataStore The new DataStore to add
+	 * @param dataStore
+	 *                  The new DataStore to add
 	 */
 	public void addDataStore(DataStore dataStore) {
 		dataStores.add(dataStore);
@@ -66,7 +72,8 @@ public abstract class CalendarParser implements Constants {
 	/**
 	 * Return the specified DataStore.
 	 * 
-	 * @param ind The DataStore index number (0=first)
+	 * @param ind
+	 *            The DataStore index number (0=first)
 	 */
 	public DataStore getDataStoreAt(int ind) {
 		return dataStores.get(ind);
@@ -75,7 +82,8 @@ public abstract class CalendarParser implements Constants {
 	/**
 	 * Remove the specified DataStore.
 	 * 
-	 * @param ind the DataStore index number (0=first)
+	 * @param ind
+	 *            the DataStore index number (0=first)
 	 * @return true if the DataStore was found and removed
 	 */
 	public boolean removeDataStoreAt(int ind) {
@@ -108,7 +116,8 @@ public abstract class CalendarParser implements Constants {
 	/**
 	 * Set the current parse method
 	 * 
-	 * @param parseMethod The new parse method (PARSE_STRICT, PARSE_LOOSE)
+	 * @param parseMethod
+	 *                    The new parse method (PARSE_STRICT, PARSE_LOOSE)
 	 */
 	public void setParseMethod(int parseMethod) {
 		this.parseMethod = parseMethod;
@@ -126,8 +135,10 @@ public abstract class CalendarParser implements Constants {
 	/**
 	 * Send a parse error message to all parse error listeners
 	 * 
-	 * @param msg     The error message
-	 * @param icalStr The offending line(s) of iCalendar
+	 * @param msg
+	 *                The error message
+	 * @param icalStr
+	 *                The offending line(s) of iCalendar
 	 */
 	public void reportParseError(ParseError error) {
 		errors.add(error);
@@ -137,11 +148,11 @@ public abstract class CalendarParser implements Constants {
 	}
 
 	/**
-	 * Get a ArrayList of all errors encountered;.
+	 * Get a List of all errors encountered;.
 	 * 
-	 * @return A ArrayList of ParseError objects
+	 * @return A List of ParseError objects
 	 */
-	public ArrayList<ParseError> getAllErrors() {
+	public List<ParseError> getAllErrors() {
 		return errors;
 	}
 
@@ -163,13 +174,16 @@ public abstract class CalendarParser implements Constants {
 		ret.append(CRLF);
 
 		// Include events
-		ArrayList<Event> events = new ArrayList<Event>(getDataStoreAt(0).getAllEvents());
-		for (Event ev : events) {
+		List<Event> events = ((DataStore) getDataStoreAt(0)).getAllEvents();
+		for (int i = 0; i < events.size(); i++) {
+			Event ev = (Event) events.get(i);
 			ret.append(ev.toICalendar());
 		}
 		// Include journal entries
-		ArrayList<Journal> journals = new ArrayList<Journal>(getDataStoreAt(0).getAllJournals());
-		for (Journal j : journals) {
+		List<Journal> journals = ((DataStore) getDataStoreAt(0))
+				.getAllJournals();
+		for (int i = 0; i < journals.size(); i++) {
+			Journal j = (Journal) journals.get(i);
 			ret.append(j.toICalendar());
 		}
 

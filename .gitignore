@@ -1,6 +1,6 @@
 build
 dist
-/bin/
+bin
 target
 .vscode
 dependency-reduced-pom.xml

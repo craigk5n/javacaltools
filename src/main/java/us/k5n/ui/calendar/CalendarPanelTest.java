@@ -11,7 +11,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Vector;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -181,10 +180,10 @@ public class CalendarPanelTest extends JFrame implements CalendarDataRepository 
 	 * this info, so this method should be fast and implement its own caching.
 	 *
 	 * @see CalendarDataRepository
-	 * @return Vector of EventInstance objects.
+	 * @return List of EventInstance objects.
 	 */
-	public Vector getEventInstancesForDate(int year, int month, int day) {
-		Vector<Event> ret = new Vector<Event>();
+	public List<EventInstance> getEventInstancesForDate(int year, int month, int day) {
+		List<EventInstance> ret = new ArrayList<EventInstance>();
 		ret.add(new Event("Test event", "This is a test event.\nTest description", year, month, day));
 		if (day % 3 == 0) {
 			ret.add(new Event("Test 9:15", "This is a test event.\nTest description", year, month, day, 9, 15, 0));

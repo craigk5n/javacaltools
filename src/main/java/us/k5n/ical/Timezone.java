@@ -20,7 +20,7 @@
 
 package us.k5n.ical;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * iCalendar Timezone class NOTE: not yet implemented!
@@ -34,23 +34,23 @@ public class Timezone {
 	public String tzOffsetTo = null;
 	public String tzName = null;
 
-	public Timezone(CalendarParser parser, int initialLine, ArrayList<String> textLines) {
+	public Timezone(CalendarParser parser, int initialLine, List<String> textLines) {
 		// TODO
 	}
 
-	public void parseLine ( String icalStr, int parseMethod )
-	    throws ParseException, BogusDataException {
+	public void parseLine(String icalStr, int parseMethod)
+			throws ParseException, BogusDataException {
 		// TODO
 
 		// so we can compile :-)
 		boolean x = false;
-		if ( x )
-			throw new ParseException ( "TODO!", "XXX" );
-		if ( x )
-			throw new BogusDataException ( "TODO!", "XXX" );
+		if (x)
+			throw new ParseException("TODO!", "XXX");
+		if (x)
+			throw new BogusDataException("TODO!", "XXX");
 	}
 
-	public boolean isValid () {
+	public boolean isValid() {
 		return false;
 	}
 

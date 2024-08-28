@@ -71,102 +71,109 @@ public class Attendee extends Property {
 	 * Constructor
 	 */
 	public Attendee() {
-		super("ATTENDEE", "Unknown Name");
+		super ( "ATTENDEE", "Unknown Name" );
 		this.type = TYPE_INDIVIDUAL;
 	}
 
 	/**
 	 * Constructor
 	 * 
-	 * @param icalStr One or more lines of iCalendar that specifies an event
-	 *                attendee
+	 * @param icalStr
+	 *          One or more lines of iCalendar that specifies an event attendee
 	 */
 	public Attendee(String icalStr) throws ParseException {
-		this(icalStr, PARSE_LOOSE);
+		this ( icalStr, PARSE_LOOSE );
 	}
 
 	/**
 	 * Constructor
 	 * 
-	 * @param icalStr   One or more lines of iCalendar that specifies an event
-	 *                  attendee
-	 * @param parseMode PARSE_STRICT or PARSE_LOOSE
+	 * @param icalStr
+	 *          One or more lines of iCalendar that specifies an event attendee
+	 * @param parseMode
+	 *          PARSE_STRICT or PARSE_LOOSE
 	 */
 	public Attendee(String icalStr, int parseMode) throws ParseException {
-		super(icalStr, parseMode);
+		super ( icalStr, parseMode );
 
-		for (Attribute a : attributeList) {
-			String aval = a.value.toUpperCase();
-			if (a.name.equals("CN")) {
+		for ( int i = 0; i < attributeList.size (); i++ ) {
+			Attribute a = attributeAt ( i );
+			String aval = a.value.toUpperCase ();
+			if ( a.name.equals ( "CN" ) ) {
 				cn = a.value;
-			} else if (a.name.equals("ROLE")) {
-				if (aval.equals("REQ-PARTICIPANT")) {
+			} else if ( a.name.equals ( "ROLE" ) ) {
+				if ( aval.equals ( "REQ-PARTICIPANT" ) ) {
 					role = ROLE_REQ_PARTICIPANT;
-				} else if (aval.equals("OPT-PARTICIPANT")) {
+				} else if ( aval.equals ( "OPT-PARTICIPANT" ) ) {
 					role = ROLE_OPT_PARTICIPANT;
-				} else if (aval.equals("NON-PARTICIPANT")) {
+				} else if ( aval.equals ( "NON-PARTICIPANT" ) ) {
 					role = ROLE_NON_PARTICIPANT;
-				} else if (aval.equals("CHAIR")) {
+				} else if ( aval.equals ( "CHAIR" ) ) {
 					role = ROLE_CHAIR;
 				} else {
-					if (parseMode == PARSE_STRICT) {
-						throw new ParseException("Unknown ROLE '" + a.value + "'", icalStr);
+					if ( parseMode == PARSE_STRICT ) {
+						throw new ParseException ( "Unknown ROLE '" + a.value + "'",
+						    icalStr );
 					}
 				}
-			} else if (a.name.equals("PARTSTAT")) {
+			} else if ( a.name.equals ( "PARTSTAT" ) ) {
 				// TODO: only certain values are allowed in VEVENT vs VTODO
-				if (aval.equals("NEEDS-ACTION")) {
+				if ( aval.equals ( "NEEDS-ACTION" ) ) {
 					status = STATUS_NEEDS_ACTION;
-				} else if (aval.equals("ACCEPTED")) {
+				} else if ( aval.equals ( "ACCEPTED" ) ) {
 					status = STATUS_ACCEPTED;
-				} else if (aval.equals("DECLINED")) {
+				} else if ( aval.equals ( "DECLINED" ) ) {
 					status = STATUS_DECLINED;
-				} else if (aval.equals("TENTATIVE")) {
+				} else if ( aval.equals ( "TENTATIVE" ) ) {
 					status = STATUS_TENTATIVE;
-				} else if (aval.equals("DELEGATED")) {
+				} else if ( aval.equals ( "DELEGATED" ) ) {
 					status = STATUS_DELEGATED;
-				} else if (aval.equals("COMPLETED")) {
+				} else if ( aval.equals ( "COMPLETED" ) ) {
 					status = STATUS_COMPLETED;
-				} else if (aval.equals("IN-PROCESS")) {
+				} else if ( aval.equals ( "IN-PROCESS" ) ) {
 					status = STATUS_IN_PROCESS;
 				} else {
-					if (parseMode == PARSE_STRICT) {
-						throw new ParseException("Unknown PARTSTAT '" + a.value + "'", icalStr);
+					if ( parseMode == PARSE_STRICT ) {
+						throw new ParseException ( "Unknown PARTSTAT '" + a.value + "'",
+						    icalStr );
 					}
 				}
-			} else if (a.name.equals("RSVP")) {
-				if (aval.equals("TRUE")) {
+			} else if ( a.name.equals ( "RSVP" ) ) {
+				if ( aval.equals ( "TRUE" ) ) {
 					rsvp = true;
-				} else if (aval.equals("FALSE")) {
+				} else if ( aval.equals ( "FALSE" ) ) {
 					rsvp = true;
 				} else {
-					if (parseMode == PARSE_STRICT) {
-						throw new ParseException("Unknown RSVP '" + a.value + "'", icalStr);
+					if ( parseMode == PARSE_STRICT ) {
+						throw new ParseException ( "Unknown RSVP '" + a.value + "'",
+						    icalStr );
 					}
 				}
-			} else if (a.name.equals("CUTYPE")) {
-				if (aval.equals("INDIVIDUAL")) {
+			} else if ( a.name.equals ( "CUTYPE" ) ) {
+				if ( aval.equals ( "INDIVIDUAL" ) ) {
 					type = TYPE_INDIVIDUAL;
-				} else if (aval.equals("GROUP")) {
+				} else if ( aval.equals ( "GROUP" ) ) {
 					type = TYPE_GROUP;
-				} else if (aval.equals("RESOURCE")) {
+				} else if ( aval.equals ( "RESOURCE" ) ) {
 					type = TYPE_RESOURCE;
-				} else if (aval.equals("ROOM")) {
+				} else if ( aval.equals ( "ROOM" ) ) {
 					type = TYPE_ROOM;
-				} else if (aval.equals("UNKNOWN")) {
+				} else if ( aval.equals ( "UNKNOWN" ) ) {
 					type = TYPE_UNKNOWN;
 				} else {
-					if (parseMode == PARSE_STRICT) {
-						throw new ParseException("Unknown CUTYPE '" + a.value + "'", icalStr);
+					if ( parseMode == PARSE_STRICT ) {
+						throw new ParseException ( "Unknown CUTYPE '" + a.value + "'",
+						    icalStr );
 					}
 				}
-			} else if (a.name.equals("DELEGATED-FROM")) {
+			} else if ( a.name.equals ( "DELEGATED-FROM" ) ) {
 				// TODO
-			} else if (a.name.equals("SENT-BY")) {
+			} else if ( a.name.equals ( "SENT-BY" ) ) {
 				// TODO
 			} else {
 				// TODO: generate errors on unrecognized attributes?
-				System.out.println("Ignoring unknown attribute '" + a.name + "' in " + this.getName());
+				System.out.println ( "Ignoring unknown attribute '" + a.name + "' in "
+				    + this.getName () );
 			}
 		}
 	}

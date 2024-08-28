@@ -2,9 +2,11 @@ package us.k5n.journal;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Vector;
+import java.util.List;
+import java.util.Map;
 
 import us.k5n.ical.Categories;
 import us.k5n.ical.Date;
@@ -21,48 +23,48 @@ import us.k5n.ical.Utils;
  */
 public class Repository {
 	File directory;
-	Vector dataFiles;
-	HashMap dataFileHash;
+	List<DataFile> dataFiles;
+	Map<String, File> dataFileHash;
 	int parseErrorCount = 0;
 	int journalCount = 0;
 	Date[] listOfDates;
-	HashMap uidHash;
-	private Vector changeListeners;
-	private Vector categories; // Vector of String categories
+	Map<String, String> uidHash;
+	private List<RepositoryChangeListener> changeListeners;
+	private List<String> categories; // List of String categories
 
 	public Repository(File dir, boolean strictParsing) {
 		this.directory = dir;
-		this.dataFiles = new Vector ();
-		this.dataFileHash = new HashMap ();
-		this.uidHash = new HashMap ();
-		this.changeListeners = new Vector ();
-		this.categories = new Vector ();
+		this.dataFiles = new ArrayList<DataFile>();
+		this.dataFileHash = new HashMap<String, File>();
+		this.uidHash = new HashMap<String, String>();
+		this.changeListeners = new ArrayList<RepositoryChangeListener>();
+		this.categories = new ArrayList<String>();
 
 		// Load all files.
-		File[] files = this.directory.listFiles ( new IcsFileFilter () );
-		for ( int i = 0; files != null && i < files.length; i++ ) {
-			DataFile f = new DataFile ( files[i].getAbsolutePath (), strictParsing );
-			if ( f != null ) {
-				this.addDataFile ( f );
+		File[] files = this.directory.listFiles(new IcsFileFilter());
+		for (int i = 0; files != null && i < files.length; i++) {
+			DataFile f = new DataFile(files[i].getAbsolutePath(), strictParsing);
+			if (f != null) {
+				this.addDataFile(f);
 			}
 		}
 
-		rebuildPrivateData ();
+		rebuildPrivateData();
 	}
 
-	public void addDataFile ( DataFile f ) {
-		this.dataFiles.addElement ( f );
-		journalCount += f.getJournalCount ();
-		parseErrorCount += f.getParseErrorCount ();
+	public void addDataFile(DataFile f) {
+		this.dataFiles.add(f);
+		journalCount += f.getJournalCount();
+		parseErrorCount += f.getParseErrorCount();
 		// Store in HashMap using just the filename (19991231.ics)
 		// as the key
-		this.dataFileHash.put ( f.getName ().toLowerCase (), f );
+		this.dataFileHash.put(f.getName().toLowerCase(), f);
 	}
 
-	public DataFile findDataFile ( Journal j ) {
-		String YMD = Utils.DateToYYYYMMDD ( j.getStartDate () );
+	public DataFile findDataFile(Journal j) {
+		String YMD = Utils.DateToYYYYMMDD(j.getStartDate());
 		String fileName = YMD + ".ics";
-		DataFile dataFile = (DataFile) this.dataFileHash.get ( fileName );
+		DataFile dataFile = (DataFile) this.dataFileHash.get(fileName);
 		return dataFile;
 	}
 
@@ -71,21 +73,21 @@ public class Repository {
 	 * 
 	 * @return
 	 */
-	public int[] getYears () {
-		if ( listOfDates == null )
+	public int[] getYears() {
+		if (listOfDates == null)
 			return null;
-		HashMap h = new HashMap ();
-		Vector years = new Vector ();
-		for ( int i = 0; i < listOfDates.length; i++ ) {
-			Integer ival = new Integer ( listOfDates[i].getYear () );
-			if ( !h.containsKey ( ival ) ) {
-				h.put ( ival, ival );
-				years.addElement ( ival );
+		Map<Integer, Integer> h = new HashMap<Integer, Integer>();
+		List<Integer> years = new ArrayList<Integer>();
+		for (int i = 0; i < listOfDates.length; i++) {
+			Integer ival = new Integer(listOfDates[i].getYear());
+			if (!h.containsKey(ival)) {
+				h.put(ival, ival);
+				years.add(ival);
 			}
 		}
-		int[] ret = new int[years.size ()];
-		for ( int i = 0; i < years.size (); i++ )
-			ret[i] = ( (Integer) years.elementAt ( i ) ).intValue ();
+		int[] ret = new int[years.size()];
+		for (int i = 0; i < years.size(); i++)
+			ret[i] = years.get(i);
 		return ret;
 	}
 
@@ -94,26 +96,26 @@ public class Repository {
 	 * year have Journal entries.
 	 * 
 	 * @param year
-	 *          4-digit year
+	 *             4-digit year
 	 * @return
 	 */
-	public int[] getMonthsForYear ( int year ) {
-		if ( listOfDates == null )
+	public int[] getMonthsForYear(int year) {
+		if (listOfDates == null)
 			return null;
-		HashMap h = new HashMap ();
-		Vector months = new Vector ();
-		for ( int i = 0; i < listOfDates.length; i++ ) {
-			if ( listOfDates[i].getYear () == year ) {
-				Integer ival = new Integer ( listOfDates[i].getMonth () );
-				if ( !h.containsKey ( ival ) ) {
-					h.put ( ival, ival );
-					months.addElement ( ival );
+		HashMap<Integer, Integer> h = new HashMap<Integer, Integer>();
+		List<Integer> months = new ArrayList<Integer>();
+		for (int i = 0; i < listOfDates.length; i++) {
+			if (listOfDates[i].getYear() == year) {
+				Integer ival = new Integer(listOfDates[i].getMonth());
+				if (!h.containsKey(ival)) {
+					h.put(ival, ival);
+					months.add(ival);
 				}
 			}
 		}
-		int[] ret = new int[months.size ()];
-		for ( int i = 0; i < months.size (); i++ )
-			ret[i] = ( (Integer) months.elementAt ( i ) ).intValue ();
+		int[] ret = new int[months.size()];
+		for (int i = 0; i < months.size(); i++)
+			ret[i] = months.get(i);
 		return ret;
 	}
 
@@ -121,26 +123,26 @@ public class Repository {
 	 * Get all Journal objects for the specified month.
 	 * 
 	 * @param year
-	 *          The 4-digit year
+	 *              The 4-digit year
 	 * @param month
-	 *          The month (Jan=1, Feb=2, etc.)
+	 *              The month (Jan=1, Feb=2, etc.)
 	 * @return
 	 */
-	public Vector getEntriesByMonth ( int year, int month ) {
-		if ( listOfDates == null )
+	public List<Journal> getEntriesByMonth(int year, int month) {
+		if (listOfDates == null)
 			return null;
-		Vector ret = new Vector ();
-		for ( int i = 0; i < dataFiles.size (); i++ ) {
-			DataFile df = (DataFile) dataFiles.elementAt ( i );
-			for ( int j = 0; j < df.getJournalCount (); j++ ) {
-				Journal journal = df.journalEntryAt ( j );
-				if ( journal.getStartDate () == null ) {
-					System.err.println ( "Error: no DTSTART date for entry #" + ( j + 1 )
-					    + " of " + df );
+		List<Journal> ret = new ArrayList<Journal>();
+		for (int i = 0; i < dataFiles.size(); i++) {
+			DataFile df = dataFiles.get(i);
+			for (int j = 0; j < df.getJournalCount(); j++) {
+				Journal journal = df.journalEntryAt(j);
+				if (journal.getStartDate() == null) {
+					System.err.println("Error: no DTSTART date for entry #" + (j + 1)
+							+ " of " + df);
 				} else {
-					if ( journal.getStartDate ().getYear () == year
-					    && journal.getStartDate ().getMonth () == month )
-						ret.addElement ( journal );
+					if (journal.getStartDate().getYear() == year
+							&& journal.getStartDate().getMonth() == month)
+						ret.add(journal);
 				}
 			}
 		}
@@ -151,23 +153,23 @@ public class Repository {
 	 * Get all Journal objects for the specified year.
 	 * 
 	 * @param year
-	 *          The 4-digit year
+	 *             The 4-digit year
 	 * @return
 	 */
-	public Vector getEntriesByYear ( int year ) {
-		if ( listOfDates == null )
+	public List<Journal> getEntriesByYear(int year) {
+		if (listOfDates == null)
 			return null;
-		Vector ret = new Vector ();
-		for ( int i = 0; i < dataFiles.size (); i++ ) {
-			DataFile df = (DataFile) dataFiles.elementAt ( i );
-			for ( int j = 0; j < df.getJournalCount (); j++ ) {
-				Journal journal = df.journalEntryAt ( j );
-				if ( journal.getStartDate () == null ) {
-					System.err.println ( "Error: no DTSTART date for entry #" + ( j + 1 )
-					    + " of " + df );
+		List<Journal> ret = new ArrayList<Journal>();
+		for (int i = 0; i < dataFiles.size(); i++) {
+			DataFile df = dataFiles.get(i);
+			for (int j = 0; j < df.getJournalCount(); j++) {
+				Journal journal = df.journalEntryAt(j);
+				if (journal.getStartDate() == null) {
+					System.err.println("Error: no DTSTART date for entry #" + (j + 1)
+							+ " of " + df);
 				} else {
-					if ( journal.getStartDate ().getYear () == year )
-						ret.addElement ( journal );
+					if (journal.getStartDate().getYear() == year)
+						ret.add(journal);
 				}
 			}
 		}
@@ -179,64 +181,64 @@ public class Repository {
 	 * 
 	 * @return
 	 */
-	public Vector getAllEntries () {
-		if ( listOfDates == null )
+	public List<Journal> getAllEntries() {
+		if (listOfDates == null)
 			return null;
-		Vector ret = new Vector ();
-		for ( int i = 0; i < dataFiles.size (); i++ ) {
-			DataFile df = (DataFile) dataFiles.elementAt ( i );
-			for ( int j = 0; j < df.getJournalCount (); j++ ) {
-				Journal journal = df.journalEntryAt ( j );
-				ret.addElement ( journal );
+		List<Journal> ret = new ArrayList<Journal>();
+		for (int i = 0; i < dataFiles.size(); i++) {
+			DataFile df = dataFiles.get(i);
+			for (int j = 0; j < df.getJournalCount(); j++) {
+				Journal journal = df.journalEntryAt(j);
+				ret.add(journal);
 			}
 		}
 		return ret;
 	}
 
 	/**
-	 * Update the listOfDates array. Update the Vector of existing categories.
+	 * Update the listOfDates array. Update the List of existing categories.
 	 */
-	private void rebuildPrivateData () {
-		Vector dates = new Vector ();
-		this.categories = new Vector ();
-		HashMap catH = new HashMap ();
-		HashMap h = new HashMap ();
-		for ( int i = 0; i < dataFiles.size (); i++ ) {
-			DataFile df = (DataFile) dataFiles.elementAt ( i );
+	private void rebuildPrivateData() {
+		List<Date> dates = new ArrayList<Date>();
+		this.categories = new ArrayList<String>();
+		HashMap<String, String> catH = new HashMap<String, String>();
+		HashMap<String, String> h = new HashMap<String, String>();
+		for (int i = 0; i < dataFiles.size(); i++) {
+			DataFile df = dataFiles.get(i);
 			// System.out.println ( "DataFile#" + i + ": " + df.toString () );
 			// System.out.println ( " df.getJournalCount () =" + df.getJournalCount ()
 			// );
-			for ( int j = 0; j < df.getJournalCount (); j++ ) {
-				Journal journal = df.journalEntryAt ( j );
-				if ( journal.getStartDate () != null ) {
-					String YMD = Utils.DateToYYYYMMDD ( journal.getStartDate () );
-					if ( !h.containsKey ( YMD ) ) {
-						h.put ( YMD, YMD );
-						dates.addElement ( journal.getStartDate () );
+			for (int j = 0; j < df.getJournalCount(); j++) {
+				Journal journal = df.journalEntryAt(j);
+				if (journal.getStartDate() != null) {
+					String YMD = Utils.DateToYYYYMMDD(journal.getStartDate());
+					if (!h.containsKey(YMD)) {
+						h.put(YMD, YMD);
+						dates.add(journal.getStartDate());
 						// System.out.println ( "Added date: " + journal.getStartDate () );
 					}
 				}
-				Categories cats = journal.getCategories ();
-				if ( cats != null && cats.getValue () != null ) {
-					String[] catArray = splitCategories ( cats.getValue () );
-					for ( int k = 0; catArray != null && k < catArray.length; k++ ) {
-						String c1 = catArray[k].trim ();
-						if ( c1.length () > 0 ) {
-							String c1up = c1.toUpperCase ();
-							if ( !catH.containsKey ( c1up ) ) {
-								this.categories.addElement ( c1 );
-								catH.put ( c1up, c1up );
+				Categories cats = journal.getCategories();
+				if (cats != null && cats.getValue() != null) {
+					String[] catArray = splitCategories(cats.getValue());
+					for (int k = 0; catArray != null && k < catArray.length; k++) {
+						String c1 = catArray[k].trim();
+						if (c1.length() > 0) {
+							String c1up = c1.toUpperCase();
+							if (!catH.containsKey(c1up)) {
+								this.categories.add(c1);
+								catH.put(c1up, c1up);
 							}
 						}
 					}
 				}
 			}
 		}
-		if ( dates.size () > 0 ) {
-			Collections.sort ( dates );
-			listOfDates = new Date[dates.size ()];
-			for ( int i = 0; i < dates.size (); i++ ) {
-				listOfDates[i] = (Date) dates.elementAt ( i );
+		if (dates.size() > 0) {
+			Collections.sort(dates);
+			listOfDates = new Date[dates.size()];
+			for (int i = 0; i < dates.size(); i++) {
+				listOfDates[i] = dates.get(i);
 				// System.out.println ( "Found date: " + listOfDates[i] );
 			}
 		} else {
@@ -254,50 +256,50 @@ public class Repository {
 	 * @param j
 	 * @throws IOException
 	 */
-	public void saveJournal ( Journal j ) throws IOException {
+	public void saveJournal(Journal j) throws IOException {
 		boolean added = false;
 
-		DataFile dataFile = (DataFile) j.getUserData ();
-		if ( dataFile == null ) {
+		DataFile dataFile = (DataFile) j.getUserData();
+		if (dataFile == null) {
 			// New journal. Add to existing data file named YYYYMMDD.ics if
 			// it exists.
-			dataFile = findDataFile ( j );
-			if ( dataFile == null ) {
+			dataFile = findDataFile(j);
+			if (dataFile == null) {
 				added = true;
 				// No file for this date (YYYYMMDD.ics) exists yet.
 				// So, we need to create a new one.
-				File f = new File ( this.directory, Utils.DateToYYYYMMDD ( j
-				    .getStartDate () )
-				    + ".ics" );
-				dataFile = new DataFile ( f.getAbsolutePath () );
-				dataFile.addJournal ( j );
-				this.addDataFile ( dataFile );
+				File f = new File(this.directory, Utils.DateToYYYYMMDD(j
+						.getStartDate())
+						+ ".ics");
+				dataFile = new DataFile(f.getAbsolutePath());
+				dataFile.addJournal(j);
+				this.addDataFile(dataFile);
 			} else {
 				// Add this journal entry to the file
-				dataFile.addJournal ( j );
+				dataFile.addJournal(j);
 			}
 		}
-		j.setLastModified ( Date.getCurrentDateTime ( "LAST-MODIFIED" ) );
-		j.setUserData ( dataFile );
-		dataFile.write ();
+		j.setLastModified(Date.getCurrentDateTime("LAST-MODIFIED"));
+		j.setUserData(dataFile);
+		dataFile.write();
 
-		rebuildPrivateData ();
+		rebuildPrivateData();
 
-		if ( added ) {
-			for ( int i = 0; this.changeListeners != null
-			    && i < this.changeListeners.size (); i++ ) {
+		if (added) {
+			for (int i = 0; this.changeListeners != null
+					&& i < this.changeListeners.size(); i++) {
 				RepositoryChangeListener l = (RepositoryChangeListener) this.changeListeners
-				    .elementAt ( i );
-				l.journalAdded ( j );
+						.get(i);
+				l.journalAdded(j);
 			}
 		} else {
 			// If we are updating, then the Journal to be updated should
 			// already be updated in the DataStore.
-			for ( int i = 0; this.changeListeners != null
-			    && i < this.changeListeners.size (); i++ ) {
+			for (int i = 0; this.changeListeners != null
+					&& i < this.changeListeners.size(); i++) {
 				RepositoryChangeListener l = (RepositoryChangeListener) this.changeListeners
-				    .elementAt ( i );
-				l.journalUpdated ( j );
+						.get(i);
+				l.journalUpdated(j);
 			}
 		}
 	}
@@ -308,23 +310,23 @@ public class Repository {
 	 * @param j
 	 * @throws IOException
 	 */
-	public boolean deleteJournal ( Journal j ) throws IOException {
+	public boolean deleteJournal(Journal j) throws IOException {
 		boolean deleted = false;
-		DataFile dataFile = (DataFile) j.getUserData ();
-		if ( dataFile == null ) {
+		DataFile dataFile = (DataFile) j.getUserData();
+		if (dataFile == null) {
 			// New journal. Nothing to do...
-			System.err.println ( "Not found..." );
+			System.err.println("Not found...");
 		} else {
 			// Journal to be deleted should be in the DataStore.
-			if ( dataFile.removeJournal ( j ) ) {
+			if (dataFile.removeJournal(j)) {
 				deleted = true;
-				dataFile.write ();
-				rebuildPrivateData ();
-				for ( int i = 0; this.changeListeners != null
-				    && i < this.changeListeners.size (); i++ ) {
+				dataFile.write();
+				rebuildPrivateData();
+				for (int i = 0; this.changeListeners != null
+						&& i < this.changeListeners.size(); i++) {
 					RepositoryChangeListener l = (RepositoryChangeListener) this.changeListeners
-					    .elementAt ( i );
-					l.journalDeleted ( j );
+							.get(i);
+					l.journalDeleted(j);
 				}
 			} else {
 				// System.out.println ( "Not deleted" );
@@ -338,17 +340,17 @@ public class Repository {
 	 * 
 	 * @param l
 	 */
-	public void addChangeListener ( RepositoryChangeListener l ) {
-		if ( this.changeListeners == null )
-			this.changeListeners = new Vector ();
-		this.changeListeners.addElement ( l );
+	public void addChangeListener(RepositoryChangeListener l) {
+		if (this.changeListeners == null)
+			this.changeListeners = new ArrayList<RepositoryChangeListener>();
+		this.changeListeners.add(l);
 	}
 
-	public Vector getCategories () {
+	public List<String> getCategories() {
 		return this.categories;
 	}
 
-	private static String[] splitCategories ( String categories ) {
-		return categories.trim ().split ( "," );
+	private static String[] splitCategories(String categories) {
+		return categories.trim().split(",");
 	}
 }

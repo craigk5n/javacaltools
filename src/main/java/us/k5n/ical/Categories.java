@@ -26,7 +26,7 @@ package us.k5n.ical;
  * 
  * @author Craig Knudsen, craig@k5n.us
  */
-public class Categories extends us.k5n.ical.Property {
+public class Categories extends Property {
 	/** Language specification */
 	public String language = null;
 
@@ -37,41 +37,46 @@ public class Categories extends us.k5n.ical.Property {
 	 * Constructor
 	 */
 	public Categories() {
-		super("CATEGORIES", "");
+		super ( "CATEGORIES", "" );
 	}
 
 	/**
 	 * Constructor
 	 * 
-	 * @param icalStr One or more lines of iCalendar that specifies an event/todo
-	 *                description
+	 * @param icalStr
+	 *          One or more lines of iCalendar that specifies an event/todo
+	 *          description
 	 */
 	public Categories(String icalStr) throws ParseException {
-		this(icalStr, PARSE_LOOSE);
+		this ( icalStr, PARSE_LOOSE );
 	}
 
 	/**
 	 * Constructor
 	 * 
-	 * @param icalStr   One or more lines of iCalendar that specifies a category
-	 *                  list (comma separated)
-	 * @param parseMode PARSE_STRICT or PARSE_LOOSE
+	 * @param icalStr
+	 *          One or more lines of iCalendar that specifies a category list
+	 *          (comma separated)
+	 * @param parseMode
+	 *          PARSE_STRICT or PARSE_LOOSE
 	 */
 	public Categories(String icalStr, int parseMode) throws ParseException {
-		super(icalStr, parseMode);
+		super ( icalStr, parseMode );
 
-		for (Attribute a : attributeList) {
-			String aval = a.value.toUpperCase();
-			if (aval.equals("LANGUAGE")) {
+		for ( int i = 0; i < attributeList.size (); i++ ) {
+			Attribute a = attributeAt ( i );
+			String aval = a.value.toUpperCase ();
+			if ( aval.equals ( "LANGUAGE" ) ) {
 				// Can only have one of these
-				if (language != null && parseMode == PARSE_STRICT) {
-					throw new ParseException("More than one LANGUAGE found", icalStr);
+				if ( language != null && parseMode == PARSE_STRICT ) {
+					throw new ParseException ( "More than one LANGUAGE found", icalStr );
 				}
 				language = a.value;
 			} else {
 				// Only generate exception if strict parsing
-				if (parseMode == PARSE_STRICT) {
-					throw new ParseException("Invalid CATEGORIES attribute '" + a.name + "'", icalStr);
+				if ( parseMode == PARSE_STRICT ) {
+					throw new ParseException ( "Invalid CATEGORIES attribute '" + a.name
+					    + "'", icalStr );
 				}
 			}
 		}

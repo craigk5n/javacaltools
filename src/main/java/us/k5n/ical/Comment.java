@@ -36,47 +36,52 @@ public class Comment extends Property {
 	 * Constructor
 	 */
 	public Comment() {
-		super("COMMENT", "");
+		super ( "COMMENT", "" );
 	}
 
 	/**
 	 * Constructor
 	 * 
-	 * @param icalStr One or more lines of iCalendar that specifies an event/todo
-	 *                comment
+	 * @param icalStr
+	 *          One or more lines of iCalendar that specifies an event/todo
+	 *          comment
 	 */
 	public Comment(String icalStr) throws ParseException {
-		this(icalStr, PARSE_LOOSE);
+		this ( icalStr, PARSE_LOOSE );
 	}
 
 	/**
 	 * Constructor
 	 * 
-	 * @param icalStr   One or more lines of iCalendar that specifies an event/todo
-	 *                  comment
-	 * @param parseMode PARSE_STRICT or PARSE_LOOSE
+	 * @param icalStr
+	 *          One or more lines of iCalendar that specifies an event/todo
+	 *          comment
+	 * @param parseMode
+	 *          PARSE_STRICT or PARSE_LOOSE
 	 */
 	public Comment(String icalStr, int parseMode) throws ParseException {
-		super(icalStr, parseMode);
+		super ( icalStr, parseMode );
 
-		for (Attribute a : attributeList) {
-			String aname = a.name.toUpperCase();
-			if (aname.equals("ALTREP")) {
+		for ( int i = 0; i < attributeList.size (); i++ ) {
+			Attribute a = attributeAt ( i );
+			String aname = a.name.toUpperCase ();
+			if ( aname.equals ( "ALTREP" ) ) {
 				// Can only have one of these
-				if (altrep != null && parseMode == PARSE_STRICT) {
-					throw new ParseException("More than one ALTREP found", icalStr);
+				if ( altrep != null && parseMode == PARSE_STRICT ) {
+					throw new ParseException ( "More than one ALTREP found", icalStr );
 				}
 				altrep = a.value;
-			} else if (aname.equals("LANGUAGE")) {
+			} else if ( aname.equals ( "LANGUAGE" ) ) {
 				// Can only have one of these
-				if (language != null && parseMode == PARSE_STRICT) {
-					throw new ParseException("More than one LANGUAGE found", icalStr);
+				if ( language != null && parseMode == PARSE_STRICT ) {
+					throw new ParseException ( "More than one LANGUAGE found", icalStr );
 				}
 				language = a.value;
 			} else {
 				// Only generate exception if strict parsing
-				if (parseMode == PARSE_STRICT) {
-					throw new ParseException("Invalid COMMENT attribute '" + a.name + "'", icalStr);
+				if ( parseMode == PARSE_STRICT ) {
+					throw new ParseException ( "Invalid COMMENT attribute '" + a.name
+					    + "'", icalStr );
 				}
 			}
 		}

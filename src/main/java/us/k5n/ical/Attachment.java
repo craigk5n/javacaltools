@@ -30,22 +30,29 @@ import org.apache.commons.codec.binary.Base64;
  * iCalendar Attachment class - This object represents the iCalendar ATTACH
  * object <br/>
  * From the RFC: <br/>
- * <quote> Purpose: The property provides the capability to associate a document
- * object with a calendar component. <br/>
- * Value Type: The default value type for this property is URI. The value type
- * can also be set to BINARY to indicate inline binary encoded content
- * information. <br/>
- * Property Parameters: Non-standard, inline encoding, format type and value
- * data type property parameters can be specified on this property. <br/>
- * Conformance: The property can be specified in a "VEVENT", "VTODO", "VJOURNAL"
- * or "VALARM" calendar components. <br/>
+ * <quote>
+ * Purpose: The property provides the capability to associate a document
+ * object with a calendar component.
+ * <br/>
+ * Value Type: The default value type for this property is URI. The
+ * value type can also be set to BINARY to indicate inline binary
+ * encoded content information.
+ * <br/>
+ * Property Parameters: Non-standard, inline encoding, format type and
+ * value data type property parameters can be specified on this
+ * property.
+ * <br/>
+ * Conformance: The property can be specified in a "VEVENT", "VTODO",
+ * "VJOURNAL" or "VALARM" calendar components.
+ * <br/>
  * Description: The property can be specified within "VEVENT", "VTODO",
- * "VJOURNAL", or "VALARM" calendar components. This property can be specified
- * multiple times within an iCalendar object. </quote>
+ * "VJOURNAL", or "VALARM" calendar components. This property can be
+ * specified multiple times within an iCalendar object.
+ * </quote>
  * 
  * @author Craig Knudsen, craig@k5n.us
  */
-public class Attachment extends us.k5n.ical.Property {
+public class Attachment extends Property {
 	protected byte[] bytes = null;
 
 	/**
@@ -58,7 +65,8 @@ public class Attachment extends us.k5n.ical.Property {
 	/**
 	 * Constructor
 	 * 
-	 * @param icalStr One or more lines of iCalendar that specifies an event/todo
+	 * @param icalStr
+	 *                One or more lines of iCalendar that specifies an event/todo
 	 *                URL
 	 */
 	public Attachment(String icalStr) throws ParseException {
@@ -78,8 +86,10 @@ public class Attachment extends us.k5n.ical.Property {
 	/**
 	 * Constructor
 	 * 
-	 * @param icalStr   One or more lines of iCalendar that specify an attachment.
-	 * @param parseMode PARSE_STRICT or PARSE_LOOSE
+	 * @param icalStr
+	 *                  One or more lines of iCalendar that specify an attachment.
+	 * @param parseMode
+	 *                  PARSE_STRICT or PARSE_LOOSE
 	 */
 	public Attachment(String icalStr, int parseMode) throws ParseException {
 		super(icalStr, parseMode);
@@ -87,16 +97,19 @@ public class Attachment extends us.k5n.ical.Property {
 	}
 
 	/**
-	 * Create an inline embedded attachment from the specified file. The contents of
-	 * the attachment will be stored in the iCalendar data file using base64
+	 * Create an inline embedded attachment from the specified file. The contents
+	 * of the attachment will be stored in the iCalendar data file using base64
 	 * encoding.
 	 * 
-	 * @param filename   The file to attach
-	 * @param formatType The format type of the file ("image/jpeg", etc.)
+	 * @param filename
+	 *                   The file to attach
+	 * @param formatType
+	 *                   The format type of the file ("image/jpeg", etc.)
 	 * @throws ParseException
 	 * @throws IOException
 	 */
-	public Attachment(File filename, String formatType) throws ParseException, IOException {
+	public Attachment(File filename, String formatType) throws ParseException,
+			IOException {
 		super("ATTACH", "");
 		this.addAttribute("ENCODING", "BASE64");
 		this.addAttribute("VALUE", "BINARY");
@@ -115,12 +128,13 @@ public class Attachment extends us.k5n.ical.Property {
 	}
 
 	/**
-	 * Create an inline embedded attachment from the specified file. The contents of
-	 * the attachment will be stored in the iCalendar data file using base64
-	 * encoding. The MIME type will be derived from the filename extension (assuming
-	 * it is a common MIME type).
+	 * Create an inline embedded attachment from the specified file. The contents
+	 * of the attachment will be stored in the iCalendar data file using base64
+	 * encoding. The MIME type will be derived from the filename extension
+	 * (assuming it is a common MIME type).
 	 * 
-	 * @param filename The file to attach
+	 * @param filename
+	 *                 The file to attach
 	 * @throws ParseException
 	 * @throws IOException
 	 */
@@ -134,7 +148,8 @@ public class Attachment extends us.k5n.ical.Property {
 	 * URL should only be used if the event/journal will only be used on the same
 	 * machine.
 	 * 
-	 * @param url The URL of the attachment. (No attempt is made to validate that
+	 * @param url
+	 *            The URL of the attachment. (No attempt is made to validate that
 	 *            the content is at the specified URL.)
 	 * @throws ParseException
 	 * @throws IOException
@@ -160,8 +175,8 @@ public class Attachment extends us.k5n.ical.Property {
 
 	/**
 	 * Set the FMTTYPE setting for this attachment. This is the MIME type (such as
-	 * "image/jpeg"). Note: You can use the Utils.getMimeTypeForExtension method to
-	 * obtain the MIME type for most common file extensions.
+	 * "image/jpeg"). Note: You can use the Utils.getMimeTypeForExtension method
+	 * to obtain the MIME type for most common file extensions.
 	 */
 	public void setFormatType(String formatType) {
 		if (formatType == null)
@@ -177,11 +192,11 @@ public class Attachment extends us.k5n.ical.Property {
 
 	/**
 	 * Get the binary data for the attachment. This is only valid for inline
-	 * attachments encoded with base64 encoding. Attachments with URLs or CIDs will
-	 * need to load the file contents externally.
+	 * attachments encoded with base64 encoding. Attachments with URLs or CIDs
+	 * will need to load the file contents externally.
 	 * 
-	 * @return The binary data of the inline attachment as an array of byte, or null
-	 *         if not an inline attachment.
+	 * @return The binary data of the inline attachment as an array of byte, or
+	 *         null if not an inline attachment.
 	 */
 	public byte[] getBytes() {
 		return this.bytes;
@@ -219,8 +234,9 @@ public class Attachment extends us.k5n.ical.Property {
 		StringBuffer ret = new StringBuffer(40);
 		ret.append(name);
 		if (attributeList.size() > 0) {
-			for (Attribute a : attributeList) {
+			for (int i = 0; i < attributeList.size(); i++) {
 				ret.append(';');
+				Attribute a = attributeList.get(i);
 				ret.append(a.name);
 				// Always quote the value just to be safe
 				ret.append("=\"");

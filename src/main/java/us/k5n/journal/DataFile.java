@@ -34,7 +34,8 @@ public class DataFile extends File implements Constants {
 	 * parsed and all entries loaded into the default DataStore. If the filename
 	 * does not exists, then no parsing/loading will take place.
 	 * 
-	 * @param filename      The filename (YYYYMMDD.ics as in "19991231.ics")
+	 * @param filename
+	 *                      The filename (YYYYMMDD.ics as in "19991231.ics")
 	 * @param strictParsing
 	 */
 	public DataFile(String filename, boolean strictParsing) {
@@ -89,7 +90,8 @@ public class DataFile extends File implements Constants {
 	/**
 	 * Get the Journal entry at the specified location.
 	 * 
-	 * @param ind The index number (0 is first)
+	 * @param ind
+	 *            The index number (0 is first)
 	 * @return
 	 */
 	public Journal journalEntryAt(int ind) {
@@ -97,7 +99,8 @@ public class DataFile extends File implements Constants {
 	}
 
 	/**
-	 * Remove the Journal object at the specified location in the Vector of entries.
+	 * Remove the Journal object at the specified location in the List of
+	 * entries.
 	 * 
 	 * @param ind
 	 * @return true if found and deleted
@@ -122,7 +125,7 @@ public class DataFile extends File implements Constants {
 	 * @return
 	 */
 	public ParseError getParseErrorAt(int ind) {
-		return (ParseError) parser.getAllErrors().get(ind);
+		return parser.getAllErrors().get(ind);
 	}
 
 	/**

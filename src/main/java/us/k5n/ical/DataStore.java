@@ -20,9 +20,7 @@
 
 package us.k5n.ical;
 
-import java.util.ArrayList;
 import java.util.List;
-
 
 /**
  * The DataStore interface defines how parsed iCalendar data (VTIMEZONE, VEVENT,

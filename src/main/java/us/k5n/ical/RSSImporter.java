@@ -54,7 +54,8 @@ public class RSSImporter extends CalendarParser {
 			}
 		}
 		reader.close();
-		StringBufferInputStream sbis = new StringBufferInputStream(data.toString());
+		StringBufferInputStream sbis = new StringBufferInputStream(data
+				.toString());
 
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -64,7 +65,8 @@ public class RSSImporter extends CalendarParser {
 			NodeList list = document.getElementsByTagName("channel");
 			int len = list.getLength();
 			if (list.getLength() < 1) {
-				reportParseError(new ParseError(0, "RSS Parse error: no <channel> tag found "));
+				reportParseError(new ParseError(0,
+						"RSS Parse error: no <channel> tag found "));
 				return false;
 			}
 			Node topNode = list.item(0);
@@ -79,23 +81,28 @@ public class RSSImporter extends CalendarParser {
 					if ("item".equals(nodeName)) {
 						RSSItem item = new RSSItem(n);
 						Event event = item.toEvent();
-						for (DataStore ds : dataStores) {
+						for (int j = 0; j < dataStores.size(); j++) {
+							DataStore ds = dataStores.get(j);
 							ds.storeEvent(event);
 						}
 					}
 				}
 			}
 		} catch (ParserConfigurationException e1) {
-			reportParseError(new ParseError(0, "RSS Parse error: " + e1.getMessage()));
+			reportParseError(new ParseError(0, "RSS Parse error: "
+					+ e1.getMessage()));
 			return false;
 		} catch (SAXException e2) {
-			reportParseError(new ParseError(0, "RSS Parse error: " + e2.getMessage()));
+			reportParseError(new ParseError(0, "RSS Parse error: "
+					+ e2.getMessage()));
 			return false;
 		} catch (BogusDataException e3) {
-			reportParseError(new ParseError(0, "RSS Parse error: " + e3.getMessage()));
+			reportParseError(new ParseError(0, "RSS Parse error: "
+					+ e3.getMessage()));
 			return false;
 		} catch (ParseException e4) {
-			reportParseError(new ParseError(0, "RSS Parse error: " + e4.getMessage()));
+			reportParseError(new ParseError(0, "RSS Parse error: "
+					+ e4.getMessage()));
 			return false;
 		}
 
@@ -103,7 +110,8 @@ public class RSSImporter extends CalendarParser {
 	}
 
 	// TODO: support date formats other than "12/31/1999" or "12/31/99"
-	private Date parseDateTime(String dateType, String date, String time) throws ParseException {
+	private Date parseDateTime(String dateType, String date, String time)
+			throws ParseException {
 		int Y, M, D, h, m, s;
 		String[] args = null;
 		Date ret = null;
@@ -147,7 +155,8 @@ public class RSSImporter extends CalendarParser {
 					}
 				}
 			} catch (NumberFormatException e1) {
-				throw new ParseException("Invalid date time: " + e1.getMessage(), date);
+				throw new ParseException("Invalid date time: " + e1.getMessage(),
+						date);
 			}
 			ret.setHour(h);
 			ret.setMinute(m);
@@ -159,8 +168,8 @@ public class RSSImporter extends CalendarParser {
 }
 
 class RSSItem {
-	public String title = null, link = null, description = null, pubdate = null, guid = null, author = null,
-			date = null;
+	public String title = null, link = null, description = null, pubdate = null,
+			guid = null, author = null, date = null;
 
 	public RSSItem(Node topNode) {
 		NodeList list = topNode.getChildNodes();
@@ -214,14 +223,16 @@ class XmlUtils {
 	/**
 	 * * For tags such as <name>xxx</name>, get the "xxx" for the Node.
 	 * 
-	 * @param node the XML Node object
+	 * @param node
+	 *             the XML Node object
 	 * @return the String value
 	 */
 	public static String xmlNodeGetValue(Node node) {
 		NodeList list = node.getChildNodes();
 		int len = list.getLength();
 		if (len > 1)
-			System.err.println("  Error: length of node=" + len + " for tag <" + node.getNodeName() + ">");
+			System.err.println("  Error: length of node=" + len + " for tag <"
+					+ node.getNodeName() + ">");
 		for (int i = 0; i < len; i++) {
 			Node n = list.item(i);
 			// System.out.println ( " " + i + "> name=" + n.getNodeName() + ", value="

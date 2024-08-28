@@ -31,11 +31,11 @@ import java.util.List;
  * @see CalendarParser
  */
 public class DefaultDataStore implements DataStore {
-	ArrayList<Timezone> timezones;
-	ArrayList<Event> events;
-	ArrayList<Todo> todos;
-	ArrayList<Journal> journals;
-	ArrayList<Freebusy> freebusys;
+	List<Timezone> timezones;
+	List<Event> events;
+	List<Todo> todos;
+	List<Journal> journals;
+	List<Freebusy> freebusys;
 
 	/**
 	 * Constructor
@@ -84,7 +84,7 @@ public class DefaultDataStore implements DataStore {
 	}
 
 	/**
-	 * Get a Vector of all Event objects
+	 * Get a List of all Event objects
 	 */
 	public List<Event> getAllEvents() {
 		return events;
@@ -93,7 +93,7 @@ public class DefaultDataStore implements DataStore {
 	/**
 	 * Get all Journal objects.
 	 * 
-	 * @return A Vector of Journal objects
+	 * @return A List of Journal objects
 	 */
 	public List<Journal> getAllJournals() {
 		return journals;

@@ -42,7 +42,8 @@ public class Description extends Property {
 	/**
 	 * Constructor
 	 * 
-	 * @param icalStr One or more lines of that specifies an event/todo description
+	 * @param icalStr
+	 *                One or more lines of that specifies an event/todo description
 	 */
 	public Description(String icalStr) throws ParseException {
 		this(icalStr, PARSE_LOOSE);
@@ -51,14 +52,17 @@ public class Description extends Property {
 	/**
 	 * Constructor
 	 * 
-	 * @param icalStr   One or more lines of that specifies an event/todo
+	 * @param icalStr
+	 *                  One or more lines of that specifies an event/todo
 	 *                  description
-	 * @param parseMode PARSE_STRICT or PARSE_LOOSE
+	 * @param parseMode
+	 *                  PARSE_STRICT or PARSE_LOOSE
 	 */
 	public Description(String icalStr, int parseMode) throws ParseException {
 		super(icalStr, parseMode);
 
-		for (Attribute a : attributeList) {
+		for (int i = 0; i < attributeList.size(); i++) {
+			Attribute a = attributeAt(i);
 			String aname = a.name.toUpperCase();
 			if (aname.equals("ALTREP")) {
 				// Can only have one of these
@@ -75,7 +79,8 @@ public class Description extends Property {
 			} else {
 				// Only generate exception if strict parsing
 				if (parseMode == PARSE_STRICT) {
-					throw new ParseException("Invalid DESCRIPTION attribute '" + a.name + "'", icalStr);
+					throw new ParseException("Invalid DESCRIPTION attribute '" + a.name
+							+ "'", icalStr);
 				}
 			}
 		}

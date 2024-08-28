@@ -37,7 +37,8 @@ public class Uid extends Property {
 	/**
 	 * Constructor
 	 * 
-	 * @param icalStr One or more lines of iCalendar that specifies an event/todo
+	 * @param icalStr
+	 *                One or more lines of iCalendar that specifies an event/todo
 	 *                uid
 	 */
 	public Uid(String icalStr) throws ParseException {
@@ -47,9 +48,11 @@ public class Uid extends Property {
 	/**
 	 * Constructor
 	 * 
-	 * @param icalStr   One or more lines of iCalendar that specifies the unique
+	 * @param icalStr
+	 *                  One or more lines of iCalendar that specifies the unique
 	 *                  identifier
-	 * @param parseMode PARSE_STRICT or PARSE_LOOSE
+	 * @param parseMode
+	 *                  PARSE_STRICT or PARSE_LOOSE
 	 */
 	public Uid(String icalStr, int parseMode) throws ParseException {
 		super(icalStr, parseMode);
@@ -59,8 +62,13 @@ public class Uid extends Property {
 			Attribute a = attributeAt(i);
 			// Only generate exception if strict parsing
 			if (parseMode == PARSE_STRICT) {
-				throw new ParseException("Invalid UID attribute '" + a.name + "'", icalStr);
+				throw new ParseException("Invalid UID attribute '" + a.name + "'",
+						icalStr);
 			}
+		}
+		if (super.getValue() == null || super.getValue().getBytes().length == 0) {
+			throw new ParseException("Missing UID attribute value",
+						icalStr);
 		}
 	}
 }

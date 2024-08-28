@@ -56,13 +56,13 @@ public class Journal implements Constants {
 	/** Time last modified */
 	protected Date lastModified = null;
 	/** Participants for the journal entry (List of Attendee) */
-	protected ArrayList<Attendee> attendees = null;
+	protected List<Attendee> attendees = null;
 	/** Recurrence rule (RRULE) */
 	protected Rrule rrule = null;
 	/** URL */
 	protected URL url = null;
 	/** Attachments */
-	protected ArrayList<Attachment> attachments = null;
+	protected List<Attachment> attachments = null;
 	/** Journal status */
 	protected int status = STATUS_UNDEFINED;
 	/** Private user object for caller to set/get */
@@ -78,20 +78,24 @@ public class Journal implements Constants {
 	/**
 	 * Create n Journal object based on the specified iCalendar data
 	 * 
-	 * @param parser      The IcalParser object
-	 * @param initialLine The starting line number
+	 * @param parser
+	 *                    The IcalParser object
+	 * @param initialLine
+	 *                    The starting line number
 	 * @Param textLines List of iCalendar text lines
 	 */
-	public Journal(CalendarParser parser, int initialLine, List<String> textLines) {
-		super();
+	public Journal(CalendarParser parser, int initialLine,
+			List<String> textLines) {
 		for (int i = 0; i < textLines.size(); i++) {
 			String line = textLines.get(i);
 			try {
 				parseLine(line, parser.getParseMethod());
 			} catch (BogusDataException bde) {
-				parser.reportParseError(new ParseError(initialLine + i, bde.error, line));
+				parser.reportParseError(new ParseError(initialLine + i, bde.error,
+						line));
 			} catch (ParseException pe) {
-				parser.reportParseError(new ParseError(initialLine + i, pe.error, line));
+				parser.reportParseError(new ParseError(initialLine + i, pe.error,
+						line));
 			}
 		}
 		// must have UID
@@ -105,13 +109,16 @@ public class Journal implements Constants {
 	/**
 	 * Create a journal entry
 	 * 
-	 * @param summary     Brief summary of journal entry
-	 * @param description Full description of the journal entry
-	 * @param startDate   The date of the journal entry in ISO 8601 format
-	 *                    (19991231, 199912310T115900, etc.)
+	 * @param summary
+	 *                    Brief summary of journal entry
+	 * @param description
+	 *                    Full description of the journal entry
+	 * @param startDate
+	 *                    The date of the journal entry in ISO 8601 format
+	 *                    (19991231,
+	 *                    199912310T115900, etc.)
 	 */
 	public Journal(String summary, String description, Date startDate) {
-		super();
 		uid = new Uid(); // Generate unique Id
 		this.summary = new Summary();
 		this.summary.value = summary;
@@ -138,10 +145,13 @@ public class Journal implements Constants {
 	/**
 	 * Parse a line of iCalendar test.
 	 * 
-	 * @param line        The line of text
-	 * @param parseMethod PARSE_STRICT or PARSE_LOOSE
+	 * @param line
+	 *                    The line of text
+	 * @param parseMethod
+	 *                    PARSE_STRICT or PARSE_LOOSE
 	 */
-	public void parseLine(String icalStr, int parseMethod) throws ParseException, BogusDataException {
+	public void parseLine(String icalStr, int parseMethod)
+			throws ParseException, BogusDataException {
 		String up = icalStr.toUpperCase();
 		if (up.equals("BEGIN:VJOURNAL") || up.equals("END:VJOURNAL")) {
 			// ignore
@@ -179,7 +189,8 @@ public class Journal implements Constants {
 			// Only allow VJOURNAL status types
 			if (status != STATUS_DRAFT && status != STATUS_FINAL) {
 				if (parseMethod == PARSE_STRICT) {
-					throw new BogusDataException("Status type not allowed in VJOURNAL", icalStr);
+					throw new BogusDataException("Status type not allowed in VJOURNAL",
+							icalStr);
 				}
 			}
 		} else if (up.startsWith("URL")) {
@@ -200,7 +211,8 @@ public class Journal implements Constants {
 	 * Get the journal entry summary for the specified language. If not available,
 	 * then the primary summary will be returned.
 	 * 
-	 * @param langage The language ("EN", "FR", etc.)
+	 * @param langage
+	 *                The language ("EN", "FR", etc.)
 	 */
 	public Summary getSummary(String language) {
 		// TODO: handle language param
@@ -238,8 +250,9 @@ public class Journal implements Constants {
 		if (url != null)
 			ret.append(url.toICalendar());
 		if (this.attachments != null) {
-			for (Attachment a : this.attachments) {
-				ret.append(a.toICalendar());
+			for (int i = 0; i < this.attachments.size(); i++) {
+				Attachment attach = (Attachment) this.attachments.get(i);
+				ret.append(attach.toICalendar());
 			}
 		}
 		if (status != STATUS_UNDEFINED) {
@@ -266,7 +279,7 @@ public class Journal implements Constants {
 	}
 
 	public void setAttendees(List<Attendee> attendees) {
-		this.attendees = new ArrayList<Attendee>(attendees);
+		this.attendees = attendees;
 	}
 
 	public Categories getCategories() {
@@ -366,7 +379,7 @@ public class Journal implements Constants {
 	}
 
 	public void setAttachments(List<Attachment> attachments) {
-		this.attachments = new ArrayList<Attachment>(attachments);
+		this.attachments = attachments;
 	}
 
 	public int getStatus() {

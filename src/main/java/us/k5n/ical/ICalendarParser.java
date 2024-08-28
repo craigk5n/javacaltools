@@ -20,9 +20,10 @@
 
 package us.k5n.ical;
 
-import java.util.ArrayList;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * iCalendar Parser class - This object is required for most parsing methods and
@@ -69,12 +70,16 @@ public class ICalendarParser extends CalendarParser implements Constants {
 	 * default DataStore object. To remove the default DataStore, you can call
 	 * removeDataStoreAt(0).
 	 * 
-	 * @param parseMethod Specifies the parsing method, which should be either
-	 *                    PARSE_STRICT or PARSE_LOOSE. The PARSE_STRICT method will
-	 *                    follow the RFC 2445 specification strictly and is intended
-	 *                    to be used to validate iCalendar data. Most clients should
-	 *                    specify PARSE_LOOSE to capture as much of the data as
-	 *                    possible.
+	 * @param parseMethod
+	 *                    Specifies the parsing method, which should be either
+	 *                    PARSE_STRICT
+	 *                    or PARSE_LOOSE. The PARSE_STRICT method will follow the
+	 *                    RFC 2445
+	 *                    specification strictly and is intended to be used to
+	 *                    validate
+	 *                    iCalendar data. Most clients should specify PARSE_LOOSE to
+	 *                    capture
+	 *                    as much of the data as possible.
 	 */
 	public ICalendarParser(int parseMethod) {
 		this(parseMethod, "EN");
@@ -85,18 +90,26 @@ public class ICalendarParser extends CalendarParser implements Constants {
 	 * default DataStore object. To remove the default DataStore, you can call
 	 * removeDataStoreAt(0).
 	 * 
-	 * @param parseMethod Specifies the parsing method, which should be either
-	 *                    PARSE_STRICT or PARSE_LOOSE. The PARSE_STRICT method will
-	 *                    follow the RFC 2445 specification strictly and is intended
-	 *                    to be used to validate iCalendar data. Most clients should
-	 *                    specify PARSE_LOOSE to capture as much of the data as
-	 *                    possible.
-	 * @param language    Default language setting. When parsing objects, the
-	 *                    property that matches this language setting will take
-	 *                    priority. For example, if "EN" is specified as a parameter
-	 *                    here, and an event in iCalendar has a summary in "EN" and
-	 *                    also in "FR", then the summary in "EN" will be returned
-	 *                    when the event is queries for a summary.
+	 * @param parseMethod
+	 *                    Specifies the parsing method, which should be either
+	 *                    PARSE_STRICT
+	 *                    or PARSE_LOOSE. The PARSE_STRICT method will follow the
+	 *                    RFC 2445
+	 *                    specification strictly and is intended to be used to
+	 *                    validate
+	 *                    iCalendar data. Most clients should specify PARSE_LOOSE to
+	 *                    capture
+	 *                    as much of the data as possible.
+	 * @param language
+	 *                    Default language setting. When parsing objects, the
+	 *                    property that
+	 *                    matches this language setting will take priority. For
+	 *                    example, if
+	 *                    "EN" is specified as a parameter here, and an event in
+	 *                    iCalendar
+	 *                    has a summary in "EN" and also in "FR", then the summary
+	 *                    in "EN"
+	 *                    will be returned when the event is queries for a summary.
 	 */
 	public ICalendarParser(int parseMethod, String language) {
 		super(parseMethod);
@@ -106,7 +119,8 @@ public class ICalendarParser extends CalendarParser implements Constants {
 	/**
 	 * Parse a File.
 	 * 
-	 * @param reader The java.io.Reader object to read the iCalendar data from. To
+	 * @param reader
+	 *               The java.io.Reader object to read the iCalendar data from. To
 	 *               parse a String object use java.io.StringReader.
 	 * @return true if no parse errors encountered
 	 */
@@ -119,7 +133,7 @@ public class ICalendarParser extends CalendarParser implements Constants {
 		int state = STATE_NONE;
 		int ln = 0; // line number
 		int startLineNo = 0;
-		ArrayList<String> textLines;
+		List<String> textLines;
 		boolean done = false;
 
 		// Because iCalendar allows lines to be "folded" (continued) onto
@@ -148,7 +162,8 @@ public class ICalendarParser extends CalendarParser implements Constants {
 				// Check to see if next line is a continuation of the current
 				// line. If it is, then append the contents of the next line
 				// onto the current line.
-				if (nextLine != null && nextLine.length() > 0
+				if (nextLine != null
+						&& nextLine.length() > 0
 						&& (nextLine.charAt(0) == SPACE || nextLine.charAt(0) == TAB)) {
 					// Line folding found. Add to previous line and continue.
 					if (notYetParsed.length() == 0)
@@ -177,7 +192,8 @@ public class ICalendarParser extends CalendarParser implements Constants {
 						} else {
 							// Hmmm... should always start with this.
 							if (isParseStrict()) {
-								reportParseError(new ParseError(ln, "Data found outside VCALENDAR block", line));
+								reportParseError(new ParseError(ln,
+										"Data found outside VCALENDAR block", line));
 							}
 						}
 						break;
@@ -213,46 +229,50 @@ public class ICalendarParser extends CalendarParser implements Constants {
 						} else if (lineUp.startsWith("VERSION")) {
 							if (icalVersion != null && isParseStrict()) {
 								// only one of these allowed
-								reportParseError(new ParseError(ln, "Only one VERSION token allowed", line));
+								reportParseError(new ParseError(ln,
+										"Only one VERSION token allowed", line));
 							} else {
 								try {
 									icalVersion = new Property(line, getParseMethod());
 								} catch (ParseException e) {
-									reportParseError(
-											new ParseError(ln, "Parse error in VERSION: " + e.toString(), line));
+									reportParseError(new ParseError(ln,
+											"Parse error in VERSION: " + e.toString(), line));
 								}
 							}
 						} else if (lineUp.startsWith("PRODID")) {
 							if (prodId != null && isParseStrict()) {
 								// only one of these allowed
-								reportParseError(new ParseError(ln, "Only one PRODID token allowed", line));
+								reportParseError(new ParseError(ln,
+										"Only one PRODID token allowed", line));
 							} else {
 								try {
 									prodId = new Property(line, getParseMethod());
 								} catch (ParseException e) {
-									reportParseError(
-											new ParseError(ln, "Parse error in PRODID: " + e.toString(), line));
+									reportParseError(new ParseError(ln,
+											"Parse error in PRODID: " + e.toString(), line));
 								}
 							}
 						} else if (lineUp.startsWith("CALSCALE")) {
 							try {
 								calscale = new Property(line, getParseMethod());
 							} catch (ParseException e) {
-								reportParseError(new ParseError(ln, "Parse error in CALSCALE: " + e.toString(), line));
+								reportParseError(new ParseError(ln,
+										"Parse error in CALSCALE: " + e.toString(), line));
 							}
 						} else if (lineUp.startsWith("METHOD")) {
 							try {
 								method = new Property(line, getParseMethod());
 							} catch (ParseException e) {
-								reportParseError(new ParseError(ln, "Parse error in CALSCALE: " + e.toString(), line));
+								reportParseError(new ParseError(ln,
+										"Parse error in CALSCALE: " + e.toString(), line));
 							}
 						} else {
 							// what else could this be???
 							if (lineUp.trim().length() == 0) {
 								// ignore blank lines
 							} else if (isParseStrict()) {
-								reportParseError(
-										new ParseError(ln, "Unrecognized data found in VCALENDAR block", line));
+								reportParseError(new ParseError(ln,
+										"Unrecognized data found in VCALENDAR block", line));
 							}
 						}
 						break;
@@ -263,11 +283,12 @@ public class ICalendarParser extends CalendarParser implements Constants {
 							state = STATE_VCALENDAR;
 							Timezone timezone = new Timezone(this, startLineNo, textLines);
 							if (timezone.isValid()) {
-								for (DataStore ds : dataStores) {
+								for (int i = 0; i < dataStores.size(); i++) {
+									DataStore ds = (DataStore) dataStores.get(i);
 									ds.storeTimezone(timezone);
 								}
 							}
-							textLines.clear(); // truncate ArrayList
+							textLines.clear(); // truncate List
 						}
 						break;
 
@@ -277,12 +298,13 @@ public class ICalendarParser extends CalendarParser implements Constants {
 							state = STATE_VCALENDAR;
 							// Send the Todo object to all DataStore objects
 							/*****************************************************************
-							 * * TODO - not yet implemented Uncomment this when Todo.java is implemented
-							 * Todo todo = new Todo ( this, startLineNo, textLines ); if ( todo.isValid() )
-							 * { for ( int i = 0; i < dataStores.size(); i++ ) { DataStore ds = (DataStore)
+							 * * TODO - not yet implemented Uncomment this when Todo.java is
+							 * implemented Todo todo = new Todo ( this, startLineNo, textLines
+							 * ); if ( todo.isValid() ) { for ( int i = 0; i <
+							 * dataStores.size(); i++ ) { DataStore ds = (DataStore)
 							 * dataStores.elementAt ( i ); ds.storeTodo ( todo ); } }
 							 ****************************************************************/
-							textLines.clear(); // truncate ArrayList
+							textLines.clear(); // truncate List
 						}
 						break;
 
@@ -293,11 +315,12 @@ public class ICalendarParser extends CalendarParser implements Constants {
 							// Send the Journal object to all DataStore objects
 							Journal journal = new Journal(this, startLineNo, textLines);
 							if (journal.isValid()) {
-								for (DataStore ds : dataStores) {
+								for (int i = 0; i < dataStores.size(); i++) {
+									DataStore ds = (DataStore) dataStores.get(i);
 									ds.storeJournal(journal);
 								}
 							}
-							textLines.clear(); // truncate ArrayList
+							textLines.clear(); // truncate List
 						}
 						break;
 
@@ -307,13 +330,14 @@ public class ICalendarParser extends CalendarParser implements Constants {
 							state = STATE_VCALENDAR;
 							Event event = new Event(this, startLineNo, textLines);
 							if (event.isValid()) {
-								for (DataStore ds : dataStores) {
+								for (int i = 0; i < dataStores.size(); i++) {
+									DataStore ds = (DataStore) dataStores.get(i);
 									ds.storeEvent(event);
 								}
 							} else {
 								System.err.println("ERROR: Invalid VEVENT found");
 							}
-							textLines.clear(); // truncate ArrayList
+							textLines.clear(); // truncate List
 						}
 						break;
 
@@ -323,12 +347,13 @@ public class ICalendarParser extends CalendarParser implements Constants {
 							state = STATE_VCALENDAR;
 							// Send the Freebusy object to all DataStore objects
 							/*****************************************************************
-							 * * TODO - not yet implemented Uncomment this when Freebusy.java is implemented
-							 * Freebusy fb = new Freebusy ( this, startLineNo, textLines ); if (
-							 * fb.isValid() ) { for ( int i = 0; i < dataStores.size(); i++ ) { DataStore ds
-							 * = (DataStore) dataStores.elementAt ( i ); ds.storeFreebusy ( event ); } }
+							 * * TODO - not yet implemented Uncomment this when Freebusy.java
+							 * is implemented Freebusy fb = new Freebusy ( this, startLineNo,
+							 * textLines ); if ( fb.isValid() ) { for ( int i = 0; i <
+							 * dataStores.size(); i++ ) { DataStore ds = (DataStore)
+							 * dataStores.elementAt ( i ); ds.storeFreebusy ( event ); } }
 							 ****************************************************************/
-							textLines.clear(); // truncate ArrayList
+							textLines.clear(); // truncate List
 						}
 						break;
 
@@ -337,7 +362,8 @@ public class ICalendarParser extends CalendarParser implements Constants {
 						if (lineUp.trim().length() == 0) {
 							// ignore blank lines at end of file
 						} else if (isParseStrict()) {
-							reportParseError(new ParseError(ln, "Data found after END:VCALENDAR", line));
+							reportParseError(new ParseError(ln,
+									"Data found after END:VCALENDAR", line));
 						}
 						break;
 				}
@@ -350,10 +376,12 @@ public class ICalendarParser extends CalendarParser implements Constants {
 		// Make sure PRODID and VERSION were specified since they are
 		// required
 		if (icalVersion == null && isParseStrict()) {
-			reportParseError(new ParseError(ln, "No required VERSION attribute found", "n/a"));
+			reportParseError(new ParseError(ln,
+					"No required VERSION attribute found", "n/a"));
 		}
 		if (prodId == null && isParseStrict()) {
-			reportParseError(new ParseError(ln, "No required PRODID attribute found", "n/a"));
+			reportParseError(new ParseError(ln,
+					"No required PRODID attribute found", "n/a"));
 		}
 
 		// iCalendar data is now in line

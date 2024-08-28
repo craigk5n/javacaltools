@@ -21,6 +21,7 @@
 package us.k5n.ical;
 
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -56,8 +57,10 @@ public class Date extends Property implements Constants, Comparable {
 	/**
 	 * Constructor
 	 * 
-	 * @param icalStr One or more lines of iCalendar that specifies a date. Dates
-	 *                must be of one of the following formats:
+	 * @param icalStr
+	 *                One or more lines of iCalendar that specifies a date. Dates
+	 *                must
+	 *                be of one of the following formats:
 	 *                <ul>
 	 *                <li>19991231 (date only, no time)</li>
 	 *                <li>19991231T115900 (date with local time)</li>
@@ -74,13 +77,19 @@ public class Date extends Property implements Constants, Comparable {
 	 * Date object will be considered "untimed" so that there is no need for
 	 * timezone information.
 	 * 
-	 * @param dateType Type of date; this should be an ical property name like
-	 *                 DTSTART, DTEND or DTSTAMP.
-	 * @param year     The 4-digit year
-	 * @param month    The month (1-12)
-	 * @param day      The day of the month (1-31)
+	 * @param dateType
+	 *                 Type of date; this should be an ical property name like
+	 *                 DTSTART,
+	 *                 DTEND or DTSTAMP.
+	 * @param year
+	 *                 The 4-digit year
+	 * @param month
+	 *                 The month (1-12)
+	 * @param day
+	 *                 The day of the month (1-31)
 	 */
-	public Date(String dateType, int year, int month, int day) throws BogusDataException {
+	public Date(String dateType, int year, int month, int day)
+			throws BogusDataException {
 		super(dateType, "");
 
 		this.year = year;
@@ -109,21 +118,30 @@ public class Date extends Property implements Constants, Comparable {
 
 	/**
 	 * Constructor: create a date based on the specified year, month, day, hour,
-	 * minute and second. The date-time value will be in the current user's timezone
-	 * (retrieved from system settings). If the Date object should be "floating"
-	 * (not a different time in each timezone), then the caller should call
-	 * Date.setFloating after the constructor.
+	 * minute and second. The date-time value will be in the current user's
+	 * timezone (retrieved from system settings). If the Date object should be
+	 * "floating" (not a different time in each timezone), then the caller should
+	 * call Date.setFloating after the constructor.
 	 * 
-	 * @param dateType Type of date; this should be an ical property name like
-	 *                 DTSTART, DTEND or DTSTAMP.
-	 * @param year     The 4-digit year
-	 * @param month    The month (1-12)
-	 * @param day      The day of the month (1-31)
-	 * @param hour     The hour of day (0-23)
-	 * @param min      minute of hour (0-59(
-	 * @param sec      seconds (0-59)
+	 * @param dateType
+	 *                 Type of date; this should be an ical property name like
+	 *                 DTSTART,
+	 *                 DTEND or DTSTAMP.
+	 * @param year
+	 *                 The 4-digit year
+	 * @param month
+	 *                 The month (1-12)
+	 * @param day
+	 *                 The day of the month (1-31)
+	 * @param hour
+	 *                 The hour of day (0-23)
+	 * @param min
+	 *                 minute of hour (0-59(
+	 * @param sec
+	 *                 seconds (0-59)
 	 */
-	public Date(String dateType, int year, int month, int day, int hour, int min, int sec) throws BogusDataException {
+	public Date(String dateType, int year, int month, int day, int hour, int min,
+			int sec) throws BogusDataException {
 		super(dateType, "");
 
 		this.year = year;
@@ -169,22 +187,26 @@ public class Date extends Property implements Constants, Comparable {
 	}
 
 	/**
-	 * Constructor from iCalendar-formated line. The format can be either a date or
-	 * a date-time value. If it is a date-time value, it should have a timezone
+	 * Constructor from iCalendar-formated line. The format can be either a date
+	 * or a date-time value. If it is a date-time value, it should have a timezone
 	 * setting. If it has no timezone setting, it will be considered a "floating"
 	 * time.
 	 * 
-	 * @param icalStr   One or more lines of iCalendar that specifies a date
-	 * @param parseMode PARSE_STRICT or PARSE_LOOSE
+	 * @param icalStr
+	 *                  One or more lines of iCalendar that specifies a date
+	 * @param parseMode
+	 *                  PARSE_STRICT or PARSE_LOOSE
 	 */
-	public Date(String icalStr, int parseMode) throws ParseException, BogusDataException {
+	public Date(String icalStr, int parseMode) throws ParseException,
+			BogusDataException {
 		super(icalStr, parseMode);
 
 		year = month = day = 0;
 		hour = minute = second = 0;
 		this.tzid = null;
 
-		for (Attribute a : attributeList) {
+		for (int i = 0; i < attributeList.size(); i++) {
+			Attribute a = attributeAt(i);
 			String aname = a.name.toUpperCase();
 			String aval = a.value.toUpperCase();
 			// Look for VALUE=DATE or VALUE=DATE-TIME
@@ -196,7 +218,8 @@ public class Date extends Property implements Constants, Comparable {
 					dateOnly = false;
 				} else {
 					if (parseMode == PARSE_STRICT) {
-						throw new ParseException("Unknown date VALUE '" + a.value + "'", icalStr);
+						throw new ParseException("Unknown date VALUE '" + a.value + "'",
+								icalStr);
 					}
 				}
 			} else if (aname.equals("TZID")) {
@@ -205,13 +228,16 @@ public class Date extends Property implements Constants, Comparable {
 				try {
 					DateTimeZone timezone = DateTimeZone.forID(tzid);
 					if (timezone == null) {
-						System.err.println("Ignoring unrecognized timezone '" + tzid + "' in Date " + this.getName());
+						System.err.println("Ignoring unrecognized timezone '" + tzid
+								+ "' in Date " + this.getName());
 					}
 				} catch (IllegalArgumentException e1) {
-					System.err.println("Ignoring unrecognized timezone '" + tzid + "' in Date " + this.getName());
+					System.err.println("Ignoring unrecognized timezone '" + tzid
+							+ "' in Date " + this.getName());
 				}
 			} else {
-				System.out.println("Ignoring unknown date attribute " + a.name + " in Date " + this.getName());
+				System.out.println("Ignoring unknown date attribute " + a.name
+						+ " in Date " + this.getName());
 				// TODO: anything else allowed here?
 			}
 		}
@@ -228,7 +254,8 @@ public class Date extends Property implements Constants, Comparable {
 		for (int i = 0; i < 8; i++) {
 			char ch = inDate.charAt(i);
 			if (ch < '0' || ch > '9') {
-				throw new ParseException("Invalid date format '" + inDate + "'", inDate);
+				throw new ParseException("Invalid date format '" + inDate + "'",
+						inDate);
 			}
 		}
 		year = Integer.parseInt(inDate.substring(0, 4));
@@ -240,11 +267,13 @@ public class Date extends Property implements Constants, Comparable {
 		if (year % 4 == 0) {
 			// leap year
 			if (day > leapMonthDays[month - 1]) {
-				throw new BogusDataException("Invalid day of month '" + inDate + "'", inDate);
+				throw new BogusDataException("Invalid day of month '" + inDate + "'",
+						inDate);
 			}
 		} else {
 			if (day > monthDays[month - 1]) {
-				throw new BogusDataException("Invalid day of month '" + inDate + "'", inDate);
+				throw new BogusDataException("Invalid day of month '" + inDate + "'",
+						inDate);
 			}
 		}
 		// TODO: parse time, handle localtime, handle timezone
@@ -256,17 +285,20 @@ public class Date extends Property implements Constants, Comparable {
 					minute = Integer.parseInt(inDate.substring(11, 13));
 					second = Integer.parseInt(inDate.substring(13, 15));
 					if (hour > 23 || minute > 59 || second > 59) {
-						throw new BogusDataException("Invalid time in date string '" + inDate + "'", inDate);
+						throw new BogusDataException("Invalid time in date string '"
+								+ inDate + "'", inDate);
 					}
 					if (inDate.length() > 15) {
 						isUTC = inDate.charAt(15) == 'Z';
 					}
 				} catch (NumberFormatException nef) {
-					throw new BogusDataException("Invalid time in date string '" + inDate + "' - " + nef, inDate);
+					throw new BogusDataException("Invalid time in date string '"
+							+ inDate + "' - " + nef, inDate);
 				}
 			} else {
 				// Invalid format
-				throw new ParseException("Invalid date format '" + inDate + "'", inDate);
+				throw new ParseException("Invalid date format '" + inDate + "'",
+						inDate);
 			}
 		} else {
 			// Just date, no time
@@ -276,8 +308,10 @@ public class Date extends Property implements Constants, Comparable {
 		if (isUTC && !dateOnly) {
 			// Use Joda Time to convert UTC to localtime
 			DateTime utcDateTime = new DateTime(DateTimeZone.UTC);
-			utcDateTime = utcDateTime.withDate(year, month, day).withTime(hour, minute, second, 0);
-			DateTime localDateTime = utcDateTime.withZone(DateTimeZone.getDefault());
+			utcDateTime = utcDateTime.withDate(year, month, day).withTime(hour,
+					minute, second, 0);
+			DateTime localDateTime = utcDateTime.withZone(DateTimeZone
+					.getDefault());
 			year = localDateTime.getYear();
 			month = localDateTime.getMonthOfYear();
 			day = localDateTime.getDayOfMonth();
@@ -293,16 +327,20 @@ public class Date extends Property implements Constants, Comparable {
 				tz = DateTimeZone.forID(this.tzid);
 			} catch (IllegalArgumentException e1) {
 				if (parseMode == PARSE_STRICT)
-					throw new BogusDataException("Invalid timezone '" + this.tzid + "'", icalStr);
+					throw new BogusDataException(
+							"Invalid timezone '" + this.tzid + "'", icalStr);
 			}
 			if (tz == null && parseMode == PARSE_STRICT) {
-				throw new BogusDataException("Invalid timezone '" + this.tzid + "'", icalStr);
+				throw new BogusDataException("Invalid timezone '" + this.tzid + "'",
+						icalStr);
 			}
 			if (tz != null) {
 				// Convert to localtime
 				DateTime utcDateTime = new DateTime(tz);
-				utcDateTime = utcDateTime.withDate(year, month, day).withTime(hour, minute, second, 0);
-				DateTime localDateTime = utcDateTime.withZone(DateTimeZone.getDefault());
+				utcDateTime = utcDateTime.withDate(year, month, day).withTime(
+						hour, minute, second, 0);
+				DateTime localDateTime = utcDateTime.withZone(DateTimeZone
+						.getDefault());
 				year = localDateTime.getYear();
 				month = localDateTime.getMonthOfYear();
 				day = localDateTime.getDayOfMonth();
@@ -339,11 +377,12 @@ public class Date extends Property implements Constants, Comparable {
 	}
 
 	/**
-	 * Set whether this Date object is "floating". If it is floating, then the same
-	 * time should be used for all timezones. If this is set to true, all timezone
-	 * info will be removed from the Date object.
+	 * Set whether this Date object is "floating". If it is floating, then the
+	 * same time should be used for all timezones. If this is set to true, all
+	 * timezone info will be removed from the Date object.
 	 * 
-	 * @param floating The new floating value
+	 * @param floating
+	 *                 The new floating value
 	 */
 	public void setFloating(boolean floating) {
 		this.floating = floating;
@@ -353,15 +392,18 @@ public class Date extends Property implements Constants, Comparable {
 	 * Get a Data object that represents the current date and has no time
 	 * information.
 	 * 
-	 * @param dateType Type of date; this should be an ical property name like
-	 *                 DTSTART, DTEND or DTSTAMP.
+	 * @param dateType
+	 *                 Type of date; this should be an ical property name like
+	 *                 DTSTART,
+	 *                 DTEND or DTSTAMP.
 	 * @return A Date object set to the current date
 	 */
 	public static Date getCurrentDate(String dateType) {
 		Date d = null;
 		Calendar c = Calendar.getInstance();
 		try {
-			d = new Date(dateType, c.get(Calendar.YEAR), c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH));
+			d = new Date(dateType, c.get(Calendar.YEAR),
+					c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH));
 		} catch (BogusDataException e2) {
 			// This should never happen since we're setting the m/d/y
 			System.err.println(e2.toString());
@@ -373,15 +415,18 @@ public class Date extends Property implements Constants, Comparable {
 	/**
 	 * Get a Data object that represents the current date and time information.
 	 * 
-	 * @param dateType Type of date; this should be an ical property name like
-	 *                 DTSTART, DTEND or DTSTAMP.
+	 * @param dateType
+	 *                 Type of date; this should be an ical property name like
+	 *                 DTSTART,
+	 *                 DTEND or DTSTAMP.
 	 * @return A Date object set to the current date
 	 */
 	public static Date getCurrentDateTime(String dateType) {
 		Date d = null;
 		Calendar c = Calendar.getInstance();
 		try {
-			d = new Date(dateType, c.get(Calendar.YEAR), c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH));
+			d = new Date(dateType, c.get(Calendar.YEAR),
+					c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH));
 			d.setHour(c.get(Calendar.HOUR_OF_DAY));
 			d.setMinute(c.get(Calendar.MINUTE));
 			d.setSecond(c.get(Calendar.SECOND));
@@ -436,7 +481,8 @@ public class Date extends Property implements Constants, Comparable {
 			// Invalid timezone
 		}
 		if (tz != null) {
-			DateTime dt = new DateTime(year, month, day, hour, minute, second, 0, tz);
+			DateTime dt = new DateTime(year, month, day, hour, minute, second, 0,
+					tz);
 			DateTime utc = dt.withZone(DateTimeZone.forID("GMT"));
 			sb.append(utc.getYear());
 			if (utc.getMonthOfYear() < 10)
@@ -570,18 +616,41 @@ public class Date extends Property implements Constants, Comparable {
 
 	/**
 	 * Get the ISO8601 week of year. NOTE: This is DIFFERENT than the
-	 * java.util.Calendar week number.
+	 * java.util.Calendar week number. The first week of the year is the week that
+	 * contains that year's first Thursday (='First 4-day week').
 	 * 
 	 * @return
 	 */
 	public int getWeekOfYear() {
-		int weekdayJan1 = Utils.getFirstDayOfWeekForYear(this.year);
-		int[] offsetsToWeek0 = { 6, 7, 8, 9, 10, 4, 5 };
-		int offsetToWeek0 = offsetsToWeek0[weekdayJan1];
-		int thisDoy = this.getDayOfYear();
-		int daysSinceStartOfWeek0 = thisDoy + offsetToWeek0;
-		int weekNum = daysSinceStartOfWeek0 / 7;
-		return weekNum;
+		int dayOfYear = getDayOfYear();
+		int jan1DayOfWeek = Utils.getDayOfWeek(getYear(), 1, 1);
+
+		// Calculate the offset of the first week according to ISO 8601
+		int firstWeekOffset = (jan1DayOfWeek <= 4) ? jan1DayOfWeek - 1 : jan1DayOfWeek - 8;
+
+		// Adjust day of the year to calculate the correct week number
+		int adjustedDayOfYear = dayOfYear + firstWeekOffset;
+		int weekNumber = adjustedDayOfYear / 7 + 1;
+
+		// Handle the case where adjustedDayOfYear results in 0 or negative, indicating
+		// that it belongs to the last week of the previous year
+		if (adjustedDayOfYear <= 0) {
+			try {
+				return (new Date("DTSTART", getYear() - 1, 12, 31)).getWeekOfYear();
+			} catch (BogusDataException e) {
+				e.printStackTrace();
+			}
+		}
+
+		// Handle the case where the week number should actually belong to the next year
+		if (weekNumber > 52) {
+			int nextYearJan1DayOfWeek = Utils.getDayOfWeek(getYear() + 1, 1, 1);
+			if (nextYearJan1DayOfWeek <= 3) {
+				return 1;
+			}
+		}
+
+		return weekNumber;
 	}
 
 	/**
@@ -610,7 +679,8 @@ public class Date extends Property implements Constants, Comparable {
 			if (this.dateOnly)
 				ret = new Date(this.name, this.year, this.month, this.day);
 			else
-				ret = new Date(this.name, this.year, this.month, this.day, this.hour, this.minute, this.second);
+				ret = new Date(this.name, this.year, this.month, this.day, this.hour,
+						this.minute, this.second);
 		} catch (BogusDataException e1) {
 			// TODO
 		}
@@ -624,7 +694,8 @@ public class Date extends Property implements Constants, Comparable {
 	/**
 	 * Is the date/time before the specified date?
 	 * 
-	 * @param d2 The Date object to compare against
+	 * @param d2
+	 *           The Date object to compare against
 	 * @return
 	 */
 	public boolean isBefore(Date d2) {
@@ -635,7 +706,8 @@ public class Date extends Property implements Constants, Comparable {
 	/**
 	 * Is the date/time after the specified date?
 	 * 
-	 * @param d2 The Date object to compare against
+	 * @param d2
+	 *           The Date object to compare against
 	 * @return
 	 */
 	public boolean isAfter(Date d2) {

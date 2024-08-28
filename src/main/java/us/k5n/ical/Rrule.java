@@ -20,8 +20,8 @@
 
 package us.k5n.ical;
 
-import java.util.Collections;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.google.ical.iter.RecurrenceIterator;
@@ -49,8 +49,10 @@ class RruleByday {
 			positive = false;
 			i++;
 		}
-		if (str.charAt(i) >= '0' && str.charAt(i) <= '9' && str.charAt(i + 1) >= '0' && str.charAt(i + 1) <= '9') {
-			number = (int) (str.charAt(i) - '0') * 10 + (int) (str.charAt(i + 1) - '0');
+		if (str.charAt(i) >= '0' && str.charAt(i) <= '9'
+				&& str.charAt(i + 1) >= '0' && str.charAt(i + 1) <= '9') {
+			number = (int) (str.charAt(i) - '0') * 10
+					+ (int) (str.charAt(i + 1) - '0');
 			i += 2;
 		} else if (str.charAt(i) >= '0' && str.charAt(i) <= '9') {
 			number = (int) (str.charAt(i) - '0');
@@ -146,7 +148,8 @@ class RruleByday {
  * 
  * This class does its own parsing of the RRULE values. However, the recurrance
  * dates are generating using Google's RFC2445 jar package. See the following
- * URL for more info: <a href=
+ * URL for more info: <a
+ * href=
  * "http://code.google.com/p/google-rfc-2445/">http://code.google.com/p/google-rfc-2445/</a>
  * 
  * @author Craig Knudsen, craig@k5n.us
@@ -188,7 +191,8 @@ public class Rrule extends Property implements Constants {
 	/**
 	 * Create an Rrule.
 	 * 
-	 * @param frequence The frequency of the recurrence (FREQ_DAILY, FREQ_WEEKLY,
+	 * @param frequence
+	 *                  The frequency of the recurrence (FREQ_DAILY, FREQ_WEEKLY,
 	 *                  etc.)
 	 */
 	public Rrule(int frequency) {
@@ -199,10 +203,13 @@ public class Rrule extends Property implements Constants {
 	/**
 	 * Construct based on iCalendar RRULE text
 	 * 
-	 * @param icalStr   The line(s) of iCalendar text (should be unfolded already)
-	 * @param parseMode PARSE_STRICT or PARSE_LOOSE
+	 * @param icalStr
+	 *                  The line(s) of iCalendar text (should be unfolded already)
+	 * @param parseMode
+	 *                  PARSE_STRICT or PARSE_LOOSE
 	 */
-	public Rrule(String icalStr, int parseMode) throws ParseException, BogusDataException {
+	public Rrule(String icalStr, int parseMode) throws ParseException,
+			BogusDataException {
 		super(icalStr, parseMode);
 
 		// Set defaults
@@ -212,9 +219,11 @@ public class Rrule extends Property implements Constants {
 		count = -1; // not in use
 
 		// No attributes allowed on RRULE
-		for (Attribute a : attributeList) {
+		for (int i = 0; i < attributeList.size(); i++) {
+			Attribute a = attributeAt(i);
 			if (parseMode == PARSE_STRICT) {
-				throw new ParseException("No attribute '" + a.name + "' allowed in RRULE", icalStr);
+				throw new ParseException("No attribute '" + a.name
+						+ "' allowed in RRULE", icalStr);
 			}
 		}
 
@@ -228,7 +237,8 @@ public class Rrule extends Property implements Constants {
 			if (aname.equals("FREQ")) {
 				// only one allowed
 				if (freq != FREQ_NOT_SPECIFIED)
-					throw new BogusDataException("More than one RRULE FREQ is not allowed", icalStr);
+					throw new BogusDataException(
+							"More than one RRULE FREQ is not allowed", icalStr);
 				if (aval.equals("YEARLY")) {
 					freq = FREQ_YEARLY;
 				} else if (aval.equals("MONTHLY")) {
@@ -244,27 +254,32 @@ public class Rrule extends Property implements Constants {
 				} else if (aval.equals("SECONDLY")) {
 					freq = FREQ_SECONDLY;
 				} else {
-					throw new BogusDataException("Invalid RRULE FREQ '" + aval + "'", icalStr);
+					throw new BogusDataException("Invalid RRULE FREQ '" + aval + "'",
+							icalStr);
 				}
 			} else if (aname.equals("INTERVAL")) {
 				try {
 					interval = Integer.parseInt(aval);
 				} catch (NumberFormatException nef) {
-					throw new BogusDataException("Invalid RRULE INTERVAL '" + aval + "'", icalStr);
+					throw new BogusDataException("Invalid RRULE INTERVAL '" + aval
+							+ "'", icalStr);
 				}
 			} else if (aname.equals("UNTIL")) {
 				try {
 					untilDate = new Date("XXX:" + aval);
 				} catch (BogusDataException bde) {
-					throw new BogusDataException("Invalid RRULE UNTIL date: " + bde.error, icalStr);
+					throw new BogusDataException("Invalid RRULE UNTIL date: "
+							+ bde.error, icalStr);
 				} catch (ParseException pe) {
-					throw new BogusDataException("Invalid RRULE UNTIL date: " + pe.error, icalStr);
+					throw new BogusDataException("Invalid RRULE UNTIL date: "
+							+ pe.error, icalStr);
 				}
 			} else if (aname.equals("COUNT")) {
 				try {
 					count = Integer.parseInt(aval);
 				} catch (NumberFormatException nef) {
-					throw new BogusDataException("Invalid RRULE COUNT '" + aval + "'", icalStr);
+					throw new BogusDataException("Invalid RRULE COUNT '" + aval + "'",
+							icalStr);
 				}
 			} else if (aname.equals("WKST")) {
 				// TODO
@@ -279,11 +294,12 @@ public class Rrule extends Property implements Constants {
 					if (StringUtils.isNumber(s[j], true)) {
 						bysetpos[j] = Integer.parseInt(s[j]);
 						if (bysetpos[j] < -366 || bysetpos[j] > 366) {
-							throw new BogusDataException("Invalid RRULE BYSETPOS (range) '" + bysetpos[j] + "'",
-									icalStr);
+							throw new BogusDataException("Invalid RRULE BYSETPOS (range) '"
+									+ bysetpos[j] + "'", icalStr);
 						}
 					} else {
-						throw new BogusDataException("Invalid RRULE BYSETPOS '" + s[j] + "'", icalStr);
+						throw new BogusDataException("Invalid RRULE BYSETPOS '" + s[j]
+								+ "'", icalStr);
 					}
 				}
 			} else if (aname.equals("BYMONTH")) {
@@ -293,7 +309,8 @@ public class Rrule extends Property implements Constants {
 					if (StringUtils.isNumber(s[j], true))
 						bymonth[j] = Integer.parseInt(s[j]);
 					else {
-						throw new BogusDataException("Invalid RRULE BYMONTH '" + s[j] + "'", icalStr);
+						throw new BogusDataException("Invalid RRULE BYMONTH '" + s[j]
+								+ "'", icalStr);
 					}
 				}
 			} else if (aname.equals("BYYEARDAY")) {
@@ -303,10 +320,12 @@ public class Rrule extends Property implements Constants {
 					if (StringUtils.isNumber(s[j], true)) {
 						byyearday[j] = Integer.parseInt(s[j]);
 						if (byyearday[j] < -366 || byyearday[j] > 366) {
-							throw new BogusDataException("Invalid RRULE BYYEARDAY '" + s[j] + "'", icalStr);
+							throw new BogusDataException("Invalid RRULE BYYEARDAY '" + s[j]
+									+ "'", icalStr);
 						}
 					} else {
-						throw new BogusDataException("Invalid RRULE BYYEARDAY '" + s[j] + "'", icalStr);
+						throw new BogusDataException("Invalid RRULE BYYEARDAY '" + s[j]
+								+ "'", icalStr);
 					}
 				}
 			} else if (aname.equals("BYMONTHDAY")) {
@@ -316,11 +335,13 @@ public class Rrule extends Property implements Constants {
 					if (StringUtils.isNumber(s[j], true)) {
 						bymonthday[j] = Integer.parseInt(s[j]);
 						if (bymonthday[j] < -31 || bymonthday[j] > 31) {
-							throw new BogusDataException("Invalid RRULE BYMONTHDAY (range) '" + bymonthday[j] + "'",
+							throw new BogusDataException(
+									"Invalid RRULE BYMONTHDAY (range) '" + bymonthday[j] + "'",
 									icalStr);
 						}
 					} else {
-						throw new BogusDataException("Invalid RRULE BYMONTHDAY '" + s[j] + "'", icalStr);
+						throw new BogusDataException("Invalid RRULE BYMONTHDAY '" + s[j]
+								+ "'", icalStr);
 					}
 				}
 			} else if (aname.equals("BYDAY")) {
@@ -329,7 +350,8 @@ public class Rrule extends Property implements Constants {
 				for (int j = 0; j < bydaystr.length; j++) {
 					byday[j] = new RruleByday(bydaystr[j]);
 					if (!byday[j].valid) {
-						throw new BogusDataException("Invalid RRULE BYDAY '" + bydaystr[j] + "'", icalStr);
+						throw new BogusDataException("Invalid RRULE BYDAY '"
+								+ bydaystr[j] + "'", icalStr);
 					}
 				}
 			} else if (aname.equals("BYHOUR")) {
@@ -338,7 +360,8 @@ public class Rrule extends Property implements Constants {
 				// validate
 				for (int j = 0; j < s.length; j++) {
 					if (!StringUtils.isNumber(s[j]) || Integer.parseInt(s[j]) > 23) {
-						throw new BogusDataException("Invalid RRULE BYHOUR '" + s[j] + "'", icalStr);
+						throw new BogusDataException("Invalid RRULE BYHOUR '" + s[j]
+								+ "'", icalStr);
 					} else {
 						byhour[j] = Integer.parseInt(s[j]);
 					}
@@ -349,7 +372,8 @@ public class Rrule extends Property implements Constants {
 				// validate
 				for (int j = 0; j < s.length; j++) {
 					if (!StringUtils.isNumber(s[j]) || Integer.parseInt(s[j]) > 59) {
-						throw new BogusDataException("Invalid RRULE BYMINUTE '" + s[j] + "'", icalStr);
+						throw new BogusDataException("Invalid RRULE BYMINUTE '" + s[j]
+								+ "'", icalStr);
 					} else {
 						byminute[j] = Integer.parseInt(s[j]);
 					}
@@ -360,20 +384,23 @@ public class Rrule extends Property implements Constants {
 				// validate
 				for (int j = 0; j < s.length; j++) {
 					if (!StringUtils.isNumber(s[j]) || Integer.parseInt(s[j]) > 59) {
-						throw new BogusDataException("Invalid RRULE BYSECOND '" + s[j] + "'", icalStr);
+						throw new BogusDataException("Invalid RRULE BYSECOND '" + s[j]
+								+ "'", icalStr);
 					} else {
 						bysecond[j] = Integer.parseInt(s[j]);
 					}
 				}
 			} else if (parseMode == PARSE_STRICT) {
 				// Only generate exception if strict parsing
-				throw new ParseException("Invalid RRULE attribute '" + aname + "'", icalStr);
+				throw new ParseException("Invalid RRULE attribute '" + aname + "'",
+						icalStr);
 			}
 		}
 
 		// freq must be defined
 		if (freq == FREQ_NOT_SPECIFIED) {
-			throw new BogusDataException("No FREQ attribute found in RRULE", icalStr);
+			throw new BogusDataException("No FREQ attribute found in RRULE",
+					icalStr);
 		}
 	}
 
@@ -499,12 +526,15 @@ public class Rrule extends Property implements Constants {
 	/**
 	 * Generate a List of Date objects indicating when this event will repeat.
 	 * This DOES NOT include the original event date specified by DTSTART. The
-	 * Google RFC2445 package is used to generate recurrences. See the following URL
-	 * for more info: <a href=
+	 * Google RFC2445 package is used to generate recurrences. See the following
+	 * URL for more info: <a
+	 * href=
 	 * "http://code.google.com/p/google-rfc-2445/">http://code.google.com/p/google-rfc-2445/</a>
 	 * 
-	 * @param startDate the start date of the recurrence
-	 * @param tzid      the timezone ID
+	 * @param startDate
+	 *                  the start date of the recurrence
+	 * @param tzid
+	 *                  the timezone ID
 	 */
 	public List<Date> generateRecurrances(Date startDate, String tzid) {
 		return generateRecurrances(startDate, tzid, null, null);
@@ -513,25 +543,37 @@ public class Rrule extends Property implements Constants {
 	/**
 	 * Generate a List of Date objects indicating when this event will repeat.
 	 * This DOES NOT include the original event date specified by DTSTART. The
-	 * Google RFC2445 package is used to generate recurrences. See the following URL
-	 * for more info: <a href=
+	 * Google RFC2445 package is used to generate recurrences. See the following
+	 * URL for more info: <a
+	 * href=
 	 * "http://code.google.com/p/google-rfc-2445/">http://code.google.com/p/google-rfc-2445/</a>
 	 * 
-	 * @param startDate the start date of the recurrence
-	 * @param tzid      the timezone ID
-	 * @param exdates   exception dates that should not be included in the series
-	 *                  (from the EXDATE iCalendar field)
-	 * @param rdates    inclusion dates that should be added to the series (from the
-	 *                  RDATE iCalendar field)
+	 * @param startDate
+	 *                  the start date of the recurrence
+	 * @param tzid
+	 *                  the timezone ID
+	 * @param exdates
+	 *                  exception dates that should not be included in the series
+	 *                  (from
+	 *                  the EXDATE iCalendar field)
+	 * @param rdates
+	 *                  inclusion dates that should be added to the series (from the
+	 *                  RDATE
+	 *                  iCalendar field)
 	 */
-	public List<Date> generateRecurrances(Date startDate, String tzid, List<Date> exdates, List<Date> rdates) {
-		ArrayList<Date> ret = new ArrayList<Date>();
+	public List<Date> generateRecurrances(Date startDate, String tzid,
+			List<Date> exdates, List<Date> rdates) {
+		List<Date> ret = new ArrayList<Date>();
 		com.google.ical.values.DateValue dtStart = null;
 		if (startDate.dateOnly) {
-			dtStart = new DateValueImpl(startDate.getYear(), startDate.getMonth(), startDate.getDay());
+			dtStart = new DateValueImpl(startDate.getYear(),
+					startDate.getMonth(), startDate.getDay());
 		} else {
-			dtStart = new DateTimeValueImpl(startDate.getYear(), startDate.getMonth(), startDate.getDay(),
-					startDate.getHour(), startDate.getMinute(), startDate.getSecond());
+			dtStart = new DateTimeValueImpl(startDate.getYear(), startDate
+					.getMonth(), startDate.getDay(), startDate.getHour(),
+					startDate
+							.getMinute(),
+					startDate.getSecond());
 		}
 		com.google.ical.values.RRule rrule = new com.google.ical.values.RRule();
 		rrule.setName("RRULE");
@@ -569,7 +611,7 @@ public class Rrule extends Property implements Constants {
 		if (this.bymonthday != null && this.bymonthday.length > 0)
 			rrule.setByMonthDay(this.bymonthday);
 		if (this.byday != null && this.byday.length > 0) {
-			ArrayList<WeekdayNum> weekdays = new ArrayList<WeekdayNum>();
+			List<WeekdayNum> weekdays = new ArrayList<WeekdayNum>();
 			for (int i = 0; i < this.byday.length; i++) {
 				WeekdayNum weekday = this.byday[i].toWeekdayNum();
 				weekdays.add(weekday);
@@ -587,11 +629,12 @@ public class Rrule extends Property implements Constants {
 		if (this.untilDate != null) {
 			com.google.ical.values.DateValue rruleUntil = null;
 			if (this.untilDate.dateOnly) {
-				rruleUntil = new DateValueImpl(this.untilDate.getYear(), this.untilDate.getMonth(),
-						this.untilDate.getDay());
+				rruleUntil = new DateValueImpl(this.untilDate.getYear(),
+						this.untilDate.getMonth(), this.untilDate.getDay());
 			} else {
-				rruleUntil = new DateTimeValueImpl(this.untilDate.getYear(), this.untilDate.getMonth(),
-						this.untilDate.getDay(), this.untilDate.getHour(), this.untilDate.getMinute(),
+				rruleUntil = new DateTimeValueImpl(this.untilDate.getYear(),
+						this.untilDate.getMonth(), this.untilDate.getDay(),
+						this.untilDate.getHour(), this.untilDate.getMinute(),
 						this.untilDate.getSecond());
 			}
 			rrule.setUntil(rruleUntil);
@@ -600,18 +643,20 @@ public class Rrule extends Property implements Constants {
 		// TODO: does this conflict with Joda's own Timezone stuff?
 		// should we be using a Joda timezone object here?
 		if (tzid==null)
-		  tzid="GMT";
+			tzid="GMT";
 		java.util.TimeZone timezone = java.util.TimeZone.getTimeZone(tzid);
-		RecurrenceIterator iter = RecurrenceIteratorFactory.createRecurrenceIterator(rrule, dtStart, timezone);
+		RecurrenceIterator iter = RecurrenceIteratorFactory
+				.createRecurrenceIterator(rrule, dtStart, timezone);
 		int num = 0;
-		int thisYear = java.util.Calendar.getInstance().get(java.util.Calendar.YEAR);
+		int thisYear = java.util.Calendar.getInstance().get(
+				java.util.Calendar.YEAR);
 		while (iter.hasNext() && num++ < 10000) {
 			com.google.ical.values.DateValue d = iter.next();
 			if (d instanceof com.google.ical.values.DateTimeValue) {
 				com.google.ical.values.DateTimeValue dt = (com.google.ical.values.DateTimeValue) d;
 				try {
-					Date newDateTime = new Date("XXX", dt.year(), dt.month(), dt.day(), dt.hour(), dt.minute(),
-							dt.second());
+					Date newDateTime = new Date("XXX", dt.year(), dt.month(), dt
+							.day(), dt.hour(), dt.minute(), dt.second());
 					boolean isException = false;
 					for (int i = 0; exdates != null && i < exdates.size(); i++) {
 						Date exdate = exdates.get(i);
