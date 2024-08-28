@@ -21,7 +21,6 @@
 package us.k5n.ical;
 
 import java.util.Calendar;
-import java.util.GregorianCalendar;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;

@@ -366,7 +366,7 @@ public class Utils implements Constants {
 	}
 
 	/**
-	 * Get the day of the week (0=Sun to 6=Sat) for any specified date.
+	 * Get the day of the week (0=Sun to 6=Sat) for any specified date. This works for any Gregorian calendar (after 1583).
 	 * 
 	 * @param y
 	 *          year (NNNN format, > 0)

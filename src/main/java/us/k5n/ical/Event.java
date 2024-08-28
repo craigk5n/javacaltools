@@ -584,6 +584,16 @@ public class Event implements Constants {
 			ret.append(lastModified.toICalendar());
 		if (rrule != null)
 			ret.append(rrule.toICalendar());
+		if (rdates != null && rdates.size() > 0) {
+			ret.append("RDATE:");
+			for ( int i = 0; i < rdates.size(); i++ ) {
+				if ( i > 0 ) {
+					ret.append(',');
+				}
+				ret.append(Utils.DateToYYYYMMDD(rdates.get(i)));
+			}
+			ret.append(CRLF);
+		}
 		if (classification != null)
 			ret.append(classification.toICalendar());
 		if (this.exdates != null && this.exdates.size() > 0) {
