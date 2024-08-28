@@ -50,14 +50,15 @@ public class RruleTest implements Constants {
 			Rrule rrule = new Rrule(str, PARSE_STRICT);
 			assertNotNull(rrule, "RRULE should not be null");
 
-			// This will generate the repeating event dates and does not include the original event date.
+			// This will generate the repeating event dates and does not include the
+			// original event date.
 			// So it should be 9 dates.
 			List<Date> dates = rrule.generateRecurrances(dtStart, tzid);
 			assertEquals(9, dates.size());
 			for (int i = 0; i < dates.size(); i++) {
 				Date d = dates.get(i);
 				String ymd = Utils.DateToYYYYMMDD(d);
-				assertEquals(expectedResults[i+1], ymd);
+				assertEquals(expectedResults[i + 1], ymd);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -81,7 +82,7 @@ public class RruleTest implements Constants {
 			for (int i = 0; i < dates.size(); i++) {
 				Date d = dates.get(i);
 				String ymd = Utils.DateToYYYYMMDD(d);
-				assertTrue(ymd.equals(expectedResults[i]),
+				assertEquals(expectedResults[i], ymd,
 						"Unexpected date: got " + ymd + " instead of " + expectedResults[i]);
 			}
 		} catch (Exception e) {
@@ -105,7 +106,7 @@ public class RruleTest implements Constants {
 			for (int i = 0; i < dates.size() && i < expectedResults.length; i++) {
 				Date d = dates.get(i);
 				String ymd = Utils.DateToYYYYMMDD(d);
-				assertTrue(ymd.equals(expectedResults[i]),
+				assertEquals(expectedResults[i], ymd,
 						"Unexpected date: got " + ymd + " instead of " + expectedResults[i]);
 			}
 		} catch (Exception e) {
@@ -130,7 +131,7 @@ public class RruleTest implements Constants {
 			for (int i = 0; i < dates.size() && i < expectedResults.length; i++) {
 				Date d = dates.get(i);
 				String ymd = Utils.DateToYYYYMMDD(d);
-				assertTrue(ymd.equals(expectedResults[i]),
+				assertEquals(expectedResults[i], ymd,
 						"Unexpected date: got " + ymd + " instead of " + expectedResults[i]);
 			}
 		} catch (Exception e) {
@@ -155,7 +156,7 @@ public class RruleTest implements Constants {
 			for (int i = 0; i < dates.size() && i < expectedResults.length; i++) {
 				Date d = dates.get(i);
 				String ymd = Utils.DateToYYYYMMDD(d);
-				assertTrue(ymd.equals(expectedResults[i]),
+				assertEquals(expectedResults[i], ymd,
 						"Unexpected date: got " + ymd + " instead of " + expectedResults[i]);
 			}
 		} catch (Exception e) {
@@ -179,7 +180,7 @@ public class RruleTest implements Constants {
 			for (int i = 0; i < dates.size() && i < expectedResults.length; i++) {
 				Date d = dates.get(i);
 				String ymd = Utils.DateToYYYYMMDD(d);
-				assertTrue(ymd.equals(expectedResults[i]),
+				assertEquals(expectedResults[i], ymd,
 						"Unexpected date: got " + ymd + " instead of " + expectedResults[i]);
 			}
 		} catch (Exception e) {
@@ -204,7 +205,7 @@ public class RruleTest implements Constants {
 			for (int i = 0; i < dates.size() && i < expectedResults.length; i++) {
 				Date d = dates.get(i);
 				String ymd = Utils.DateToYYYYMMDD(d);
-				assertTrue(ymd.equals(expectedResults[i]),
+				assertEquals(expectedResults[i], ymd,
 						"Unexpected date: got " + ymd + " instead of " + expectedResults[i]);
 			}
 		} catch (Exception e) {
@@ -228,7 +229,7 @@ public class RruleTest implements Constants {
 			for (int i = 0; i < dates.size() && i < expectedResults.length; i++) {
 				Date d = dates.get(i);
 				String ymd = Utils.DateToYYYYMMDD(d);
-				assertTrue(ymd.equals(expectedResults[i]),
+				assertEquals(expectedResults[i], ymd,
 						"Unexpected date: got " + ymd + " instead of " + expectedResults[i]);
 			}
 		} catch (Exception e) {
@@ -253,7 +254,7 @@ public class RruleTest implements Constants {
 			for (int i = 0; i < dates.size() && i < expectedResults.length; i++) {
 				Date d = dates.get(i);
 				String ymd = Utils.DateToYYYYMMDD(d);
-				assertTrue(ymd.equals(expectedResults[i]),
+				assertEquals(expectedResults[i], ymd,
 						"Unexpected date: got " + ymd + " instead of " + expectedResults[i]);
 			}
 		} catch (Exception e) {
@@ -277,7 +278,7 @@ public class RruleTest implements Constants {
 			for (int i = 0; i < dates.size() && i < expectedResults.length; i++) {
 				Date d = dates.get(i);
 				String ymd = Utils.DateToYYYYMMDD(d);
-				assertTrue(ymd.equals(expectedResults[i]),
+				assertEquals(expectedResults[i], ymd,
 						"Unexpected date: got " + ymd + " instead of " + expectedResults[i]);
 			}
 		} catch (Exception e) {
@@ -301,7 +302,7 @@ public class RruleTest implements Constants {
 			for (int i = 0; i < dates.size() && i < expectedResults.length; i++) {
 				Date d = dates.get(i);
 				String ymd = Utils.DateToYYYYMMDD(d);
-				assertTrue(ymd.equals(expectedResults[i]),
+				assertEquals(expectedResults[i], ymd,
 						"Unexpected date: got " + ymd + " instead of " + expectedResults[i]);
 			}
 			assertTrue(dates.size() == 5, "Expected 5 events, but got: " + dates.size());
