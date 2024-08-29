@@ -37,7 +37,7 @@ import org.joda.time.DateTimeZone;
  * 
  * @author Craig Knudsen, craig@k5n.us
  */
-public class Date extends Property implements Constants, Comparable {
+public class Date extends Property implements Comparable {
 	int year, month, day;
 	int hour, minute, second;
 	boolean dateOnly = false; // is date only (rather than date-time)?
@@ -174,7 +174,6 @@ public class Date extends Property implements Constants, Comparable {
 		if (secStr.length() < 2)
 			secStr = '0' + secStr;
 
-		// TODO: use StringBuffer to speed this up
 		// TODO: validate values
 		value = yearStr + monthStr + dayStr + 'T' + hourStr + minStr + secStr;
 

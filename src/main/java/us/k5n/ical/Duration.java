@@ -57,7 +57,7 @@ package us.k5n.ical;
  * 
  * @author Craig Knudsen, craig@k5n.us
  */
-public class Duration extends Property implements Constants {
+public class Duration extends Property {
 	/** duration in seconds */
 	int duration = 0;
 

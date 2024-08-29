@@ -266,6 +266,16 @@ public class ICalendarParser extends CalendarParser implements Constants {
 								reportParseError(new ParseError(ln,
 										"Parse error in CALSCALE: " + e.toString(), line));
 							}
+						} else if (lineUp.startsWith("X-")) {
+							// These are extensions like: X-WR-CALNAME, X-WR-CALDESC, X-WR-TIMEZONE, X-WR-RELCALID,
+							// X-PUBLISHED-TTL, X-APPLE-CALENDAR-COLOR, X-MS-OLK-APPTSEQTIME, X-MS-OLK-CONFTYPE,
+							// X-MS-OLK-DTSTART, X-MS-OLK-DTEND, X-GOOGLE-CALENDAR-COLOR
+							try {
+								method = new Property(line, getParseMethod());
+							} catch (ParseException e) {
+								reportParseError(new ParseError(ln,
+										"Parse error in CALSCALE: " + e.toString(), line));
+							}
 						} else {
 							// what else could this be???
 							if (lineUp.trim().length() == 0) {

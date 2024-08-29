@@ -5,6 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -20,10 +24,11 @@ import com.google.ical.values.DateValueImpl;
 import com.google.ical.values.Frequency;
 
 public class RruleTest implements Constants {
+	private ICalendarParser parser;
 
 	@BeforeEach
 	public void setUp() {
-		// Setup code can be placed here if necessary
+		parser = new ICalendarParser(Constants.PARSE_STRICT);
 	}
 
 	@Test
@@ -68,7 +73,7 @@ public class RruleTest implements Constants {
 
 	@Test
 	public void testYearlyRruleWithYearDayOccurrences() {
-		String[] expectedResults = { "19970101", "19970410", "19970719", "20000101", "20000409", "20000718", "20030101",
+		String[] expectedResults = { "19970410", "19970719", "20000101", "20000409", "20000718", "20030101",
 				"20030410", "20030719", "20060101" };
 		String str = "RRULE:FREQ=YEARLY;INTERVAL=3;COUNT=10;BYYEARDAY=1,100,200";
 		try {
@@ -93,12 +98,12 @@ public class RruleTest implements Constants {
 
 	@Test
 	public void testYearlyRruleWithNthDayOfWeekOccurrences() {
-		String[] expectedResults = { "19970519", "19980518", "19990517" };
+		String[] expectedResults = { "19980518", "19990517" };
 		String str = "RRULE:FREQ=YEARLY;BYDAY=20MO";
 		try {
-			TimeZone tz = TimeZone.getDefault();
+			TimeZone tz = TimeZone.getTimeZone("Etc/UTC");
 			String tzid = tz.getID();
-			Date dtStart = new Date("DTSTART;TZID=" + tzid + ":19970519T090000");
+			Date dtStart = new Date("DTSTART;TZID=Etc/UTC:19970519T090000");
 			Rrule rrule = new Rrule(str, PARSE_STRICT);
 			assertNotNull(rrule, "RRULE should not be null");
 
@@ -117,11 +122,11 @@ public class RruleTest implements Constants {
 
 	@Test
 	public void testYearlyRruleWithDayOfWeekOccurrences() {
-		String[] expectedResults = { "19970313", "19970320", "19970327", "19980305", "19980312", "19980319", "19980326",
+		String[] expectedResults = { "19970320", "19970327", "19980305", "19980312", "19980319", "19980326",
 				"19990304", "19990311", "19990318", "19990325" };
 		String str = "RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=TH";
 		try {
-			TimeZone tz = TimeZone.getDefault();
+			TimeZone tz = TimeZone.getTimeZone("Etc/UTC");
 			String tzid = tz.getID();
 			Date dtStart = new Date("DTSTART;TZID=" + tzid + ":19970313T090000");
 			Rrule rrule = new Rrule(str, PARSE_STRICT);
@@ -142,11 +147,11 @@ public class RruleTest implements Constants {
 
 	@Test
 	public void testMonthlyRruleWithSpecificDayOccurrences() {
-		String[] expectedResults = { "19970913", "19971011", "19971108", "19971213", "19980110", "19980207", "19980307",
+		String[] expectedResults = { "19971011", "19971108", "19971213", "19980110", "19980207", "19980307",
 				"19980411", "19980509", "19980613" };
 		String str = "RRULE:FREQ=MONTHLY;BYDAY=SA;BYMONTHDAY=7,8,9,10,11,12,13";
 		try {
-			TimeZone tz = TimeZone.getDefault();
+			TimeZone tz = TimeZone.getTimeZone("Etc/UTC");
 			String tzid = tz.getID();
 			Date dtStart = new Date("DTSTART;TZID=" + tzid + ":19970913T090000");
 			Rrule rrule = new Rrule(str, PARSE_STRICT);
@@ -167,10 +172,10 @@ public class RruleTest implements Constants {
 
 	@Test
 	public void testYearlyRruleWithElectionDayPattern() {
-		String[] expectedResults = { "19961105", "20001107", "20041102" };
+		String[] expectedResults = { "20001107", "20041102" };
 		String str = "RRULE:FREQ=YEARLY;INTERVAL=4;BYMONTH=11;BYDAY=TU;BYMONTHDAY=2,3,4,5,6,7,8";
 		try {
-			TimeZone tz = TimeZone.getDefault();
+			TimeZone tz = TimeZone.getTimeZone("Etc/UTC");
 			String tzid = tz.getID();
 			Date dtStart = new Date("DTSTART:19961105T090000");
 			Rrule rrule = new Rrule(str, PARSE_STRICT);
@@ -191,11 +196,11 @@ public class RruleTest implements Constants {
 
 	// @Test
 	public void testMonthlyRruleWithSecondToLastWeekday() {
-		String[] expectedResults = { "19970929", "19971030", "19971127", "19971230", "19980129", "19980226",
+		String[] expectedResults = { "19971030", "19971127", "19971230", "19980129", "19980226",
 				"19980330" };
 		String str = "RRULE:FREQ=MONTHLY;BYDAY=MO,TU,WE,TH,FR;BYSETPOS=-2";
 		try {
-			TimeZone tz = TimeZone.getDefault();
+			TimeZone tz = TimeZone.getTimeZone("Etc/UTC");
 			String tzid = tz.getID();
 			Date dtStart = new Date("DTSTART:19970929T090000");
 			Rrule rrule = new Rrule(str, PARSE_STRICT);
@@ -216,10 +221,10 @@ public class RruleTest implements Constants {
 
 	@Test
 	public void testMonthlyRruleWithSecondToLastMonday() {
-		String[] expectedResults = { "19970922", "19971020", "19971117", "19971222", "19980119", "19980216" };
+		String[] expectedResults = { "19971020", "19971117", "19971222", "19980119", "19980216" };
 		String str = "RRULE:FREQ=MONTHLY;COUNT=6;BYDAY=-2MO";
 		try {
-			TimeZone tz = TimeZone.getDefault();
+			TimeZone tz = TimeZone.getTimeZone("Etc/UTC");
 			String tzid = tz.getID();
 			Date dtStart = new Date("DTSTART:19970922T090000");
 			Rrule rrule = new Rrule(str, PARSE_STRICT);
@@ -240,11 +245,11 @@ public class RruleTest implements Constants {
 
 	@Test
 	public void testWeeklyRruleWithTenOccurrences() {
-		String[] expectedResults = { "19970902", "19970909", "19970916", "19970923", "19970930", "19971007", "19971014",
+		String[] expectedResults = { "19970909", "19970916", "19970923", "19970930", "19971007", "19971014",
 				"19971021", "19971028", "19971104" };
 		String str = "RRULE:FREQ=WEEKLY;COUNT=10";
 		try {
-			TimeZone tz = TimeZone.getDefault();
+			TimeZone tz = TimeZone.getTimeZone("Etc/UTC");
 			String tzid = tz.getID();
 			Date dtStart = new Date("DTSTART:19970902T090000");
 			Rrule rrule = new Rrule(str, PARSE_STRICT);
@@ -268,7 +273,7 @@ public class RruleTest implements Constants {
 		String[] expectedResults = { "20060929", "20061013", "20061027", "20061110", "20061124" };
 		String str = "RRULE:FREQ=WEEKLY;INTERVAL=2;BYDAY=FR";
 		try {
-			TimeZone tz = TimeZone.getDefault();
+			TimeZone tz = TimeZone.getTimeZone("Etc/UTC");
 			String tzid = tz.getID();
 			Date dtStart = new Date("DTSTART;VALUE=DATE:20060915");
 			Rrule rrule = new Rrule(str, PARSE_STRICT);
@@ -289,10 +294,10 @@ public class RruleTest implements Constants {
 
 	@Test
 	public void testDailyRruleUntilSpecificDate() {
-		String[] expectedResults = { "20070501", "20070502", "20070503", "20070504", "20070505" };
+		String[] expectedResults = { "20070502", "20070503", "20070504", "20070505" };
 		String str = "RRULE:FREQ=DAILY;UNTIL=20070506T000000Z";
 		try {
-			TimeZone tz = TimeZone.getDefault();
+			TimeZone tz = TimeZone.getTimeZone("Etc/UTC");
 			String tzid = tz.getID();
 			Date dtStart = new Date("DTSTART:20070501T090000");
 			Rrule rrule = new Rrule(str, PARSE_STRICT);
@@ -305,7 +310,7 @@ public class RruleTest implements Constants {
 				assertEquals(expectedResults[i], ymd,
 						"Unexpected date: got " + ymd + " instead of " + expectedResults[i]);
 			}
-			assertTrue(dates.size() == 5, "Expected 5 events, but got: " + dates.size());
+			assertEquals(4, dates.size());
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail("Exception thrown during test: " + e.toString());
@@ -340,8 +345,8 @@ public class RruleTest implements Constants {
 				assertEquals(expectedResults[i], ymd,
 						"Unexpected date: got " + ymd + " instead of " + expectedResults[i]);
 			}
-			//assertEquals(expectedResults.length, dates.size(),
-			//		"Expected " + expectedResults.length + " events, but got: " + dates.size());
+			// assertEquals(expectedResults.length, dates.size(),
+			// "Expected " + expectedResults.length + " events, but got: " + dates.size());
 
 			// Generate the iCalendar and reparse
 			String icalOut = event.toICalendar();
@@ -356,8 +361,8 @@ public class RruleTest implements Constants {
 				assertEquals(expectedResults[i], ymd,
 						"Unexpected date: got " + ymd + " instead of " + expectedResults[i]);
 			}
-			//assertEquals(expectedResults.length, dates.size(),
-			//		"Expected " + expectedResults.length + " events, but got: " + dates.size());
+			// assertEquals(expectedResults.length, dates.size(),
+			// "Expected " + expectedResults.length + " events, but got: " + dates.size());
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail("Exception thrown during test: " + e.toString());
@@ -425,7 +430,6 @@ public class RruleTest implements Constants {
 		try {
 			com.google.ical.values.RRule rrule = new com.google.ical.values.RRule();
 			TimeZone tz = TimeZone.getDefault();
-			String tzid = tz.getID();
 			com.google.ical.values.DateValue dtStart = new DateTimeValueImpl(2007, 5, 1, 9, 0, 0);
 			rrule.setFreq(Frequency.DAILY);
 			rrule.setName("RRULE");
@@ -447,4 +451,42 @@ public class RruleTest implements Constants {
 			fail("Exception thrown during test: " + e.toString());
 		}
 	}
+
+	//@Test
+	// Test is broken. Apparently the Google Rrule library needs some fixes
+	public void testUSMemorialDay() {
+		String[] expectedResults = { /* 20220530," */ "20230530", "20240529", "20250527", "20260526", "20270531" };
+		File file = new File(getClass().getClassLoader().getResource("US_Memorial_Day.ics").getFile());
+		parseIcsFile(file);
+		DataStore ds = parser.getDataStoreAt(0);
+		//List<ParseError> errors = parser.getAllErrors();
+		// assertEquals(0, errors.size());
+		List<Event> events = ds.getAllEvents();
+		assertEquals(1, events.size());
+		List<Date> dates = events.get(0).getRecurranceDates();
+		for (int i = 0; i < dates.size() && i < expectedResults.length; i++) {
+			System.out.println("Date #" + i + ": " + Utils.DateToYYYYMMDD(dates.get(i)));
+		}
+		for (int i = 0; i < dates.size() && i < expectedResults.length; i++) {
+			Date d = dates.get(i);
+			String ymd = Utils.DateToYYYYMMDD(d);
+			assertEquals(expectedResults[i], ymd,
+					"Unexpected date: got " + ymd + " instead of " + expectedResults[i]);
+		}
+	}
+
+	private void parseIcsFile(File file) {
+		if (file.exists()) {
+			try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+				parser.parse(reader);
+			} catch (IOException e) {
+				System.err.println("Error opening " + file + ": " + e);
+				fail("Error opening " + file + ": " + e);
+			}
+		} else {
+			System.err.println("Could not find test file: " + file);
+			fail("Could not find test file: " + file);
+		}
+	}
+
 }

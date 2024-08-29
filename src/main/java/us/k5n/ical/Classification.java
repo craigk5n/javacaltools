@@ -53,7 +53,7 @@ package us.k5n.ical;
  * 
  * @author Craig Knudsen, craig@k5n.us
  */
-public class Classification extends Property implements Constants {
+public class Classification extends Property {
 	int classification = PUBLIC;
 
 	/**

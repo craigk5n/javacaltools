@@ -154,7 +154,7 @@ class RruleByday {
  * 
  * @author Craig Knudsen, craig@k5n.us
  */
-public class Rrule extends Property implements Constants {
+public class Rrule extends Property {
 	/** Repeat frequency (required) */
 	public int freq;
 	/** Interval between recurrences (default is 1) */
@@ -569,11 +569,9 @@ public class Rrule extends Property implements Constants {
 			dtStart = new DateValueImpl(startDate.getYear(),
 					startDate.getMonth(), startDate.getDay());
 		} else {
-			dtStart = new DateTimeValueImpl(startDate.getYear(), startDate
-					.getMonth(), startDate.getDay(), startDate.getHour(),
-					startDate
-							.getMinute(),
-					startDate.getSecond());
+			dtStart = new DateTimeValueImpl(startDate.getYear(),
+					startDate.getMonth(), startDate.getDay(), startDate.getHour(),
+					startDate.getMinute(), startDate.getSecond());
 		}
 		com.google.ical.values.RRule rrule = new com.google.ical.values.RRule();
 		rrule.setName("RRULE");
@@ -642,8 +640,8 @@ public class Rrule extends Property implements Constants {
 
 		// TODO: does this conflict with Joda's own Timezone stuff?
 		// should we be using a Joda timezone object here?
-		if (tzid==null)
-			tzid="GMT";
+		if (tzid == null)
+			tzid = "GMT";
 		java.util.TimeZone timezone = java.util.TimeZone.getTimeZone(tzid);
 		RecurrenceIterator iter = RecurrenceIteratorFactory
 				.createRecurrenceIterator(rrule, dtStart, timezone);
@@ -652,11 +650,23 @@ public class Rrule extends Property implements Constants {
 				java.util.Calendar.YEAR);
 		while (iter.hasNext() && num++ < 10000) {
 			com.google.ical.values.DateValue d = iter.next();
+			// Check if the generated date matches the original start date
+			boolean isSameAsStartDate = d.year() == startDate.getYear() &&
+					d.month() == startDate.getMonth() &&
+					d.day() == startDate.getDay() &&
+					(!startDate.dateOnly || (d instanceof com.google.ical.values.DateTimeValue &&
+							((com.google.ical.values.DateTimeValue) d).hour() == startDate.getHour() &&
+							((com.google.ical.values.DateTimeValue) d).minute() == startDate.getMinute() &&
+							((com.google.ical.values.DateTimeValue) d).second() == startDate.getSecond()));
+
+			if (isSameAsStartDate) {
+				continue; // Skip adding the original start date
+			}
 			if (d instanceof com.google.ical.values.DateTimeValue) {
 				com.google.ical.values.DateTimeValue dt = (com.google.ical.values.DateTimeValue) d;
 				try {
-					Date newDateTime = new Date("XXX", dt.year(), dt.month(), dt
-							.day(), dt.hour(), dt.minute(), dt.second());
+					Date newDateTime = new Date("XXX", dt.year(), dt.month(),
+							dt.day(), dt.hour(), dt.minute(), dt.second());
 					boolean isException = false;
 					for (int i = 0; exdates != null && i < exdates.size(); i++) {
 						Date exdate = exdates.get(i);
