@@ -24,3 +24,13 @@ This library and all associated tools and applications are licensed under
 the GNU Lesser General Public License v2.1.
 
 For information about this license, see the LICENSE file.
+
+# Swing Calendar Panel
+There is a Java Swing component for display events.
+You can use the `CalendarPanelTest` class to view a sample of what it looks like:
+```
+java -cp target/javacaltools-1.0.1.jar us/k5n/ui/calendar/CalendarPanelTest
+```
+
+This will show you something like this:
+![Sample Image for CalendarPanelTest](CalendarPanelTest.png)
