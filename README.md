@@ -12,7 +12,7 @@ libraries written in Java.  See the URL above for more information.
 ## Building
 To build the source, you will need to use maven:
 ```
-    maven package
+    mvn package
 ```
 
 This build process will create the following jar file:
