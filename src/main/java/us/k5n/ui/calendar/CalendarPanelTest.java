@@ -120,27 +120,28 @@ public class CalendarPanelTest extends JFrame implements CalendarDataRepository 
 
 		cpanel = new CalendarPanel(this);
 		cpanel.setFormatter(new MyEventFormatter());
-		Calendar startOf2015 = Calendar.getInstance();
-		startOf2015.setLenient(true);
-		startOf2015.set(Calendar.YEAR, 2015);
-		startOf2015.set(Calendar.MONTH, 0);
-		startOf2015.set(Calendar.DAY_OF_MONTH, 1);
-		startOf2015.set(Calendar.HOUR_OF_DAY, 0);
-		startOf2015.set(Calendar.MINUTE, 0);
-		startOf2015.set(Calendar.SECOND, 0);
-		startOf2015.set(Calendar.MILLISECOND, 0);
-		cpanel.setAbsoluteStartDay(startOf2015);
+		Calendar startOfTwoYearsAgo = Calendar.getInstance();
+		startOfTwoYearsAgo.setLenient(true);
+		int currentYear = startOfTwoYearsAgo.get(Calendar.YEAR);
+		startOfTwoYearsAgo.set(Calendar.YEAR, currentYear - 2);
+		startOfTwoYearsAgo.set(Calendar.MONTH, 0);
+		startOfTwoYearsAgo.set(Calendar.DAY_OF_MONTH, 1);
+		startOfTwoYearsAgo.set(Calendar.HOUR_OF_DAY, 0);
+		startOfTwoYearsAgo.set(Calendar.MINUTE, 0);
+		startOfTwoYearsAgo.set(Calendar.SECOND, 0);
+		startOfTwoYearsAgo.set(Calendar.MILLISECOND, 0);
+		cpanel.setAbsoluteStartDay(startOfTwoYearsAgo);
 
-		Calendar endOf2018 = Calendar.getInstance();
-		endOf2018.setLenient(true);
-		endOf2018.set(Calendar.YEAR, 2018);
-		endOf2018.set(Calendar.MONTH, 11);
-		endOf2018.set(Calendar.DAY_OF_MONTH, 31);
-		endOf2018.set(Calendar.HOUR_OF_DAY, 23);
-		endOf2018.set(Calendar.MINUTE, 59);
-		endOf2018.set(Calendar.SECOND, 59);
-		endOf2018.set(Calendar.MILLISECOND, 999);
-		cpanel.setAbsoluteEndDay(endOf2018);
+		Calendar endOfTwoYearsFromNow = Calendar.getInstance();
+		endOfTwoYearsFromNow.setLenient(true);
+		endOfTwoYearsFromNow.set(Calendar.YEAR, currentYear + 2);
+		endOfTwoYearsFromNow.set(Calendar.MONTH, 11);
+		endOfTwoYearsFromNow.set(Calendar.DAY_OF_MONTH, 31);
+		endOfTwoYearsFromNow.set(Calendar.HOUR_OF_DAY, 23);
+		endOfTwoYearsFromNow.set(Calendar.MINUTE, 59);
+		endOfTwoYearsFromNow.set(Calendar.SECOND, 59);
+		endOfTwoYearsFromNow.set(Calendar.MILLISECOND, 999);
+		cpanel.setAbsoluteEndDay(endOfTwoYearsFromNow);
 
 		contentPane.add(cpanel, BorderLayout.CENTER);
 		this.setVisible(true);

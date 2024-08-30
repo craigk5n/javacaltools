@@ -17,7 +17,7 @@ To build the source, you will need to use maven:
 
 This build process will create the following jar file:
 
-- target/javacaltools-1.0.1.jar
+- `target/javacaltools-1.0.1.jar`
 
 # License
 This library and all associated tools and applications are licensed under
