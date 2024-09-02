@@ -1,13 +1,21 @@
 # k5n Java Calendar Tools
-- Version: 1.0.1
+- Version: 1.0.2
 - URL: https://github.com/craigk5n/javacaltools
 - Author: Craig Knudsen, craig [< at >] k5n.us
 - License: GNU GPL
-- Requires: Java 17
+- Requires: Java 11
 
 ## About
 The k5n Java Calendar Tools package contains various calendar-related
 libraries written in Java.  See the URL above for more information.
+
+Note: This project now bundles the Google RFC 2445 Rrule code.
+The project is now retired, but it's project page can be
+found here:
+
+  https://code.google.com/archive/p/google-rfc-2445/
+
+See the LICENSE-google-rfc-2445	file for the license for that project.
 
 ## Building
 To build the source, you will need to use maven:
@@ -17,7 +25,7 @@ To build the source, you will need to use maven:
 
 This build process will create the following jar file:
 
-- `target/javacaltools-1.0.1.jar`
+- `target/javacaltools-1.0.2.jar`
 
 # License
 This library and all associated tools and applications are licensed under
@@ -29,7 +37,7 @@ For information about this license, see the LICENSE file.
 There is a Java Swing component for display events.
 You can use the `CalendarPanelTest` class to view a sample of what it looks like:
 ```
-java -cp target/javacaltools-1.0.1.jar us/k5n/ui/calendar/CalendarPanelTest
+java -jar target/javacaltools-1.0.2.jar
 ```
 
 This will show you something like this:
