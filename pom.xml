@@ -5,7 +5,7 @@
 
     <groupId>us.k5n</groupId>
     <artifactId>javacaltools</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <packaging>jar</packaging>
 
     <name>javacaltools</name>
@@ -13,8 +13,9 @@
     <url>https://www.k5n.us/java-calendar-tools/</url>
 
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.release>11</maven.compiler.release>
     </properties>
 
     <dependencies>
@@ -22,12 +23,6 @@
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
             <version>1.4</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/org.scala-saddle/google-rfc-2445 -->
-        <dependency>
-            <groupId>org.scala-saddle</groupId>
-            <artifactId>google-rfc-2445</artifactId>
-            <version>20110304</version>
         </dependency>
         <dependency>
             <groupId>net.sourceforge.javacsv</groupId>
@@ -62,6 +57,9 @@
     </dependencies>
 
     <build>
+        <sourceDirectory>src/main/java</sourceDirectory>
+        <testSourceDirectory>src/test/java</testSourceDirectory>
+
         <plugins>
             <!-- Compiler plugin -->
             <plugin>
@@ -71,6 +69,7 @@
                 <configuration>
                     <source>${maven.compiler.source}</source>
                     <target>${maven.compiler.target}</target>
+                    <release>${maven.compiler.release}</release>
                 </configuration>
             </plugin>
 
@@ -82,12 +81,38 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <addClasspath>true</addClasspath>
-                            <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>us.k5n.journal.Main</mainClass>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                            <mainClass>us.k5n.journal.Main</mainClass> <!-- Your main class -->
                         </manifest>
                     </archive>
                 </configuration>
+            </plugin>
+
+            <!-- Assembly plugin to include dependencies -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>us.k5n.ui.calendar.CalendarPanelTest</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
             <!-- Javadoc plugin -->
@@ -98,11 +123,6 @@
                 <configuration>
                     <destDir>${project.build.directory}/docs</destDir>
                     <source>${maven.compiler.source}</source>
-                    <docletArtifact>
-                        <groupId>com.yworks</groupId>
-                        <artifactId>ydoc</artifactId>
-                        <version>3.0.1</version>
-                    </docletArtifact>
                 </configuration>
             </plugin>
 

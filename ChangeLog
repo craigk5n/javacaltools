@@ -1,3 +1,10 @@
+Version 1.0.2 (02 Sep 2024)
+ - Google's RFC 2445 RRule library source is now included with the source here
+   since there is not a reliable maven jar to reference. The source is unmodified
+   except for a single Java 9+ incompatibility.
+ - Switch back to Java 11 since Java 17+ features are not being used yet.
+ - Removed all the journal UI code since that is now its own git repo
+   at craigk5n/k5njournal.
 Version 1.0.1 (28 Aug 2024)
  - Added new unit tests.
  - Updating Java 17.
