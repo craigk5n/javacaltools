@@ -38,6 +38,7 @@ public class DefaultDataStore implements DataStore {
 	List<Freebusy> freebusys;
 	List<VLocation> vlocations;
 	List<VResource> vresources;
+	List<VAvailability> vavailabilities;
 
 	/**
 	 * Constructor
@@ -50,6 +51,7 @@ public class DefaultDataStore implements DataStore {
 		freebusys = new ArrayList<Freebusy>();
 		vlocations = new ArrayList<VLocation>();
 		vresources = new ArrayList<VResource>();
+		vavailabilities = new ArrayList<VAvailability>();
 	}
 
 	/**
@@ -99,6 +101,13 @@ public class DefaultDataStore implements DataStore {
 	 */
 	public void storeVResource(VResource vresource) {
 		vresources.add(vresource);
+	}
+
+	/**
+	 * This method will be called as the parser finds a VAVAILABILITY object.
+	 */
+	public void storeVAvailability(VAvailability vavailability) {
+		vavailabilities.add(vavailability);
 	}
 
 	/**

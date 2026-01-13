@@ -72,6 +72,8 @@ public class Todo implements Constants {
 	protected String locationId = null;
 	/** Resource references (List of VRESOURCE UIDs) */
 	protected List<String> resourceIds = null;
+	/** Availability references (List of VAVAILABILITY UIDs) */
+	protected List<String> availabilityIds = null;
 	/** Geographic position */
 	protected String geo = null;
 	/** Participants for todo (List of Attendee) */
@@ -651,6 +653,24 @@ public class Todo implements Constants {
 	 */
 	public void setResourceIds(List<String> resourceIds) {
 		this.resourceIds = resourceIds;
+	}
+
+	/**
+	 * Get availability references (UIDs of VAVAILABILITY objects)
+	 *
+	 * @return list of availability UIDs
+	 */
+	public List<String> getAvailabilityIds() {
+		return availabilityIds;
+	}
+
+	/**
+	 * Set availability references (UIDs of VAVAILABILITY objects)
+	 *
+	 * @param availabilityIds the list of UIDs of referenced VAVAILABILITY objects
+	 */
+	public void setAvailabilityIds(List<String> availabilityIds) {
+		this.availabilityIds = availabilityIds;
 	}
 
 	/**

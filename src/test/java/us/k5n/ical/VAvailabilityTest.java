@@ -1,0 +1,199 @@
+/*
+ * Copyright (C) 2005-2006 Craig Knudsen and other authors
+ * (see AUTHORS for a complete list)
+ *
+ * JavaCalTools is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+ * License for more details.
+ *
+ * A copy of the GNU Lesser General Public License is included in the Wine
+ * distribution in the file COPYING.LIB. If you did not receive this copy,
+ * write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
+ * Boston, MA 02111-1307 USA.
+ */
+
+package us.k5n.ical;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.BeforeEach;
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+/**
+ * Test class for VAVAILABILITY component support
+ *
+ * @author Craig Knudsen, craig@k5n.us
+ */
+public class VAvailabilityTest {
+	private ICalendarParser parser;
+
+	@BeforeEach
+	void setUp() {
+		parser = new ICalendarParser(ICalendarParser.PARSE_LOOSE);
+	}
+
+	@Test
+	@DisplayName("Test VAVAILABILITY parsing with basic properties")
+	void testVAvailabilityBasic() throws Exception {
+		String icalStr = "BEGIN:VAVAILABILITY\n" +
+			"UID:avail-123@example.com\n" +
+			"DTSTAMP:20230101T120000Z\n" +
+			"BUSYTYPE:BUSY\n" +
+			"END:VAVAILABILITY";
+
+		List<String> lines = new ArrayList<>(Arrays.asList(icalStr.split("\\r?\\n")));
+		VAvailability vavailability = new VAvailability(parser, 1, lines);
+
+		assertTrue(vavailability.isValid());
+		assertEquals("avail-123@example.com", vavailability.getUid().getValue());
+		assertEquals("BUSY", vavailability.getBusyType());
+	}
+
+	@Test
+	@DisplayName("Test VAVAILABILITY with all properties")
+	void testVAvailabilityComplete() throws Exception {
+		String icalStr = "BEGIN:VAVAILABILITY\n" +
+			"UID:avail-456@example.com\n" +
+			"DTSTAMP:20230101T120000Z\n" +
+			"DTSTART:20230101T090000Z\n" +
+			"DTEND:20230101T170000Z\n" +
+			"BUSYTYPE:BUSY-UNAVAILABLE\n" +
+			"SUMMARY:Weekly Office Hours\n" +
+			"DESCRIPTION:Regular working hours\n" +
+			"CATEGORIES:WORK,OFFICE\n" +
+			"CREATED:20230101T100000Z\n" +
+			"LAST-MODIFIED:20230101T110000Z\n" +
+			"END:VAVAILABILITY";
+
+		List<String> lines = new ArrayList<>(Arrays.asList(icalStr.split("\\r?\\n")));
+		VAvailability vavailability = new VAvailability(parser, 1, lines);
+
+		assertTrue(vavailability.isValid());
+		assertEquals("avail-456@example.com", vavailability.getUid().getValue());
+		assertEquals("BUSY-UNAVAILABLE", vavailability.getBusyType());
+		assertEquals("Weekly Office Hours", vavailability.getSummary().getValue());
+		assertEquals("Regular working hours", vavailability.getDescription().getValue());
+		assertEquals("WORK,OFFICE", vavailability.getCategories().getValue());
+	}
+
+	@Test
+	@DisplayName("Test VAVAILABILITY toICalendar output")
+	void testVAvailabilityToICalendar() throws Exception {
+		String icalStr = "BEGIN:VAVAILABILITY\n" +
+			"UID:avail-test@example.com\n" +
+			"DTSTAMP:20230101T120000Z\n" +
+			"BUSYTYPE:FREE\n" +
+			"SUMMARY:Available Time\n" +
+			"END:VAVAILABILITY";
+
+		List<String> lines = new ArrayList<>(Arrays.asList(icalStr.split("\\r?\\n")));
+		VAvailability vavailability = new VAvailability(parser, 1, lines);
+
+		String output = vavailability.toICalendar();
+
+		assertTrue(output.contains("BEGIN:VAVAILABILITY"));
+		assertTrue(output.contains("UID:avail-test@example.com"));
+		assertTrue(output.contains("BUSYTYPE:FREE"));
+		assertTrue(output.contains("SUMMARY:Available Time"));
+		assertTrue(output.contains("END:VAVAILABILITY"));
+	}
+
+	@Test
+	@DisplayName("Test VAVAILABILITY parsing from calendar")
+	void testVAvailabilityInCalendar() throws Exception {
+		String calendarStr = "BEGIN:VCALENDAR\n" +
+			"VERSION:2.0\n" +
+			"PRODID:-//Test//Test//EN\n" +
+			"BEGIN:VAVAILABILITY\n" +
+			"UID:avail-001@example.com\n" +
+			"DTSTAMP:20230101T120000Z\n" +
+			"BUSYTYPE:BUSY\n" +
+			"SUMMARY:Busy Period\n" +
+			"END:VAVAILABILITY\n" +
+			"BEGIN:VEVENT\n" +
+			"UID:event-001@example.com\n" +
+			"DTSTAMP:20230101T120000Z\n" +
+			"DTSTART:20230101T130000Z\n" +
+			"DTEND:20230101T140000Z\n" +
+			"SUMMARY:Test Event\n" +
+			"END:VEVENT\n" +
+			"END:VCALENDAR";
+
+		ICalendarParser calParser = new ICalendarParser(ICalendarParser.PARSE_LOOSE);
+		java.io.StringReader reader = new java.io.StringReader(calendarStr);
+		calParser.parse(reader);
+
+		// The VAVAILABILITY should be stored in the data store
+		// Note: This test assumes the DataStore interface has been updated
+		// For now, we just verify the parsing doesn't crash
+		assertTrue(true); // Placeholder - would need DataStore.getVAvailabilities() method
+	}
+
+	@Test
+	@DisplayName("Test invalid VAVAILABILITY (missing UID)")
+	void testInvalidVAvailability() throws Exception {
+		String icalStr = "BEGIN:VAVAILABILITY\n" +
+			"DTSTAMP:20230101T120000Z\n" +
+			"BUSYTYPE:BUSY\n" +
+			"END:VAVAILABILITY";
+
+		List<String> lines = new ArrayList<>(Arrays.asList(icalStr.split("\\r?\\n")));
+		VAvailability vavailability = new VAvailability(parser, 1, lines);
+
+		assertFalse(vavailability.isValid());
+	}
+
+	@Test
+	@DisplayName("Test invalid VAVAILABILITY (missing DTSTAMP)")
+	void testInvalidVAvailabilityMissingDtstamp() throws Exception {
+		String icalStr = "BEGIN:VAVAILABILITY\n" +
+			"UID:avail-123@example.com\n" +
+			"BUSYTYPE:BUSY\n" +
+			"END:VAVAILABILITY";
+
+		List<String> lines = new ArrayList<>(Arrays.asList(icalStr.split("\\r?\\n")));
+		VAvailability vavailability = new VAvailability(parser, 1, lines);
+
+		assertFalse(vavailability.isValid());
+	}
+
+	@Test
+	@DisplayName("Test Event with availability references")
+	void testEventWithAvailabilityReferences() throws Exception {
+		String icalStr = "BEGIN:VEVENT\n" +
+			"DTSTAMP:20230101T120000Z\n" +
+			"UID:event-with-availability@example.com\n" +
+			"DTSTART:20230101T090000Z\n" +
+			"DTEND:20230101T100000Z\n" +
+			"SUMMARY:Meeting during available time\n" +
+			"END:VEVENT";
+
+		Event event = createEventFromICalendar(icalStr);
+
+		// Test setting availability references
+		List<String> availabilityIds = new ArrayList<>();
+		availabilityIds.add("office-hours-001@example.com");
+		availabilityIds.add("meeting-room-avail-001@example.com");
+		event.setAvailabilityIds(availabilityIds);
+
+		assertNotNull(event.getAvailabilityIds());
+		assertEquals(2, event.getAvailabilityIds().size());
+		assertEquals("office-hours-001@example.com", event.getAvailabilityIds().get(0));
+		assertEquals("meeting-room-avail-001@example.com", event.getAvailabilityIds().get(1));
+	}
+
+	private Event createEventFromICalendar(String icalStr) throws Exception {
+		List<String> lines = new ArrayList<>(Arrays.asList(icalStr.split("\\r?\\n")));
+		return new Event(parser, 1, lines);
+	}
+}

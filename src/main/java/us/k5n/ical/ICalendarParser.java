@@ -59,6 +59,7 @@ public class ICalendarParser extends CalendarParser implements Constants {
 	Timezone currentTimezone = null; // current timezone being parsed
 	VLocation currentVLocation = null; // current vlocation being parsed
 	VResource currentVResource = null; // current vresource being parsed
+	VAvailability currentVAvailability = null; // current vavailability being parsed
 	static final int STATE_NONE = 0;
 	static final int STATE_VCALENDAR = 1;
 	static final int STATE_VEVENT = 2;
@@ -71,7 +72,8 @@ public class ICalendarParser extends CalendarParser implements Constants {
 	static final int STATE_VALARM = 9;
 	static final int STATE_VLOCATION = 10;
 	static final int STATE_VRESOURCE = 11;
-	static final int STATE_DONE = 12;
+	static final int STATE_VAVAILABILITY = 12;
+	static final int STATE_DONE = 13;
 
 	/**
 	 * Create an ICalendarParser object. By default, this will also setup the
@@ -244,6 +246,12 @@ public class ICalendarParser extends CalendarParser implements Constants {
 							textLines.clear();
 							textLines.add(line);
 							currentVResource = new VResource(this, startLineNo, textLines);
+						} else if (lineUp.startsWith("BEGIN:VAVAILABILITY")) {
+							state = STATE_VAVAILABILITY;
+							startLineNo = ln; // mark starting line number
+							textLines.clear();
+							textLines.add(line);
+							currentVAvailability = new VAvailability(this, startLineNo, textLines);
 						} else if (lineUp.startsWith("END:VCALENDAR")) {
 							state = STATE_DONE;
 						} else if (lineUp.startsWith("VERSION")) {
@@ -421,6 +429,21 @@ public class ICalendarParser extends CalendarParser implements Constants {
 							if (standard.isValid() && currentTimezone != null) {
 								currentTimezone.addStandard(standard);
 							}
+							textLines.clear(); // truncate List
+						}
+						break;
+
+					case STATE_VAVAILABILITY:
+						textLines.add(line);
+						if (lineUp.startsWith("END:VAVAILABILITY")) {
+							state = STATE_VCALENDAR;
+							if (currentVAvailability != null && currentVAvailability.isValid()) {
+								for (int i = 0; i < dataStores.size(); i++) {
+									DataStore ds = (DataStore) dataStores.get(i);
+									ds.storeVAvailability(currentVAvailability);
+								}
+							}
+							currentVAvailability = null;
 							textLines.clear(); // truncate List
 						}
 						break;

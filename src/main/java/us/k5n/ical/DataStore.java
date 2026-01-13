@@ -75,6 +75,11 @@ public interface DataStore {
 	public void storeVResource(VResource vresource);
 
 	/**
+	 * This method will be called the parser finds a VAVAILABILITY object.
+	 */
+	public void storeVAvailability(VAvailability vavailability);
+
+	/**
 	 * Get all Event objects.
 	 * 
 	 * @return A List if Event objects
