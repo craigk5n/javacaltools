@@ -145,8 +145,64 @@ public class Timezone implements Constants {
 	 * @return true if timezone has required information
 	 */
 	public boolean isValid() {
-		// Must have at least a TZID to be valid
-		return tzid != null && tzid.length() > 0;
+		return isValid(null);
+	}
+
+	/**
+	 * Check if this Timezone is valid with optional error details
+	 *
+	 * @param errors List to collect validation error messages (can be null)
+	 * @return true if the timezone is valid
+	 */
+	public boolean isValid(List<String> errors) {
+		boolean valid = true;
+
+		// TZID validation
+		if (tzid == null || tzid.trim().length() == 0) {
+			valid = false;
+			if (errors != null) errors.add("Timezone must have a TZID");
+		} else if (tzid.length() > 255) {
+			valid = false;
+			if (errors != null) errors.add("Timezone TZID is too long (max 255 characters)");
+		} else if (!tzid.matches("[A-Za-z0-9_/+-]+")) {
+			valid = false;
+			if (errors != null) errors.add("Timezone TZID contains invalid characters");
+		}
+
+		// Validate STANDARD components if they exist
+		if (standards != null) {
+			// Validate STANDARD components
+			for (int i = 0; i < standards.size(); i++) {
+				TimezoneStandard std = standards.get(i);
+				if (std != null && !std.isValid()) {
+					valid = false;
+					if (errors != null) errors.add("Timezone STANDARD component " + i + " is invalid");
+				}
+			}
+		}
+
+		// Validate DAYLIGHT components if they exist
+		if (daylight != null) {
+			for (int i = 0; i < daylight.size(); i++) {
+				TimezoneDaylight dl = daylight.get(i);
+				if (dl != null && !dl.isValid()) {
+					valid = false;
+					if (errors != null) errors.add("Timezone DAYLIGHT component " + i + " is invalid");
+				}
+			}
+		}
+
+		// URL validation if present
+		if (url != null && url.value != null) {
+			try {
+				new java.net.URL(url.value); // Basic URL validation
+			} catch (java.net.MalformedURLException e) {
+				valid = false;
+				if (errors != null) errors.add("Timezone URL is not a valid URL: " + url.value);
+			}
+		}
+
+		return valid;
 	}
 
 	/**

@@ -240,4 +240,68 @@ public class TimezoneTest {
 		assertEquals(1, dataStore.getAllTimezones().size());
 		assertEquals("Pacific/Honolulu", dataStore.getAllTimezones().get(0).getTimezoneId());
 	}
+
+	@Test
+	@DisplayName("Test Timezone validation - valid timezone")
+	void testTimezoneValidationValid() throws Exception {
+		textLines.clear();
+		textLines.add("TZID:America/New_York");
+
+		Timezone timezone = new Timezone(parser, 1, textLines);
+		assertTrue(timezone.isValid());
+	}
+
+
+
+
+
+	@Test
+	@DisplayName("Test Timezone validation - invalid TZID characters")
+	void testTimezoneValidationInvalidTzid() throws Exception {
+		textLines.clear();
+		textLines.add("TZID:America/New York"); // Space in TZID
+		textLines.add("BEGIN:STANDARD");
+		textLines.add("DTSTART:20230101T020000");
+		textLines.add("TZOFFSETFROM:-0500");
+		textLines.add("TZOFFSETTO:-0500");
+		textLines.add("END:STANDARD");
+
+		Timezone timezone = new Timezone(parser, 1, textLines);
+		List<String> errors = new ArrayList<>();
+		assertFalse(timezone.isValid(errors));
+		assertTrue(errors.contains("Timezone TZID contains invalid characters"));
+	}
+
+
+
+	@Test
+	@DisplayName("Test Timezone with invalid URL")
+	void testTimezoneValidationInvalidUrl() throws Exception {
+		textLines.clear();
+		textLines.add("TZID:America/New_York");
+		textLines.add("TZURL:invalid-url");
+		textLines.add("BEGIN:STANDARD");
+		textLines.add("DTSTART:20230101T020000");
+		textLines.add("TZOFFSETFROM:-0500");
+		textLines.add("TZOFFSETTO:-0500");
+		textLines.add("END:STANDARD");
+
+		Timezone timezone = new Timezone(parser, 1, textLines);
+		List<String> errors = new ArrayList<>();
+		assertFalse(timezone.isValid(errors));
+		assertTrue(errors.stream().anyMatch(e -> e.contains("URL is not a valid URL")));
+	}
+
+	@Test
+	@DisplayName("Test timezone validation with detailed error checking")
+	void testTimezoneValidationDetailedErrors() throws Exception {
+		textLines.clear();
+		textLines.add("TZID:America/New_York");
+		textLines.add("TZURL:not-a-valid-url-at-all");
+
+		Timezone timezone = new Timezone(parser, 1, textLines);
+		List<String> errors = new ArrayList<>();
+		assertFalse(timezone.isValid(errors));
+		assertTrue(errors.stream().anyMatch(e -> e.contains("URL is not a valid URL")));
+	}
 }

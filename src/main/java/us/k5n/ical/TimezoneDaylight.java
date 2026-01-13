@@ -127,8 +127,62 @@ public class TimezoneDaylight implements Constants {
 	 * @return true if required properties are present
 	 */
 	public boolean isValid() {
-		// Must have DTSTART, TZOFFSETFROM, and TZOFFSETTO
-		return dtstart != null && tzOffsetFrom != null && tzOffsetTo != null;
+		return isValid(null);
+	}
+
+	/**
+	 * Check if this TimezoneDaylight is valid with optional error details
+	 *
+	 * @param errors List to collect validation error messages (can be null)
+	 * @return true if the timezone daylight is valid
+	 */
+	public boolean isValid(List<String> errors) {
+		boolean valid = true;
+
+		// Required fields
+		if (dtstart == null) {
+			valid = false;
+			if (errors != null) errors.add("TimezoneDaylight must have DTSTART");
+		}
+
+		if (tzOffsetFrom == null) {
+			valid = false;
+			if (errors != null) errors.add("TimezoneDaylight must have TZOFFSETFROM");
+		}
+
+		if (tzOffsetTo == null) {
+			valid = false;
+			if (errors != null) errors.add("TimezoneDaylight must have TZOFFSETTO");
+		}
+
+		// TZOFFSET validation
+		if (tzOffsetFrom != null && !isValidTimezoneOffset(tzOffsetFrom)) {
+			valid = false;
+			if (errors != null) errors.add("TimezoneDaylight TZOFFSETFROM is invalid: " + tzOffsetFrom);
+		}
+
+		if (tzOffsetTo != null && !isValidTimezoneOffset(tzOffsetTo)) {
+			valid = false;
+			if (errors != null) errors.add("TimezoneDaylight TZOFFSETTO is invalid: " + tzOffsetTo);
+		}
+
+		// RRULE validation for recurrence (basic check)
+		if (rrule != null && rrule.value == null) {
+			valid = false;
+			if (errors != null) errors.add("TimezoneDaylight RRULE is malformed");
+		}
+
+		return valid;
+	}
+
+	/**
+	 * Validate timezone offset format (e.g., +0500, -0800)
+	 */
+	private boolean isValidTimezoneOffset(String offset) {
+		if (offset == null || offset.length() != 5) {
+			return false;
+		}
+		return offset.matches("[+-][0-9]{4}");
 	}
 
 	/**
