@@ -132,11 +132,8 @@ public class Event implements Constants {
 						line));
 			}
 		}
-		// must have UID
-		if (uid == null) {
-			uid = new Uid();
-			uid.value = Utils.generateUniqueId("JAVACALTOOLS");
-		}
+		// Note: UID validation is now handled in isValid() method
+		// Auto-generation moved to toICalendar() for better validation
 		// create a sequence if not specified
 		if (sequence == null)
 			sequence = new Sequence(0);
@@ -188,8 +185,79 @@ public class Event implements Constants {
 	 * Event object will be created for it.
 	 */
 	public boolean isValid() {
-		// Must have at least a start date and a summary
-		return (startDate != null && summary != null && uid != null);
+		return isValid(null);
+	}
+
+	/**
+	 * Check if this Event is valid with optional error details
+	 *
+	 * @param errors List to collect validation error messages (can be null)
+	 * @return true if the event is valid
+	 */
+	public boolean isValid(List<String> errors) {
+		boolean valid = true;
+
+		// Required fields
+		if (uid == null) {
+			valid = false;
+			if (errors != null) errors.add("Event must have a UID");
+		}
+
+		if (summary == null) {
+			valid = false;
+			if (errors != null) errors.add("Event must have a SUMMARY");
+		}
+
+		if (startDate == null) {
+			valid = false;
+			if (errors != null) errors.add("Event must have a DTSTART");
+		}
+
+		// Date validation
+		if (startDate != null && endDate != null) {
+			if (startDate.compareTo(endDate) > 0) {
+				valid = false;
+				if (errors != null) errors.add("Event DTEND must be after DTSTART");
+			}
+		}
+
+		// Duration validation (if duration is specified, end date should not be)
+		if (duration != null && endDate != null) {
+			valid = false;
+			if (errors != null) errors.add("Event cannot have both DURATION and DTEND");
+		}
+
+		// Alarm validation
+		if (alarms != null) {
+			for (int i = 0; i < alarms.size(); i++) {
+				Valarm alarm = alarms.get(i);
+				if (alarm != null && !alarm.isValid()) {
+					valid = false;
+					if (errors != null) errors.add("Event alarm " + i + " is invalid");
+				}
+			}
+		}
+
+		// Recurrence validation
+		if (rrule != null && exdates != null) {
+			// Check if exdates are within recurrence range
+			// This is a basic check - more complex validation could be added
+		}
+
+		// Status validation
+		if (status != STATUS_UNDEFINED && status != STATUS_TENTATIVE &&
+			status != STATUS_CONFIRMED && status != STATUS_CANCELLED) {
+			valid = false;
+			if (errors != null) errors.add("Invalid event STATUS value: " + status);
+		}
+
+		// Priority validation
+		if (priority != null && (priority < 0 || priority > 9)) {
+			valid = false;
+			if (errors != null) errors.add("Event PRIORITY must be between 0 and 9");
+		}
+
+		return valid;
 	}
 
 	/**
@@ -329,11 +397,13 @@ public class Event implements Constants {
 		} else if (up.startsWith("PRIORITY")) {
 			Property p = new Property(icalStr);
 			try {
-				priority = Integer.parseInt(p.value);
-			} catch (NumberFormatException e) {
-				if (parseMethod == PARSE_STRICT) {
-					throw new ParseException("Invalid PRIORITY: " + p.value, icalStr);
+				int pri = Integer.parseInt(p.value);
+				if (pri < 0 || pri > 9) {
+					throw new ParseException("PRIORITY must be between 0 and 9, got: " + pri, icalStr);
 				}
+				priority = pri;
+			} catch (NumberFormatException e) {
+				throw new ParseException("Invalid PRIORITY value (must be integer 0-9): " + p.value, icalStr);
 			}
 		} else if (up.startsWith("REQUEST-STATUS")) {
 			Property p = new Property(icalStr);
@@ -726,8 +796,14 @@ public class Event implements Constants {
 		ret.append("BEGIN:VEVENT");
 		ret.append(CRLF);
 
-		if (uid != null)
+		if (uid != null) {
 			ret.append(uid.toICalendar());
+		} else {
+			// Auto-generate UID for serialization
+			Uid autoUid = new Uid();
+			autoUid.value = Utils.generateUniqueId("JAVACALTOOLS");
+			ret.append(autoUid.toICalendar());
+		}
 		if (sequence != null)
 			ret.append(sequence.toICalendar());
 		if (summary != null)

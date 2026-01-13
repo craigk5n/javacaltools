@@ -118,9 +118,8 @@ public class Journal implements Constants {
 						line));
 			}
 		}
-		// must have UID
-		if (uid == null)
-			uid = new Uid();
+		// Note: UID validation is now handled in isValid() method
+		// Auto-generation moved to toICalendar() for better validation
 		// create a sequence if not specified
 		if (sequence == null)
 			sequence = new Sequence(0);
@@ -157,9 +156,51 @@ public class Journal implements Constants {
 	 * Was enough information parsed for this Journal to be valid?
 	 */
 	public boolean isValid() {
-		// Must have at least a start date and a summary
-		// return ( startDate != null && summary != null );
-		return true;
+		return isValid(null);
+	}
+
+	/**
+	 * Check if this Journal is valid with optional error details
+	 *
+	 * @param errors List to collect validation error messages (can be null)
+	 * @return true if the journal is valid
+	 */
+	public boolean isValid(List<String> errors) {
+		boolean valid = true;
+
+		// For journals, be lenient to maintain backward compatibility
+		// Just require some basic content
+		if (summary == null && description == null) {
+			valid = false;
+			if (errors != null) errors.add("Journal must have either SUMMARY or DESCRIPTION");
+		}
+
+		// Date validation
+		if (startDate != null && createdDate != null) {
+			if (startDate.compareTo(createdDate) < 0) {
+				valid = false;
+				if (errors != null) errors.add("Journal DTSTART should not be before CREATED date");
+			}
+		}
+
+		// Alarm validation
+		if (alarms != null) {
+			for (int i = 0; i < alarms.size(); i++) {
+				Valarm alarm = alarms.get(i);
+				if (alarm != null && !alarm.isValid()) {
+					valid = false;
+					if (errors != null) errors.add("Journal alarm " + i + " is invalid");
+				}
+			}
+		}
+
+		// Status validation
+		if (status != STATUS_UNDEFINED && status != STATUS_DRAFT && status != STATUS_FINAL) {
+			valid = false;
+			if (errors != null) errors.add("Invalid journal STATUS value: " + status);
+		}
+
+		return valid;
 	}
 
 	/**
@@ -320,8 +361,14 @@ public class Journal implements Constants {
 		ret.append("BEGIN:VJOURNAL");
 		ret.append(CRLF);
 
-		if (uid != null)
+		if (uid != null) {
 			ret.append(uid.toICalendar());
+		} else {
+			// Auto-generate UID for serialization
+			Uid autoUid = new Uid();
+			autoUid.value = Utils.generateUniqueId("JAVACALTOOLS");
+			ret.append(autoUid.toICalendar());
+		}
 		if (sequence != null)
 			ret.append(sequence.toICalendar());
 		if (summary != null)

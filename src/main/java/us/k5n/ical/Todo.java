@@ -125,11 +125,8 @@ public class Todo implements Constants {
 						line));
 			}
 		}
-		
-		if (uid == null) {
-			uid = new Uid();
-			uid.value = Utils.generateUniqueId("JAVACALTOOLS");
-		}
+		// Note: UID validation is now handled in isValid() method
+		// Auto-generation moved to toICalendar() for better validation
 		if (sequence == null)
 			sequence = new Sequence(0);
 	}
@@ -338,7 +335,85 @@ public class Todo implements Constants {
 	 * @return true if todo has required information
 	 */
 	public boolean isValid() {
-		return (summary != null || description != null);
+		return isValid(null);
+	}
+
+	/**
+	 * Check if this Todo is valid with optional error details
+	 *
+	 * @param errors List to collect validation error messages (can be null)
+	 * @return true if the todo is valid
+	 */
+	public boolean isValid(List<String> errors) {
+		boolean valid = true;
+
+		// Required fields
+		if (uid == null) {
+			valid = false;
+			if (errors != null) errors.add("Todo must have a UID");
+		}
+
+		if (summary == null && description == null) {
+			valid = false;
+			if (errors != null) errors.add("Todo must have either SUMMARY or DESCRIPTION");
+		}
+
+		// Date validation
+		if (startDate != null && dueDate != null) {
+			if (startDate.compareTo(dueDate) > 0) {
+				valid = false;
+				if (errors != null) errors.add("Todo DUE date must be after DTSTART");
+			}
+		}
+
+		if (startDate != null && completed != null) {
+			if (startDate.compareTo(completed) > 0) {
+				valid = false;
+				if (errors != null) errors.add("Todo COMPLETED date must be after DTSTART");
+			}
+		}
+
+		if (dueDate != null && completed != null) {
+			if (dueDate.compareTo(completed) < 0) {
+				valid = false;
+				if (errors != null) errors.add("Todo COMPLETED date must be before DUE date");
+			}
+		}
+
+		// Percent complete validation
+		if (percentComplete != null) {
+			if (percentComplete < 0 || percentComplete > 100) {
+				valid = false;
+				if (errors != null) errors.add("Todo PERCENT-COMPLETE must be between 0 and 100");
+			}
+		}
+
+		// Alarm validation
+		if (alarms != null) {
+			for (int i = 0; i < alarms.size(); i++) {
+				Valarm alarm = alarms.get(i);
+				if (alarm != null && !alarm.isValid()) {
+					valid = false;
+					if (errors != null) errors.add("Todo alarm " + i + " is invalid");
+				}
+			}
+		}
+
+		// Status validation
+		if (status != STATUS_UNDEFINED && status != STATUS_NEEDS_ACTION &&
+			status != STATUS_IN_PROCESS && status != STATUS_COMPLETED &&
+			status != STATUS_CANCELLED) {
+			valid = false;
+			if (errors != null) errors.add("Invalid todo STATUS value: " + status);
+		}
+
+		// Priority validation
+		if (priority != null && (priority < 0 || priority > 9)) {
+			valid = false;
+			if (errors != null) errors.add("Todo PRIORITY must be between 0 and 9");
+		}
+
+		return valid;
 	}
 
 	/**
@@ -617,6 +692,12 @@ public class Todo implements Constants {
 
 		if (uid != null) {
 			ret.append(uid.toICalendar());
+			ret.append(CRLF);
+		} else {
+			// Auto-generate UID for serialization
+			Uid autoUid = new Uid();
+			autoUid.value = Utils.generateUniqueId("JAVACALTOOLS");
+			ret.append(autoUid.toICalendar());
 			ret.append(CRLF);
 		}
 
