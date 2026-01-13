@@ -75,6 +75,12 @@ public class Todo implements Constants {
 	protected List<String> resourceIds = null;
 	/** Availability references (List of VAVAILABILITY UIDs) */
 	protected List<String> availabilityIds = null;
+	/** Color */
+	protected String color = null;
+	/** Image URI */
+	protected String imageUri = null;
+	/** Conference URI */
+	protected String conferenceUri = null;
 	/** Geographic position */
 	protected String geo = null;
 	/** Participants for todo (List of Attendee) */
@@ -334,6 +340,15 @@ public class Todo implements Constants {
 			for (String uid : uids) {
 				availabilityIds.add(uid.trim());
 			}
+		} else if (up.startsWith("COLOR")) {
+			Property p = new Property(icalStr);
+			color = p.value;
+		} else if (up.startsWith("IMAGE")) {
+			Property p = new Property(icalStr);
+			imageUri = p.value;
+		} else if (up.startsWith("CONFERENCE")) {
+			Property p = new Property(icalStr);
+			conferenceUri = p.value;
 		} else {
 			System.out.println("Ignoring VTODO line: " + icalStr);
 		}
@@ -1034,6 +1049,16 @@ public class Todo implements Constants {
 				ret.append(availabilityIds.get(i));
 			}
 			ret.append(CRLF);
+		}
+
+		if (color != null) {
+			ret.append("COLOR:").append(color).append(CRLF);
+		}
+		if (imageUri != null) {
+			ret.append("IMAGE:").append(imageUri).append(CRLF);
+		}
+		if (conferenceUri != null) {
+			ret.append("CONFERENCE:").append(conferenceUri).append(CRLF);
 		}
 
 		ret.append("END:VTODO");

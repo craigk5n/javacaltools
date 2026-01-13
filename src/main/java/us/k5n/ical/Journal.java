@@ -47,6 +47,10 @@ public class Journal implements Constants {
 	protected Classification classification = null;
 	/** List of categories (comma-separated) */
 	protected Categories categories = null;
+	/** Color */
+	protected String color = null;
+	/** Image URI */
+	protected String imageUri = null;
 	/** Date created */
 	protected Date createdDate = null;
 	/** Primary start date */
@@ -329,6 +333,12 @@ public class Journal implements Constants {
 			}
 		} else if (up.startsWith("RELATED-TO")) {
 			relatedTo = new RelatedTo(icalStr);
+		} else if (up.startsWith("COLOR")) {
+			Property p = new Property(icalStr);
+			color = p.value;
+		} else if (up.startsWith("IMAGE")) {
+			Property p = new Property(icalStr);
+			imageUri = p.value;
 		} else {
 			System.err.println("Ignoring VJOURNAL line: " + icalStr);
 		}
@@ -457,6 +467,13 @@ public class Journal implements Constants {
 				Valarm alarm = (Valarm) this.alarms.get(i);
 				ret.append(alarm.toICalendar());
 			}
+		}
+
+		if (color != null) {
+			ret.append("COLOR:").append(color).append(CRLF);
+		}
+		if (imageUri != null) {
+			ret.append("IMAGE:").append(imageUri).append(CRLF);
 		}
 
 		ret.append("END:VJOURNAL");

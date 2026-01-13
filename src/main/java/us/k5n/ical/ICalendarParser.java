@@ -392,6 +392,28 @@ public class ICalendarParser extends CalendarParser implements Constants {
 								reportParseError(new ParseError(ln,
 										"Parse error in METHOD: " + e.toString(), line));
 							}
+						} else if (lineUp.startsWith("NAME")) {
+							try {
+								Property nameProp = new Property(line, getParseMethod());
+								for (int i = 0; i < dataStores.size(); i++) {
+									DefaultDataStore ds = (DefaultDataStore) dataStores.get(i);
+									ds.setName(nameProp.value);
+								}
+							} catch (ParseException e) {
+								reportParseError(new ParseError(ln,
+										"Parse error in NAME: " + e.toString(), line));
+							}
+						} else if (lineUp.startsWith("CALENDAR-ADDRESS")) {
+							try {
+								Property calAddr = new Property(line, getParseMethod());
+								for (int i = 0; i < dataStores.size(); i++) {
+									DefaultDataStore ds = (DefaultDataStore) dataStores.get(i);
+									ds.setCalendarAddress(calAddr.value);
+								}
+							} catch (ParseException e) {
+								reportParseError(new ParseError(ln,
+										"Parse error in CALENDAR-ADDRESS: " + e.toString(), line));
+							}
 						} else if (lineUp.startsWith("X-")) {
 							// These are extensions like: X-WR-CALNAME, X-WR-CALDESC, X-WR-TIMEZONE, X-WR-RELCALID,
 							// X-PUBLISHED-TTL, X-APPLE-CALENDAR-COLOR, X-MS-OLK-APPTSEQTIME, X-MS-OLK-CONFTYPE,

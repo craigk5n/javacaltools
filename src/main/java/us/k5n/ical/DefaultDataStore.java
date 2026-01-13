@@ -42,6 +42,8 @@ public class DefaultDataStore implements DataStore {
 	List<VResource> vresources;
 	List<VAvailability> vavailabilities;
 	Property method;
+	String name;
+	String calendarAddress;
 
 	/**
 	 * Constructor
@@ -166,6 +168,42 @@ public class DefaultDataStore implements DataStore {
 	}
 
 	/**
+	 * Set the NAME property for VCALENDAR.
+	 *
+	 * @param name the name
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	/**
+	 * Get the NAME property.
+	 *
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * Set the CALENDAR-ADDRESS property for VCALENDAR.
+	 *
+	 * @param calendarAddress the calendar address
+	 */
+	public void setCalendarAddress(String calendarAddress) {
+		this.calendarAddress = calendarAddress;
+	}
+
+	/**
+	 * Get the CALENDAR-ADDRESS property.
+	 *
+	 * @return the calendar address
+	 */
+	public String getCalendarAddress() {
+		return calendarAddress;
+	}
+
+	/**
 	 * Generate iCalendar format string for the entire calendar.
 	 *
 	 * @return The iCalendar string
@@ -178,6 +216,12 @@ public class DefaultDataStore implements DataStore {
 
 		if (method != null) {
 			sb.append(method.toICalendar());
+		}
+		if (name != null) {
+			sb.append("NAME:").append(name).append(Constants.CRLF);
+		}
+		if (calendarAddress != null) {
+			sb.append("CALENDAR-ADDRESS:").append(calendarAddress).append(Constants.CRLF);
 		}
 
 		// Add components

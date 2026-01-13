@@ -25,6 +25,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -235,6 +236,47 @@ public class VAvailabilityTest {
 		assertEquals(2, event.getAvailabilityIds().size());
 		assertEquals("office-hours-001@example.com", event.getAvailabilityIds().get(0));
 		assertEquals("meeting-room-avail-001@example.com", event.getAvailabilityIds().get(1));
+	}
+
+	@Test
+	public void testEventColorProperty() throws Exception {
+		String icalStr = "BEGIN:VEVENT\n" +
+			"UID:event-color@example.com\n" +
+			"SUMMARY:Color Test\n" +
+			"DTSTART:20230101T100000Z\n" +
+			"COLOR:#FF0000\n" +
+			"END:VEVENT";
+
+		Event event = createEventFromICalendar(icalStr);
+
+		// Test serialization (since color is protected)
+		String serialized = event.toICalendar();
+		String unfolded = serialized.replace("\r\n ", "").replace("\r\n", "\n");
+		assertTrue(unfolded.contains("COLOR:#FF0000"));
+	}
+
+	@Test
+	public void testCalendarNameProperty() throws Exception {
+		String icalStr = "BEGIN:VCALENDAR\n" +
+			"NAME:My Calendar\n" +
+			"METHOD:PUBLISH\n" +
+			"VERSION:2.0\n" +
+			"BEGIN:VEVENT\n" +
+			"UID:event-name@example.com\n" +
+			"SUMMARY:Test Event\n" +
+			"DTSTART:20230101T100000Z\n" +
+			"END:VEVENT\n" +
+			"END:VCALENDAR";
+
+		parser.parse(new StringReader(icalStr));
+		DefaultDataStore ds = (DefaultDataStore) parser.getDataStoreAt(0);
+
+		assertEquals("My Calendar", ds.getName());
+
+		// Test serialization
+		String serialized = ds.toICalendar();
+		String unfolded = serialized.replace("\r\n ", "").replace("\r\n", "\n");
+		assertTrue(unfolded.contains("NAME:My Calendar"));
 	}
 
 	private Event createEventFromICalendar(String icalStr) throws Exception {
