@@ -65,6 +65,11 @@ public interface DataStore {
 	public void storeFreebusy(Freebusy freebusy);
 
 	/**
+	 * This method will be called the parser finds a VLOCATION object.
+	 */
+	public void storeVLocation(VLocation vlocation);
+
+	/**
 	 * Get all Event objects.
 	 * 
 	 * @return A List if Event objects

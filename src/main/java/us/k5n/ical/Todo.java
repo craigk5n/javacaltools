@@ -68,6 +68,8 @@ public class Todo implements Constants {
 	protected URL url = null;
 	/** Location */
 	protected Location location = null;
+	/** Location reference (UID of VLOCATION) */
+	protected String locationId = null;
 	/** Geographic position */
 	protected String geo = null;
 	/** Participants for todo (List of Attendee) */
@@ -536,6 +538,24 @@ public class Todo implements Constants {
 	 */
 	public Location getLocation() {
 		return location;
+	}
+
+	/**
+	 * Get location reference (UID of VLOCATION)
+	 *
+	 * @return location UID reference
+	 */
+	public String getLocationId() {
+		return locationId;
+	}
+
+	/**
+	 * Set location reference (UID of VLOCATION)
+	 *
+	 * @param locationId the UID of the referenced VLOCATION
+	 */
+	public void setLocationId(String locationId) {
+		this.locationId = locationId;
 	}
 
 	/**

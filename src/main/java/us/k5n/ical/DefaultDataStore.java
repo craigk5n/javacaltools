@@ -36,6 +36,7 @@ public class DefaultDataStore implements DataStore {
 	List<Todo> todos;
 	List<Journal> journals;
 	List<Freebusy> freebusys;
+	List<VLocation> vlocations;
 
 	/**
 	 * Constructor
@@ -46,6 +47,7 @@ public class DefaultDataStore implements DataStore {
 		todos = new ArrayList<Todo>();
 		journals = new ArrayList<Journal>();
 		freebusys = new ArrayList<Freebusy>();
+		vlocations = new ArrayList<VLocation>();
 	}
 
 	/**
@@ -81,6 +83,13 @@ public class DefaultDataStore implements DataStore {
 	 */
 	public void storeFreebusy(Freebusy freebusy) {
 		freebusys.add(freebusy);
+	}
+
+	/**
+	 * This method will be called as the parser finds a VLOCATION object.
+	 */
+	public void storeVLocation(VLocation vlocation) {
+		vlocations.add(vlocation);
 	}
 
 	/**
