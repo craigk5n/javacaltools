@@ -78,6 +78,18 @@ public class Event implements Constants {
 	protected int transp = TRANSP_OPAQUE;
 	/** Attachments */
 	protected List<Attachment> attachments = null;
+	/** Alarms (List of Valarm objects) */
+	protected List<Valarm> alarms = null;
+	/** Organizer */
+	protected Organizer organizer = null;
+	/** Contact */
+	protected Contact contact = null;
+	/** Priority (1-9, 0 is undefined) */
+	protected Integer priority = null;
+	/** Request status */
+	protected int requestStatus = STATUS_UNDEFINED;
+	/** Geographic position */
+	protected String geo = null;
 	/** Private user object for caller to set/get */
 	private Object userData = null;
 
@@ -279,6 +291,36 @@ public class Event implements Constants {
 			if (this.attendees == null)
 				this.attendees = new ArrayList<Attendee>();
 			this.attendees.add(attendee);
+		} else if (up.startsWith("ORGANIZER")) {
+			organizer = new Organizer(icalStr);
+		} else if (up.startsWith("CONTACT")) {
+			contact = new Contact(icalStr);
+		} else if (up.startsWith("PRIORITY")) {
+			Property p = new Property(icalStr);
+			try {
+				priority = Integer.parseInt(p.value);
+			} catch (NumberFormatException e) {
+				if (parseMethod == PARSE_STRICT) {
+					throw new ParseException("Invalid PRIORITY: " + p.value, icalStr);
+				}
+			}
+		} else if (up.startsWith("REQUEST-STATUS")) {
+			Property p = new Property(icalStr);
+			if (p.value.equals("NEEDS-ACTION"))
+				requestStatus = STATUS_NEEDS_ACTION;
+			else if (p.value.equals("ACCEPTED"))
+				requestStatus = 3; // STATUS_IN_PROCESS for accepted
+			else if (p.value.equals("DECLINED"))
+				requestStatus = 7; // STATUS_CANCELLED for declined
+			else if (p.value.equals("TENTATIVE"))
+				requestStatus = 8; // STATUS_TENTATIVE for tentative
+			else if (p.value.equals("COMPLETED"))
+				requestStatus = STATUS_COMPLETED;
+			else if (p.value.equals("IN-PROCESS"))
+				requestStatus = STATUS_IN_PROCESS;
+		} else if (up.startsWith("GEO")) {
+			Property p = new Property(icalStr);
+			geo = p.value;
 		} else {
 			System.out.println("Ignoring VEVENT line: " + icalStr);
 		}
@@ -535,6 +577,51 @@ public class Event implements Constants {
 
 	public void setUserData(Object userData) {
 		this.userData = userData;
+	}
+
+	/**
+	 * Get organizer
+	 *
+	 * @return organizer object
+	 */
+	public Organizer getOrganizer() {
+		return organizer;
+	}
+
+	/**
+	 * Get contact
+	 *
+	 * @return contact object
+	 */
+	public Contact getContact() {
+		return contact;
+	}
+
+	/**
+	 * Get priority
+	 *
+	 * @return priority (1-9, 0 undefined)
+	 */
+	public Integer getPriority() {
+		return priority;
+	}
+
+	/**
+	 * Get request status
+	 *
+	 * @return request status
+	 */
+	public int getRequestStatus() {
+		return requestStatus;
+	}
+
+	/**
+	 * Get geographic position
+	 *
+	 * @return geo string (latitude;longitude)
+	 */
+	public String getGeo() {
+		return geo;
 	}
 
 	/**

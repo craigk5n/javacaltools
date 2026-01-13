@@ -56,14 +56,18 @@ public class ICalendarParser extends CalendarParser implements Constants {
 	Property method = null;
 	Property calscale = null;
 	String language = "EN"; // default language setting
+	Timezone currentTimezone = null; // current timezone being parsed
 	static final int STATE_NONE = 0;
 	static final int STATE_VCALENDAR = 1;
 	static final int STATE_VEVENT = 2;
 	static final int STATE_VTODO = 3;
 	static final int STATE_VJOURNAL = 4;
 	static final int STATE_VTIMEZONE = 5;
-	static final int STATE_VFREEBUSY = 6;
-	static final int STATE_DONE = 7;
+	static final int STATE_VTIMEZONE_STANDARD = 6;
+	static final int STATE_VTIMEZONE_DAYLIGHT = 7;
+	static final int STATE_VFREEBUSY = 8;
+	static final int STATE_VALARM = 9;
+	static final int STATE_DONE = 10;
 
 	/**
 	 * Create an ICalendarParser object. By default, this will also setup the
@@ -291,14 +295,28 @@ public class ICalendarParser extends CalendarParser implements Constants {
 						textLines.add(line);
 						if (lineUp.startsWith("END:VTIMEZONE")) {
 							state = STATE_VCALENDAR;
-							Timezone timezone = new Timezone(this, startLineNo, textLines);
-							if (timezone.isValid()) {
-								for (int i = 0; i < dataStores.size(); i++) {
-									DataStore ds = (DataStore) dataStores.get(i);
-									ds.storeTimezone(timezone);
+							if (currentTimezone != null) {
+								if (currentTimezone.isValid()) {
+									for (int i = 0; i < dataStores.size(); i++) {
+										DataStore ds = (DataStore) dataStores.get(i);
+										ds.storeTimezone(currentTimezone);
+									}
 								}
+								currentTimezone = null;
 							}
 							textLines.clear(); // truncate List
+						} else if (lineUp.startsWith("BEGIN:STANDARD")) {
+							state = STATE_VTIMEZONE_STANDARD;
+							startLineNo = ln; // mark starting line number
+							textLines.clear();
+							textLines.add(line);
+						} else if (lineUp.startsWith("BEGIN:DAYLIGHT")) {
+							state = STATE_VTIMEZONE_DAYLIGHT;
+							startLineNo = ln; // mark starting line number
+							textLines.clear();
+							textLines.add(line);
+						} else if (lineUp.startsWith("BEGIN:VTIMEZONE")) {
+							currentTimezone = new Timezone(this, ln, textLines);
 						}
 						break;
 
@@ -306,14 +324,13 @@ public class ICalendarParser extends CalendarParser implements Constants {
 						textLines.add(line);
 						if (lineUp.startsWith("END:VTODO")) {
 							state = STATE_VCALENDAR;
-							// Send the Todo object to all DataStore objects
-							/*****************************************************************
-							 * * TODO - not yet implemented Uncomment this when Todo.java is
-							 * implemented Todo todo = new Todo ( this, startLineNo, textLines
-							 * ); if ( todo.isValid() ) { for ( int i = 0; i <
-							 * dataStores.size(); i++ ) { DataStore ds = (DataStore)
-							 * dataStores.elementAt ( i ); ds.storeTodo ( todo ); } }
-							 ****************************************************************/
+							Todo todo = new Todo(this, startLineNo, textLines);
+							if (todo.isValid()) {
+								for (int i = 0; i < dataStores.size(); i++) {
+									DataStore ds = (DataStore) dataStores.get(i);
+									ds.storeTodo(todo);
+								}
+							}
 							textLines.clear(); // truncate List
 						}
 						break;
@@ -355,14 +372,39 @@ public class ICalendarParser extends CalendarParser implements Constants {
 						textLines.add(line);
 						if (lineUp.startsWith("END:VFREEBUSY")) {
 							state = STATE_VCALENDAR;
-							// Send the Freebusy object to all DataStore objects
-							/*****************************************************************
-							 * * TODO - not yet implemented Uncomment this when Freebusy.java
-							 * is implemented Freebusy fb = new Freebusy ( this, startLineNo,
-							 * textLines ); if ( fb.isValid() ) { for ( int i = 0; i <
-							 * dataStores.size(); i++ ) { DataStore ds = (DataStore)
-							 * dataStores.elementAt ( i ); ds.storeFreebusy ( event ); } }
-							 ****************************************************************/
+							Freebusy fb = new Freebusy(this, startLineNo, textLines);
+							if (fb.isValid()) {
+								for (int i = 0; i < dataStores.size(); i++) {
+									DataStore ds = (DataStore) dataStores.get(i);
+									ds.storeFreebusy(fb);
+								}
+							}
+							textLines.clear(); // truncate List
+						}
+						break;
+
+
+
+					case STATE_VTIMEZONE_DAYLIGHT:
+						textLines.add(line);
+						if (lineUp.startsWith("END:DAYLIGHT")) {
+							state = STATE_VTIMEZONE;
+							TimezoneDaylight daylight = new TimezoneDaylight(this, startLineNo, textLines);
+							if (daylight.isValid() && currentTimezone != null) {
+								currentTimezone.addDaylight(daylight);
+							}
+							textLines.clear(); // truncate List
+						}
+						break;
+
+					case STATE_VTIMEZONE_STANDARD:
+						textLines.add(line);
+						if (lineUp.startsWith("END:STANDARD")) {
+							state = STATE_VTIMEZONE;
+							TimezoneStandard standard = new TimezoneStandard(this, startLineNo, textLines);
+							if (standard.isValid() && currentTimezone != null) {
+								currentTimezone.addStandard(standard);
+							}
 							textLines.clear(); // truncate List
 						}
 						break;

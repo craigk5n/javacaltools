@@ -25,7 +25,7 @@ import java.util.List;
 
 /**
  * A simple implementation of the DataStore interface. This is the default
- * implementation used by the IcalParser class.
+ * implementation used by IcalParser class.
  * 
  * @author Craig Knudsen, craig@k5n.us
  * @see CalendarParser
@@ -49,35 +49,35 @@ public class DefaultDataStore implements DataStore {
 	}
 
 	/**
-	 * This method will be called the parser finds a VTIMEZONE object.
+	 * This method will be called as the parser finds a VTIMEZONE object.
 	 */
 	public void storeTimezone(Timezone timezone) {
 		timezones.add(timezone);
 	}
 
 	/**
-	 * This method will be called the parser finds a VEVENT object.
+	 * This method will be called as the parser finds a VEVENT object.
 	 */
 	public void storeEvent(Event event) {
 		events.add(event);
 	}
 
 	/**
-	 * This method will be called the parser finds a VTODO object.
+	 * This method will be called as the parser finds a VTODO object.
 	 */
 	public void storeTodo(Todo todo) {
 		todos.add(todo);
 	}
 
 	/**
-	 * This method will be called the parser finds a VJOURNAL object.
+	 * This method will be called as the parser finds a VJOURNAL object.
 	 */
 	public void storeJournal(Journal journal) {
 		journals.add(journal);
 	}
 
 	/**
-	 * This method will be called the parser finds a VFREEBUSY object.
+	 * This method will be called as the parser finds a VFREEBUSY object.
 	 */
 	public void storeFreebusy(Freebusy freebusy) {
 		freebusys.add(freebusy);
@@ -85,6 +85,8 @@ public class DefaultDataStore implements DataStore {
 
 	/**
 	 * Get a List of all Event objects
+	 * 
+	 * @return A List of Event objects
 	 */
 	public List<Event> getAllEvents() {
 		return events;
@@ -99,4 +101,21 @@ public class DefaultDataStore implements DataStore {
 		return journals;
 	}
 
+	/**
+	 * Get all Timezone objects.
+	 * 
+	 * @return A List of Timezone objects
+	 */
+	public List<Timezone> getAllTimezones() {
+		return timezones;
+	}
+
+	/**
+	 * Get all Freebusy objects.
+	 * 
+	 * @return A List of Freebusy objects
+	 */
+	public List<Freebusy> getAllFreebusys() {
+		return freebusys;
+	}
 }

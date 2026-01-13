@@ -663,6 +663,41 @@ public class Date extends Property implements Comparable {
 			return monthDays[this.month - 1];
 	}
 
+	/**
+     * Convert this Date object into a date-time format used in ISO 8601.
+     * Example output: "20230101T000000Z" (for UTC) or "20230101T000000" (for floating/local).
+     * * @return String formatted in ISO 8601
+     */
+    public String toISO8601String() {
+        StringBuilder sb = new StringBuilder(dateOnly ? 8 : 16);
+
+        // Format Date Part: YYYYMMDD
+        sb.append(year);
+        if (month < 10) sb.append('0');
+        sb.append(month);
+        if (day < 10) sb.append('0');
+        sb.append(day);
+
+        // If it's a date-time, append the time part: THHMMSS
+        if (!dateOnly) {
+            sb.append('T');
+            if (hour < 10) sb.append('0');
+            sb.append(hour);
+            if (minute < 10) sb.append('0');
+            sb.append(minute);
+            if (second < 10) sb.append('0');
+            sb.append(second);
+
+            // If it is not floating and we have a timezone, 
+            // the toICalendar logic suggests appending 'Z' for UTC/GMT.
+            if (!floating && (tzid == null || tzid.equalsIgnoreCase("GMT") || tzid.equalsIgnoreCase("UTC"))) {
+                sb.append('Z');
+            }
+        }
+
+        return sb.toString();
+    }
+
 	public boolean equals(Object o) {
 		if (o instanceof Date) {
 			return (this.compareTo(o) == 0);
