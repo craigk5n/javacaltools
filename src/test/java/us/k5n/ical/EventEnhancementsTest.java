@@ -244,13 +244,14 @@ public class EventEnhancementsTest {
 
 		Event event = createEventFromICalendar(icalStr);
 		String output = event.toICalendar();
+		String unfolded = output.replace("\r\n ", "").replace("\r\n", "\n");
 
 		// Verify the output contains VALARM
-		assertTrue(output.contains("BEGIN:VALARM"));
-		assertTrue(output.contains("ACTION:AUDIO"));
-		assertTrue(output.contains("TRIGGER:-PT15M"));
-		assertTrue(output.contains("END:VALARM"));
-		assertTrue(output.contains("BEGIN:VEVENT"));
-		assertTrue(output.contains("END:VEVENT"));
+		assertTrue(unfolded.contains("BEGIN:VALARM"));
+		assertTrue(unfolded.contains("ACTION:AUDIO"));
+		assertTrue(unfolded.contains("TRIGGER:-PT15M"));
+		assertTrue(unfolded.contains("END:VALARM"));
+		assertTrue(unfolded.contains("BEGIN:VEVENT"));
+		assertTrue(unfolded.contains("END:VEVENT"));
 	}
 }

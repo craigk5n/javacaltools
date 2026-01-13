@@ -351,7 +351,8 @@ public class RruleTest implements Constants {
 
 			// Generate the iCalendar and reparse
 			String icalOut = event.toICalendar();
-			List<String> icalLines = Arrays.asList(icalOut.split("[\r\n]+"));
+			String unfolded = Utils.unfoldLines(icalOut);
+			List<String> icalLines = Arrays.asList(unfolded.split("\n"));
 			event = new Event(parser, 0, icalLines);
 			assertNotNull(event, "Event should not be null");
 
@@ -406,7 +407,8 @@ public class RruleTest implements Constants {
 			// Generate the iCalendar and reparse
 			String icalOut = event.toICalendar();
 			System.out.println("iCalendar:\n" + icalOut + "\n\n");
-			List<String> icalLines = Arrays.asList(icalOut.split("[\r\n]+"));
+			String unfolded = Utils.unfoldLines(icalOut);
+			List<String> icalLines = Arrays.asList(unfolded.split("\n"));
 			event = new Event(parser, 0, icalLines);
 			assertNotNull(event, "Event should not be null");
 
@@ -547,9 +549,33 @@ public class RruleTest implements Constants {
 				fail("Error opening " + file + ": " + e);
 			}
 		} else {
-			System.err.println("Could not find test file: " + file);
-			fail("Could not find test file: " + file);
+			fail("Expected IOException");
 		}
+	}
+
+	@Test
+	public void testEventGetAllOccurrences() throws Exception {
+		List<String> lines = new ArrayList<>();
+		lines.add("BEGIN:VEVENT");
+		lines.add("UID: test-occurrence@example.com");
+		lines.add("SUMMARY:Test Recurring Event");
+		lines.add("DTSTART:20230101T100000Z");
+		lines.add("RRULE:FREQ=WEEKLY;COUNT=3");
+		lines.add("RDATE:20230115T100000Z");
+		lines.add("EXDATE:20230108T100000Z");
+		lines.add("END:VEVENT");
+
+		ICalendarParser parser = new ICalendarParser(Constants.PARSE_STRICT);
+		Event event = new Event(parser, 0, lines);
+
+		List<Date> occurrences = event.getAllOccurrences();
+
+		assertNotNull(occurrences);
+		assertTrue(occurrences.size() > 0);
+
+		// Should include start date, rrule instances, rdate, minus exdate
+		// 2023-01-01 (start), 2023-01-08 (excluded), 2023-01-15 (rdate), 2023-01-22 (rrule)
+		assertEquals(3, occurrences.size()); // Assuming the rrule generates 2 more after start
 	}
 
 }

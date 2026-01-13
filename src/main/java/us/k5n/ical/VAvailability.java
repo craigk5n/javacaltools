@@ -205,7 +205,7 @@ public class VAvailability implements Constants {
 
 		ret.append("END:VAVAILABILITY");
 		ret.append(CRLF);
-		return ret.toString();
+		return Utils.foldLines(ret.toString());
 	}
 
 	// Getter and setter methods

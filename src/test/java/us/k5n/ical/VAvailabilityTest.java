@@ -100,12 +100,13 @@ public class VAvailabilityTest {
 		VAvailability vavailability = new VAvailability(parser, 1, lines);
 
 		String output = vavailability.toICalendar();
+		String unfolded = output.replace("\r\n ", "").replace("\r\n", "\n");
 
-		assertTrue(output.contains("BEGIN:VAVAILABILITY"));
-		assertTrue(output.contains("UID:avail-test@example.com"));
-		assertTrue(output.contains("BUSYTYPE:FREE"));
-		assertTrue(output.contains("SUMMARY:Available Time"));
-		assertTrue(output.contains("END:VAVAILABILITY"));
+		assertTrue(unfolded.contains("BEGIN:VAVAILABILITY"));
+		assertTrue(unfolded.contains("UID:avail-test@example.com"));
+		assertTrue(unfolded.contains("BUSYTYPE:FREE"));
+		assertTrue(unfolded.contains("SUMMARY:Available Time"));
+		assertTrue(unfolded.contains("END:VAVAILABILITY"));
 	}
 
 	@Test
@@ -168,14 +169,58 @@ public class VAvailabilityTest {
 	}
 
 	@Test
-	@DisplayName("Test Event with availability references")
-	void testEventWithAvailabilityReferences() throws Exception {
+	@DisplayName("Test Event availability references parsing")
+	void testEventAvailabilityReferencesParsing() throws Exception {
 		String icalStr = "BEGIN:VEVENT\n" +
-			"DTSTAMP:20230101T120000Z\n" +
-			"UID:event-with-availability@example.com\n" +
-			"DTSTART:20230101T090000Z\n" +
-			"DTEND:20230101T100000Z\n" +
-			"SUMMARY:Meeting during available time\n" +
+			"UID:event-123@example.com\n" +
+			"SUMMARY:Test Event\n" +
+			"DTSTART:20230101T100000Z\n" +
+			"DTEND:20230101T110000Z\n" +
+			"AVAILABILITY:office-hours-001@example.com,meeting-room-avail-001@example.com\n" +
+			"END:VEVENT";
+
+		Event event = createEventFromICalendar(icalStr);
+
+		assertNotNull(event.getAvailabilityIds());
+		assertEquals(2, event.getAvailabilityIds().size());
+		assertEquals("office-hours-001@example.com", event.getAvailabilityIds().get(0));
+		assertEquals("meeting-room-avail-001@example.com", event.getAvailabilityIds().get(1));
+
+		// Test serialization
+		String serialized = event.toICalendar();
+		String unfolded = serialized.replace("\r\n ", "").replace("\r\n", "\n");
+		assertTrue(unfolded.contains("AVAILABILITY:office-hours-001@example.com,meeting-room-avail-001@example.com"));
+	}
+
+	@Test
+	@DisplayName("Test Todo availability references parsing")
+	void testTodoAvailabilityReferencesParsing() throws Exception {
+		String icalStr = "BEGIN:VTODO\n" +
+			"UID:todo-123@example.com\n" +
+			"SUMMARY:Test Todo\n" +
+			"AVAILABILITY:personal-avail-001@example.com\n" +
+			"END:VTODO";
+
+		Todo todo = createTodoFromICalendar(icalStr);
+
+		assertNotNull(todo.getAvailabilityIds());
+		assertEquals(1, todo.getAvailabilityIds().size());
+		assertEquals("personal-avail-001@example.com", todo.getAvailabilityIds().get(0));
+
+		// Test serialization
+		String serialized = todo.toICalendar();
+		String unfolded = serialized.replace("\r\n ", "").replace("\r\n", "\n");
+		assertTrue(unfolded.contains("AVAILABILITY:personal-avail-001@example.com"));
+	}
+
+	@Test
+	@DisplayName("Test Event availability references")
+	void testEventAvailabilityReferences() throws Exception {
+		String icalStr = "BEGIN:VEVENT\n" +
+			"UID:event-123@example.com\n" +
+			"SUMMARY:Test Event\n" +
+			"DTSTART:20230101T100000Z\n" +
+			"DTEND:20230101T110000Z\n" +
 			"END:VEVENT";
 
 		Event event = createEventFromICalendar(icalStr);
@@ -195,5 +240,10 @@ public class VAvailabilityTest {
 	private Event createEventFromICalendar(String icalStr) throws Exception {
 		List<String> lines = new ArrayList<>(Arrays.asList(icalStr.split("\\r?\\n")));
 		return new Event(parser, 1, lines);
+	}
+
+	private Todo createTodoFromICalendar(String icalStr) throws Exception {
+		List<String> lines = new ArrayList<>(Arrays.asList(icalStr.split("\\r?\\n")));
+		return new Todo(parser, 1, lines);
 	}
 }

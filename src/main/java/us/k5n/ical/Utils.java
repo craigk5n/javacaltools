@@ -24,6 +24,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Calendar;
 
@@ -466,6 +467,79 @@ public class Utils implements Constants {
 		}
 		ret.append(java.util.Calendar.getInstance().getTimeInMillis());
 		return ret.toString();
+	}
+
+	/**
+	 * Fold long lines in iCalendar format according to RFC 5545.
+	 * Lines longer than 75 characters are folded by inserting CRLF followed by a space.
+	 *
+	 * @param input the input string to fold
+	 * @return the folded string
+	 */
+	public static String foldLines(String input) {
+		if (input == null) return null;
+		StringBuilder result = new StringBuilder();
+		int length = input.length();
+		int pos = 0;
+		while (pos < length) {
+			int end = Math.min(pos + 75, length);
+			if (end < length) {
+				// Find a safe break point (not in the middle of a UTF-8 sequence)
+				while (end > pos && (input.charAt(end - 1) & 0x80) != 0) {
+					end--;
+				}
+				if (end == pos) end = Math.min(pos + 75, length); // Fallback
+			}
+			result.append(input.substring(pos, end));
+			if (end < length) {
+				result.append(CRLF).append(" ");
+			}
+			pos = end;
+		}
+		return result.toString();
+	}
+
+	/**
+	 * Unfold iCalendar lines according to RFC 5545.
+	 * Removes CRLF followed by space.
+	 *
+	 * @param input the folded input string
+	 * @return the unfolded string
+	 */
+	public static String unfoldLines(String input) {
+		if (input == null) return null;
+		return input.replace("\r\n ", "").replace("\r\n", "\n");
+	}
+
+	/**
+	 * Export iCalendar data to a file.
+	 *
+	 * @param icalData the iCalendar data string
+	 * @param filename the file to write to
+	 * @throws IOException if writing fails
+	 */
+	public static void exportToFile(String icalData, String filename) throws IOException {
+		try (FileWriter writer = new FileWriter(filename)) {
+			writer.write(icalData);
+		}
+	}
+
+	/**
+	 * Import iCalendar data from a file.
+	 *
+	 * @param filename the file to read from
+	 * @return the iCalendar data as a string
+	 * @throws IOException if reading fails
+	 */
+	public static String importFromFile(String filename) throws IOException {
+		StringBuilder sb = new StringBuilder();
+		try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
+			String line;
+			while ((line = reader.readLine()) != null) {
+				sb.append(line).append("\n");
+			}
+		}
+		return sb.toString();
 	}
 
 }

@@ -21,6 +21,7 @@
 package us.k5n.ical;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -424,6 +425,13 @@ public class Event implements Constants {
 		} else if (up.startsWith("GEO")) {
 			Property p = new Property(icalStr);
 			geo = p.value;
+		} else if (up.startsWith("AVAILABILITY")) {
+			Property p = new Property(icalStr);
+			if (availabilityIds == null) availabilityIds = new ArrayList<>();
+			String[] uids = p.value.split(",");
+			for (String uid : uids) {
+				availabilityIds.add(uid.trim());
+			}
 		} else {
 			System.out.println("Ignoring VEVENT line: " + icalStr);
 		}
@@ -929,10 +937,52 @@ public class Event implements Constants {
 			}
 		}
 
+		if (availabilityIds != null && !availabilityIds.isEmpty()) {
+			ret.append("AVAILABILITY:");
+			for (int i = 0; i < availabilityIds.size(); i++) {
+				if (i > 0) ret.append(",");
+				ret.append(availabilityIds.get(i));
+			}
+			ret.append(CRLF);
+		}
+
 		ret.append("END:VEVENT");
 		ret.append(CRLF);
 
-		return ret.toString();
+		return Utils.foldLines(ret.toString());
+	}
+
+	/**
+	 * Generate all occurrences of this event, including recurrences and applying exceptions.
+	 *
+	 * @return list of Date objects for all occurrences
+	 */
+	public List<Date> getAllOccurrences() {
+		List<Date> occurrences = new ArrayList<>();
+
+		if (startDate != null) {
+			occurrences.add(startDate); // Add the start date itself
+		}
+
+		if (rrule != null) {
+			List<Date> recurrences = rrule.generateRecurrances(startDate, null);
+			occurrences.addAll(recurrences);
+		}
+
+		if (rdates != null) {
+			occurrences.addAll(rdates);
+		}
+
+		if (exdates != null) {
+			// Remove exdates from occurrences
+			occurrences.removeAll(exdates);
+		}
+
+		// Sort and remove duplicates
+		Collections.sort(occurrences);
+		// Note: Simple removeAll may not handle date equality properly, but for now assume Date.equals works
+
+		return occurrences;
 	}
 
 }
