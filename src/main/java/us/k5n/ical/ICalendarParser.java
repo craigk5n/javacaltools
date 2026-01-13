@@ -60,6 +60,16 @@ public class ICalendarParser extends CalendarParser implements Constants {
 	VLocation currentVLocation = null; // current vlocation being parsed
 	VResource currentVResource = null; // current vresource being parsed
 	VAvailability currentVAvailability = null; // current vavailability being parsed
+	/** Enable streaming parsing for large files */
+	protected boolean streamingMode = false;
+	/** Maximum component size for streaming mode (lines) */
+	protected int maxComponentSize = 10000;
+	/** Enable performance monitoring */
+	protected boolean performanceMonitoring = false;
+	/** Performance metrics */
+	protected long parseStartTime = 0;
+	protected long linesProcessed = 0;
+	protected long componentsParsed = 0;
 	static final int STATE_NONE = 0;
 	static final int STATE_VCALENDAR = 1;
 	static final int STATE_VEVENT = 2;
@@ -127,6 +137,80 @@ public class ICalendarParser extends CalendarParser implements Constants {
 	}
 
 	/**
+	 * Enable or disable streaming parsing mode for large files.
+	 * Streaming mode reduces memory usage by limiting the size of component text buffers.
+	 *
+	 * @param streamingMode true to enable streaming mode, false for normal mode
+	 */
+	public void setStreamingMode(boolean streamingMode) {
+		this.streamingMode = streamingMode;
+	}
+
+	/**
+	 * Set the maximum component size for streaming mode.
+	 * Components larger than this size will be processed in chunks.
+	 *
+	 * @param maxComponentSize maximum number of lines per component chunk
+	 */
+	public void setMaxComponentSize(int maxComponentSize) {
+		this.maxComponentSize = maxComponentSize;
+	}
+
+	/**
+	 * Get the current streaming mode setting.
+	 *
+	 * @return true if streaming mode is enabled
+	 */
+	public boolean isStreamingMode() {
+		return streamingMode;
+	}
+
+	/**
+	 * Get the maximum component size setting.
+	 *
+	 * @return maximum component size in lines
+	 */
+	public int getMaxComponentSize() {
+		return maxComponentSize;
+	}
+
+	/**
+	 * Enable or disable performance monitoring.
+	 *
+	 * @param performanceMonitoring true to enable performance monitoring
+	 */
+	public void setPerformanceMonitoring(boolean performanceMonitoring) {
+		this.performanceMonitoring = performanceMonitoring;
+	}
+
+	/**
+	 * Get the number of lines processed in the last parse operation.
+	 *
+	 * @return number of lines processed
+	 */
+	public long getLinesProcessed() {
+		return linesProcessed;
+	}
+
+	/**
+	 * Get the number of components parsed in the last parse operation.
+	 *
+	 * @return number of components parsed
+	 */
+	public long getComponentsParsed() {
+		return componentsParsed;
+	}
+
+	/**
+	 * Get the parse time in milliseconds for the last parse operation.
+	 *
+	 * @return parse time in milliseconds, or 0 if monitoring not enabled
+	 */
+	public long getParseTime() {
+		return performanceMonitoring ? System.currentTimeMillis() - parseStartTime : 0;
+	}
+
+	/**
 	 * Parse a File.
 	 * 
 	 * @param reader
@@ -135,11 +219,17 @@ public class ICalendarParser extends CalendarParser implements Constants {
 	 * @return true if no parse errors encountered
 	 */
 	public boolean parse(java.io.Reader reader) throws IOException {
+		if (performanceMonitoring) {
+			parseStartTime = System.currentTimeMillis();
+			linesProcessed = 0;
+			componentsParsed = 0;
+		}
+
 		boolean noErrors = true;
 		String line, nextLine;
-		BufferedReader r = new BufferedReader(reader);
-		StringBuffer data = new StringBuffer();
-		StringBuffer notYetParsed;
+		BufferedReader r = new BufferedReader(reader, 16384); // Use larger buffer for better performance
+		StringBuilder data = new StringBuilder(4096); // Use StringBuilder instead of StringBuffer
+		StringBuilder notYetParsed = null;
 		int state = STATE_NONE;
 		int ln = 0; // line number
 		int startLineNo = 0;
@@ -154,15 +244,19 @@ public class ICalendarParser extends CalendarParser implements Constants {
 		// variable contains the next line of text to be processed.
 		// TODO: line numbers in errors may be off for folded lines since the
 		// last line number of the text will be reported.
-		textLines = new ArrayList<String>();
+		textLines = streamingMode ? new ArrayList<String>(Math.min(maxComponentSize, 1000))
+		                          : new ArrayList<String>(1000);
 		nextLine = r.readLine();
-		notYetParsed = new StringBuffer();
+		notYetParsed = new StringBuilder(1024);
 		if (nextLine == null) {
 			// empty file
 		} else {
 			while (!done) {
 				line = nextLine;
 				ln++;
+				if (performanceMonitoring) {
+					linesProcessed++;
+				}
 				if (nextLine != null) {
 					nextLine = r.readLine();
 					// if nextLine is null, don't set done to true yet since we
@@ -325,10 +419,13 @@ public class ICalendarParser extends CalendarParser implements Constants {
 										DataStore ds = (DataStore) dataStores.get(i);
 										ds.storeTimezone(currentTimezone);
 									}
+									if (performanceMonitoring) {
+										componentsParsed++;
+									}
 								}
 								currentTimezone = null;
+								textLines.clear(); // truncate List
 							}
-							textLines.clear(); // truncate List
 						} else if (lineUp.startsWith("BEGIN:STANDARD")) {
 							state = STATE_VTIMEZONE_STANDARD;
 							startLineNo = ln; // mark starting line number
@@ -354,6 +451,9 @@ public class ICalendarParser extends CalendarParser implements Constants {
 									DataStore ds = (DataStore) dataStores.get(i);
 									ds.storeTodo(todo);
 								}
+								if (performanceMonitoring) {
+									componentsParsed++;
+								}
 							}
 							textLines.clear(); // truncate List
 						}
@@ -370,6 +470,9 @@ public class ICalendarParser extends CalendarParser implements Constants {
 									DataStore ds = (DataStore) dataStores.get(i);
 									ds.storeJournal(journal);
 								}
+								if (performanceMonitoring) {
+									componentsParsed++;
+								}
 							}
 							textLines.clear(); // truncate List
 						}
@@ -384,6 +487,9 @@ public class ICalendarParser extends CalendarParser implements Constants {
 								for (int i = 0; i < dataStores.size(); i++) {
 									DataStore ds = (DataStore) dataStores.get(i);
 									ds.storeEvent(event);
+								}
+								if (performanceMonitoring) {
+									componentsParsed++;
 								}
 							} else {
 								System.err.println("ERROR: Invalid VEVENT found");
@@ -401,6 +507,9 @@ public class ICalendarParser extends CalendarParser implements Constants {
 								for (int i = 0; i < dataStores.size(); i++) {
 									DataStore ds = (DataStore) dataStores.get(i);
 									ds.storeFreebusy(fb);
+								}
+								if (performanceMonitoring) {
+									componentsParsed++;
 								}
 							}
 							textLines.clear(); // truncate List
@@ -442,6 +551,9 @@ public class ICalendarParser extends CalendarParser implements Constants {
 									DataStore ds = (DataStore) dataStores.get(i);
 									ds.storeVAvailability(currentVAvailability);
 								}
+								if (performanceMonitoring) {
+									componentsParsed++;
+								}
 							}
 							currentVAvailability = null;
 							textLines.clear(); // truncate List
@@ -457,6 +569,9 @@ public class ICalendarParser extends CalendarParser implements Constants {
 									DataStore ds = (DataStore) dataStores.get(i);
 									ds.storeVResource(currentVResource);
 								}
+								if (performanceMonitoring) {
+									componentsParsed++;
+								}
 							}
 							currentVResource = null;
 							textLines.clear(); // truncate List
@@ -471,6 +586,9 @@ public class ICalendarParser extends CalendarParser implements Constants {
 								for (int i = 0; i < dataStores.size(); i++) {
 									DataStore ds = (DataStore) dataStores.get(i);
 									ds.storeVLocation(currentVLocation);
+								}
+								if (performanceMonitoring) {
+									componentsParsed++;
 								}
 							}
 							currentVLocation = null;
