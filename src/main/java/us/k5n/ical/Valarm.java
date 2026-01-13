@@ -42,10 +42,10 @@ public class Valarm implements Constants {
 	protected Duration duration = null;
 	/** Number of times to repeat */
 	protected Integer repeat = null;
-	/** Attendee to notify */
-	protected Attendee attendee = null;
-	/** Attachment for the alarm */
-	protected Attachment attachment = null;
+	/** Attendees to notify */
+	protected List<Attendee> attendees = null;
+	/** Attachments for the alarm */
+	protected List<Attachment> attachments = null;
 
 	/**
 	 * Create a Valarm object based on specified iCalendar data
@@ -134,9 +134,15 @@ public class Valarm implements Constants {
 				}
 			}
 		} else if (up.startsWith("ATTENDEE:")) {
-			attendee = new Attendee(icalStr);
+			Attendee attendee = new Attendee(icalStr);
+			if (attendees == null)
+				attendees = new ArrayList<Attendee>();
+			attendees.add(attendee);
 		} else if (up.startsWith("ATTACH:")) {
-			attachment = new Attachment(icalStr);
+			Attachment attach = new Attachment(icalStr);
+			if (attachments == null)
+				attachments = new ArrayList<Attachment>();
+			attachments.add(attach);
 		} else if (isParseStrict(parseMethod)) {
 			throw new ParseException("Unrecognized data in VALARM: " + icalStr, icalStr);
 		}
@@ -214,21 +220,21 @@ public class Valarm implements Constants {
 	}
 
 	/**
-	 * Get the attendee
-	 * 
-	 * @return: attendee object
+	 * Get the attendees
+	 *
+	 * @return: list of attendee objects
 	 */
-	public Attendee getAttendee() {
-		return attendee;
+	public List<Attendee> getAttendees() {
+		return attendees;
 	}
 
 	/**
-	 * Get the attachment
-	 * 
-	 * @return: attachment object
+	 * Get the attachments
+	 *
+	 * @return: list of attachment objects
 	 */
-	public Attachment getAttachment() {
-		return attachment;
+	public List<Attachment> getAttachments() {
+		return attachments;
 	}
 
 	/**
@@ -271,14 +277,18 @@ public class Valarm implements Constants {
 			ret.append(CRLF);
 		}
 		
-		if (attendee != null) {
-			ret.append(attendee.toICalendar());
-			ret.append(CRLF);
+		if (attendees != null) {
+			for (Attendee attendee : attendees) {
+				ret.append(attendee.toICalendar());
+				ret.append(CRLF);
+			}
 		}
-		
-		if (attachment != null) {
-			ret.append(attachment.toICalendar());
-			ret.append(CRLF);
+
+		if (attachments != null) {
+			for (Attachment attachment : attachments) {
+				ret.append(attachment.toICalendar());
+				ret.append(CRLF);
+			}
 		}
 		
 		ret.append("END:VALARM");

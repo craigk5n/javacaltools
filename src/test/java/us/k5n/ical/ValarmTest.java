@@ -82,4 +82,61 @@ public class ValarmTest {
 		assertTrue(output.contains("SUMMARY:Test alarm"));
 		assertTrue(output.contains("END:VALARM"));
 	}
+
+	@Test
+	@DisplayName("Test VALARM with ATTENDEE property parsing")
+	void testValarmAttendee() throws Exception {
+		Valarm alarm = new Valarm("BEGIN:VALARM\nACTION:EMAIL\nTRIGGER:-PT15M\nATTENDEE:mailto:user@example.com\nEND:VALARM");
+
+		assertNotNull(alarm.getAttendees());
+		assertEquals(1, alarm.getAttendees().size());
+		assertEquals("mailto:user@example.com", alarm.getAttendees().get(0).getValue());
+	}
+
+	@Test
+	@DisplayName("Test VALARM with multiple ATTENDEE properties")
+	void testValarmMultipleAttendees() throws Exception {
+		Valarm alarm = new Valarm("BEGIN:VALARM\nACTION:EMAIL\nTRIGGER:-PT15M\nATTENDEE:mailto:user1@example.com\nATTENDEE:mailto:user2@example.com\nEND:VALARM");
+
+		assertNotNull(alarm.getAttendees());
+		assertEquals(2, alarm.getAttendees().size());
+		assertEquals("mailto:user1@example.com", alarm.getAttendees().get(0).getValue());
+		assertEquals("mailto:user2@example.com", alarm.getAttendees().get(1).getValue());
+	}
+
+	@Test
+	@DisplayName("Test VALARM with ATTACH property parsing")
+	void testValarmAttachment() throws Exception {
+		Valarm alarm = new Valarm("BEGIN:VALARM\nACTION:DISPLAY\nTRIGGER:-PT15M\nATTACH:http://example.com/alert.wav\nEND:VALARM");
+
+		assertNotNull(alarm.getAttachments());
+		assertEquals(1, alarm.getAttachments().size());
+		assertEquals("http://example.com/alert.wav", alarm.getAttachments().get(0).getValue());
+	}
+
+	@Test
+	@DisplayName("Test VALARM with multiple ATTACH properties")
+	void testValarmMultipleAttachments() throws Exception {
+		Valarm alarm = new Valarm("BEGIN:VALARM\nACTION:DISPLAY\nTRIGGER:-PT15M\nATTACH:http://example.com/sound1.wav\nATTACH:http://example.com/sound2.wav\nEND:VALARM");
+
+		assertNotNull(alarm.getAttachments());
+		assertEquals(2, alarm.getAttachments().size());
+		assertEquals("http://example.com/sound1.wav", alarm.getAttachments().get(0).getValue());
+		assertEquals("http://example.com/sound2.wav", alarm.getAttachments().get(1).getValue());
+	}
+
+	@Test
+	@DisplayName("Test VALARM with ATTENDEE and ATTACH properties toICalendar output")
+	void testValarmAttendeeAttachmentToICalendar() throws Exception {
+		Valarm alarm = new Valarm("BEGIN:VALARM\nACTION:EMAIL\nTRIGGER:-PT15M\nATTENDEE:mailto:user@example.com\nATTACH:http://example.com/alert.wav\nEND:VALARM");
+
+		String output = alarm.toICalendar();
+
+		assertTrue(output.contains("BEGIN:VALARM"));
+		assertTrue(output.contains("ACTION:EMAIL"));
+		assertTrue(output.contains("TRIGGER:-PT15M"));
+		assertTrue(output.contains("ATTENDEE:mailto:user@example.com"));
+		assertTrue(output.contains("ATTACH:http://example.com/alert.wav"));
+		assertTrue(output.contains("END:VALARM"));
+	}
 }
