@@ -1,6 +1,7 @@
 package us.k5n.ical;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -473,6 +474,68 @@ public class RruleTest implements Constants {
 			assertEquals(expectedResults[i], ymd,
 					"Unexpected date: got " + ymd + " instead of " + expectedResults[i]);
 		}
+	}
+
+	@Test
+	public void testRruleValidationValid() throws Exception {
+		Rrule rrule = new Rrule("RRULE:FREQ=WEEKLY;INTERVAL=2", PARSE_STRICT);
+		assertTrue(rrule.isValid());
+	}
+
+	@Test
+	public void testRruleValidationInvalidInterval() throws Exception {
+		Rrule rrule = new Rrule("RRULE:FREQ=WEEKLY;INTERVAL=0", PARSE_STRICT);
+		List<String> errors = new ArrayList<>();
+		assertFalse(rrule.isValid(errors));
+		assertTrue(errors.contains("RRULE INTERVAL must be positive"));
+	}
+
+	@Test
+	public void testRruleValidationCountAndUntil() throws Exception {
+		Rrule rrule = new Rrule("RRULE:FREQ=DAILY;COUNT=10;UNTIL=20231231T000000Z", PARSE_STRICT);
+		List<String> errors = new ArrayList<>();
+		assertFalse(rrule.isValid(errors));
+		assertTrue(errors.contains("RRULE cannot have both COUNT and UNTIL"));
+	}
+
+	@Test
+	public void testRruleValidationInvalidBymonthdayForWeekly() throws Exception {
+		Rrule rrule = new Rrule("RRULE:FREQ=WEEKLY;BYMONTHDAY=15", PARSE_STRICT);
+		List<String> errors = new ArrayList<>();
+		assertFalse(rrule.isValid(errors));
+		assertTrue(errors.contains("RRULE BYMONTHDAY not valid with WEEKLY frequency"));
+	}
+
+	@Test
+	public void testRruleValidationInvalidBydayForDaily() throws Exception {
+		Rrule rrule = new Rrule("RRULE:FREQ=DAILY;BYDAY=MO", PARSE_STRICT);
+		List<String> errors = new ArrayList<>();
+		assertFalse(rrule.isValid(errors));
+		assertTrue(errors.contains("RRULE BYDAY not valid with DAILY frequency"));
+	}
+
+	@Test
+	public void testRruleValidationInvalidBysetpos() throws Exception {
+		Rrule rrule = new Rrule("RRULE:FREQ=MONTHLY;BYDAY=MO;BYSETPOS=0", PARSE_STRICT);
+		List<String> errors = new ArrayList<>();
+		assertFalse(rrule.isValid(errors));
+		assertTrue(errors.contains("RRULE BYSETPOS values must be between -53 and 53, excluding 0"));
+	}
+
+	@Test
+	public void testRruleValidationInvalidBymonth() throws Exception {
+		Rrule rrule = new Rrule("RRULE:FREQ=YEARLY;BYMONTH=13", PARSE_STRICT);
+		List<String> errors = new ArrayList<>();
+		assertFalse(rrule.isValid(errors));
+		assertTrue(errors.contains("RRULE BYMONTH values must be between 1 and 12"));
+	}
+
+	@Test
+	public void testRruleValidationInvalidBymonthday() throws Exception {
+		Rrule rrule = new Rrule("RRULE:FREQ=MONTHLY;BYMONTHDAY=0", PARSE_STRICT);
+		List<String> errors = new ArrayList<>();
+		assertFalse(rrule.isValid(errors));
+		assertTrue(errors.contains("RRULE BYMONTHDAY values must be between -31 and 31, excluding 0"));
 	}
 
 	private void parseIcsFile(File file) {

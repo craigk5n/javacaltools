@@ -718,4 +718,129 @@ public class Rrule extends Property {
 		}
 		return ret;
 	}
+
+	/**
+	 * Check if this RRULE is valid
+	 *
+	 * @return true if the RRULE is valid
+	 */
+	public boolean isValid() {
+		return isValid(null);
+	}
+
+	/**
+	 * Check if this RRULE is valid with optional error details
+	 *
+	 * @param errors List to collect validation error messages (can be null)
+	 * @return true if the RRULE is valid
+	 */
+	public boolean isValid(List<String> errors) {
+		boolean valid = true;
+
+		// Frequency is required
+		if (freq == FREQ_NOT_SPECIFIED || freq < FREQ_YEARLY || freq > FREQ_SECONDLY) {
+			valid = false;
+			if (errors != null) errors.add("RRULE must have a valid FREQ");
+		}
+
+		// Interval must be positive
+		if (interval <= 0) {
+			valid = false;
+			if (errors != null) errors.add("RRULE INTERVAL must be positive");
+		}
+
+		// Count and Until are mutually exclusive
+		// count >= 0 means COUNT was explicitly specified (count = -1 when not specified)
+		if (count >= 0 && untilDate != null) {
+			valid = false;
+			if (errors != null) errors.add("RRULE cannot have both COUNT and UNTIL");
+		}
+
+		// Count must be positive if specified
+		if (count >= 0 && count <= 0) {
+			valid = false;
+			if (errors != null) errors.add("RRULE COUNT must be positive");
+		}
+
+		// Validate BYxxx rules based on frequency
+		if (freq == FREQ_YEARLY) {
+			// BYMONTHDAY and BYYEARDAY are valid for YEARLY
+		} else if (freq == FREQ_MONTHLY) {
+			// BYMONTHDAY is valid for MONTHLY
+			if (byyearday != null && byyearday.length > 0) {
+				valid = false;
+				if (errors != null) errors.add("RRULE BYYEARDAY not valid with MONTHLY frequency");
+			}
+		} else if (freq == FREQ_WEEKLY) {
+			// BYMONTHDAY and BYYEARDAY not valid for WEEKLY
+			if (bymonthday != null && bymonthday.length > 0) {
+				valid = false;
+				if (errors != null) errors.add("RRULE BYMONTHDAY not valid with WEEKLY frequency");
+			}
+			if (byyearday != null && byyearday.length > 0) {
+				valid = false;
+				if (errors != null) errors.add("RRULE BYYEARDAY not valid with WEEKLY frequency");
+			}
+		} else if (freq == FREQ_DAILY) {
+			// Most BYxxx rules not valid for DAILY
+			if (bymonthday != null && bymonthday.length > 0) {
+				valid = false;
+				if (errors != null) errors.add("RRULE BYMONTHDAY not valid with DAILY frequency");
+			}
+			if (byyearday != null && byyearday.length > 0) {
+				valid = false;
+				if (errors != null) errors.add("RRULE BYYEARDAY not valid with DAILY frequency");
+			}
+			if (byday != null && byday.length > 0) {
+				valid = false;
+				if (errors != null) errors.add("RRULE BYDAY not valid with DAILY frequency");
+			}
+		}
+
+		// Validate BYSETPOS values (-53 to 53, excluding 0)
+		if (bysetpos != null) {
+			for (int pos : bysetpos) {
+				if (pos == 0 || pos < -53 || pos > 53) {
+					valid = false;
+					if (errors != null) errors.add("RRULE BYSETPOS values must be between -53 and 53, excluding 0");
+					break;
+				}
+			}
+		}
+
+		// Validate BYMONTH values (1-12)
+		if (bymonth != null) {
+			for (int month : bymonth) {
+				if (month < 1 || month > 12) {
+					valid = false;
+					if (errors != null) errors.add("RRULE BYMONTH values must be between 1 and 12");
+					break;
+				}
+			}
+		}
+
+		// Validate BYMONTHDAY values (-31 to 31, excluding 0)
+		if (bymonthday != null) {
+			for (int day : bymonthday) {
+				if (day == 0 || day < -31 || day > 31) {
+					valid = false;
+					if (errors != null) errors.add("RRULE BYMONTHDAY values must be between -31 and 31, excluding 0");
+					break;
+				}
+			}
+		}
+
+		// Validate BYYEARDAY values (-366 to 366, excluding 0)
+		if (byyearday != null) {
+			for (int day : byyearday) {
+				if (day == 0 || day < -366 || day > 366) {
+					valid = false;
+					if (errors != null) errors.add("RRULE BYYEARDAY values must be between -366 and 366, excluding 0");
+					break;
+				}
+			}
+		}
+
+		return valid;
+	}
 }
