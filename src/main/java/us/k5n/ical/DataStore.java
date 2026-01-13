@@ -70,6 +70,11 @@ public interface DataStore {
 	public void storeVLocation(VLocation vlocation);
 
 	/**
+	 * This method will be called the parser finds a VRESOURCE object.
+	 */
+	public void storeVResource(VResource vresource);
+
+	/**
 	 * Get all Event objects.
 	 * 
 	 * @return A List if Event objects

@@ -70,6 +70,8 @@ public class Todo implements Constants {
 	protected Location location = null;
 	/** Location reference (UID of VLOCATION) */
 	protected String locationId = null;
+	/** Resource references (List of VRESOURCE UIDs) */
+	protected List<String> resourceIds = null;
 	/** Geographic position */
 	protected String geo = null;
 	/** Participants for todo (List of Attendee) */
@@ -556,6 +558,24 @@ public class Todo implements Constants {
 	 */
 	public void setLocationId(String locationId) {
 		this.locationId = locationId;
+	}
+
+	/**
+	 * Get resource references (UIDs of VRESOURCE objects)
+	 *
+	 * @return list of resource UIDs
+	 */
+	public List<String> getResourceIds() {
+		return resourceIds;
+	}
+
+	/**
+	 * Set resource references (UIDs of VRESOURCE objects)
+	 *
+	 * @param resourceIds the list of UIDs of referenced VRESOURCE objects
+	 */
+	public void setResourceIds(List<String> resourceIds) {
+		this.resourceIds = resourceIds;
 	}
 
 	/**

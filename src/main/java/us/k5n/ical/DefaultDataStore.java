@@ -37,6 +37,7 @@ public class DefaultDataStore implements DataStore {
 	List<Journal> journals;
 	List<Freebusy> freebusys;
 	List<VLocation> vlocations;
+	List<VResource> vresources;
 
 	/**
 	 * Constructor
@@ -48,6 +49,7 @@ public class DefaultDataStore implements DataStore {
 		journals = new ArrayList<Journal>();
 		freebusys = new ArrayList<Freebusy>();
 		vlocations = new ArrayList<VLocation>();
+		vresources = new ArrayList<VResource>();
 	}
 
 	/**
@@ -90,6 +92,13 @@ public class DefaultDataStore implements DataStore {
 	 */
 	public void storeVLocation(VLocation vlocation) {
 		vlocations.add(vlocation);
+	}
+
+	/**
+	 * This method will be called as the parser finds a VRESOURCE object.
+	 */
+	public void storeVResource(VResource vresource) {
+		vresources.add(vresource);
 	}
 
 	/**

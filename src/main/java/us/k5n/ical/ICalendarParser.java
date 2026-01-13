@@ -58,6 +58,7 @@ public class ICalendarParser extends CalendarParser implements Constants {
 	String language = "EN"; // default language setting
 	Timezone currentTimezone = null; // current timezone being parsed
 	VLocation currentVLocation = null; // current vlocation being parsed
+	VResource currentVResource = null; // current vresource being parsed
 	static final int STATE_NONE = 0;
 	static final int STATE_VCALENDAR = 1;
 	static final int STATE_VEVENT = 2;
@@ -69,7 +70,8 @@ public class ICalendarParser extends CalendarParser implements Constants {
 	static final int STATE_VFREEBUSY = 8;
 	static final int STATE_VALARM = 9;
 	static final int STATE_VLOCATION = 10;
-	static final int STATE_DONE = 11;
+	static final int STATE_VRESOURCE = 11;
+	static final int STATE_DONE = 12;
 
 	/**
 	 * Create an ICalendarParser object. By default, this will also setup the
@@ -236,6 +238,12 @@ public class ICalendarParser extends CalendarParser implements Constants {
 							textLines.clear();
 							textLines.add(line);
 							currentVLocation = new VLocation(this, startLineNo, textLines);
+						} else if (lineUp.startsWith("BEGIN:VRESOURCE")) {
+							state = STATE_VRESOURCE;
+							startLineNo = ln; // mark starting line number
+							textLines.clear();
+							textLines.add(line);
+							currentVResource = new VResource(this, startLineNo, textLines);
 						} else if (lineUp.startsWith("END:VCALENDAR")) {
 							state = STATE_DONE;
 						} else if (lineUp.startsWith("VERSION")) {
@@ -413,6 +421,21 @@ public class ICalendarParser extends CalendarParser implements Constants {
 							if (standard.isValid() && currentTimezone != null) {
 								currentTimezone.addStandard(standard);
 							}
+							textLines.clear(); // truncate List
+						}
+						break;
+
+					case STATE_VRESOURCE:
+						textLines.add(line);
+						if (lineUp.startsWith("END:VRESOURCE")) {
+							state = STATE_VCALENDAR;
+							if (currentVResource != null && currentVResource.isValid()) {
+								for (int i = 0; i < dataStores.size(); i++) {
+									DataStore ds = (DataStore) dataStores.get(i);
+									ds.storeVResource(currentVResource);
+								}
+							}
+							currentVResource = null;
 							textLines.clear(); // truncate List
 						}
 						break;
