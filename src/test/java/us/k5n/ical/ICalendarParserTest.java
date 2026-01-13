@@ -1,5 +1,6 @@
 package us.k5n.ical;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -8,6 +9,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -85,5 +87,27 @@ public class ICalendarParserTest implements Constants {
 		parseIcsFile(emptyFile);
 		List<Event> events = ds.getAllEvents();
 		assertTrue(events.isEmpty(), "No events should be loaded from an empty file");
+	}
+
+	@Test
+	public void testMethodPropertyParsing() {
+		String icalStr = "BEGIN:VCALENDAR\n" +
+			"METHOD:REQUEST\n" +
+			"VERSION:2.0\n" +
+			"BEGIN:VEVENT\n" +
+			"UID:test@example.com\n" +
+			"SUMMARY:Test Event\n" +
+			"DTSTART:20230101T100000Z\n" +
+			"END:VEVENT\n" +
+			"END:VCALENDAR";
+
+		try {
+			parser.parse(new StringReader(icalStr));
+			Property method = ((DefaultDataStore) ds).getMethod();
+			assertNotNull(method, "METHOD property should be parsed");
+			assertEquals("REQUEST", method.value, "METHOD value should be REQUEST");
+		} catch (Exception e) {
+			fail("Parsing should not fail: " + e.getMessage());
+		}
 	}
 }

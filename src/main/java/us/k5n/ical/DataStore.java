@@ -80,6 +80,11 @@ public interface DataStore {
 	public void storeVAvailability(VAvailability vavailability);
 
 	/**
+	 * This method will be called when the METHOD property is found in VCALENDAR.
+	 */
+	public void setMethod(Property method);
+
+	/**
 	 * Get all Event objects.
 	 * 
 	 * @return A List if Event objects

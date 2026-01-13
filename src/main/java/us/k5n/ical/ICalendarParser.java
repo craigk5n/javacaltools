@@ -384,9 +384,13 @@ public class ICalendarParser extends CalendarParser implements Constants {
 						} else if (lineUp.startsWith("METHOD")) {
 							try {
 								method = new Property(line, getParseMethod());
+								for (int i = 0; i < dataStores.size(); i++) {
+									DataStore ds = (DataStore) dataStores.get(i);
+									ds.setMethod(method);
+								}
 							} catch (ParseException e) {
 								reportParseError(new ParseError(ln,
-										"Parse error in CALSCALE: " + e.toString(), line));
+										"Parse error in METHOD: " + e.toString(), line));
 							}
 						} else if (lineUp.startsWith("X-")) {
 							// These are extensions like: X-WR-CALNAME, X-WR-CALDESC, X-WR-TIMEZONE, X-WR-RELCALID,

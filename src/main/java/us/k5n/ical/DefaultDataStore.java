@@ -23,6 +23,8 @@ package us.k5n.ical;
 import java.util.ArrayList;
 import java.util.List;
 
+import us.k5n.ical.Constants;
+
 /**
  * A simple implementation of the DataStore interface. This is the default
  * implementation used by IcalParser class.
@@ -39,6 +41,7 @@ public class DefaultDataStore implements DataStore {
 	List<VLocation> vlocations;
 	List<VResource> vresources;
 	List<VAvailability> vavailabilities;
+	Property method;
 
 	/**
 	 * Constructor
@@ -111,6 +114,13 @@ public class DefaultDataStore implements DataStore {
 	}
 
 	/**
+	 * This method will be called when the METHOD property is found in VCALENDAR.
+	 */
+	public void setMethod(Property method) {
+		this.method = method;
+	}
+
+	/**
 	 * Get a List of all Event objects
 	 * 
 	 * @return A List of Event objects
@@ -139,10 +149,65 @@ public class DefaultDataStore implements DataStore {
 
 	/**
 	 * Get all Freebusy objects.
-	 * 
+	 *
 	 * @return A List of Freebusy objects
 	 */
 	public List<Freebusy> getAllFreebusys() {
 		return freebusys;
+	}
+
+	/**
+	 * Get the METHOD property.
+	 *
+	 * @return The METHOD property, or null if not set
+	 */
+	public Property getMethod() {
+		return method;
+	}
+
+	/**
+	 * Generate iCalendar format string for the entire calendar.
+	 *
+	 * @return The iCalendar string
+	 */
+	public String toICalendar() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("BEGIN:VCALENDAR").append(Constants.CRLF);
+		sb.append("VERSION:2.0").append(Constants.CRLF);
+		sb.append("PRODID:-//K5N//JavaCalTools//EN").append(Constants.CRLF);
+
+		if (method != null) {
+			sb.append(method.toICalendar());
+		}
+
+		// Add components
+		for (Timezone tz : timezones) {
+			sb.append(tz.toICalendar());
+		}
+		for (Event event : events) {
+			sb.append(event.toICalendar());
+		}
+		for (Todo todo : todos) {
+			sb.append(todo.toICalendar());
+		}
+		for (Journal journal : journals) {
+			sb.append(journal.toICalendar());
+		}
+		for (Freebusy fb : freebusys) {
+			sb.append(fb.toICalendar());
+		}
+		for (VLocation loc : vlocations) {
+			sb.append(loc.toICalendar());
+		}
+		for (VResource res : vresources) {
+			sb.append(res.toICalendar());
+		}
+		for (VAvailability va : vavailabilities) {
+			sb.append(va.toICalendar());
+		}
+
+		sb.append("END:VCALENDAR").append(Constants.CRLF);
+
+		return Utils.foldLines(sb.toString());
 	}
 }
