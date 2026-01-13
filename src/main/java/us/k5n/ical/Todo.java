@@ -409,6 +409,40 @@ public class Todo implements Constants {
 			if (errors != null) errors.add("Invalid todo STATUS value: " + status);
 		}
 
+		// Status consistency validation
+		if (completed != null && status != STATUS_COMPLETED) {
+			valid = false;
+			if (errors != null) errors.add("Todo with COMPLETED date must have STATUS:COMPLETED");
+		}
+
+		if (percentComplete != null) {
+			if (percentComplete == 100 && status != STATUS_COMPLETED) {
+				valid = false;
+				if (errors != null) errors.add("Todo with 100% PERCENT-COMPLETE must have STATUS:COMPLETED");
+			}
+			if (percentComplete == 0 && status == STATUS_COMPLETED) {
+				valid = false;
+				if (errors != null) errors.add("Todo with STATUS:COMPLETED cannot have 0% PERCENT-COMPLETE");
+			}
+		}
+
+		if (status == STATUS_CANCELLED && completed != null) {
+			valid = false;
+			if (errors != null) errors.add("Todo with STATUS:CANCELLED should not have COMPLETED date");
+		}
+
+		// Additional status validations
+		if (status == STATUS_COMPLETED) {
+			if (completed == null) {
+				valid = false;
+				if (errors != null) errors.add("Todo with STATUS:COMPLETED must have COMPLETED date");
+			}
+			if (percentComplete == null || percentComplete != 100) {
+				valid = false;
+				if (errors != null) errors.add("Todo with STATUS:COMPLETED must have PERCENT-COMPLETE of 100");
+			}
+		}
+
 		// Priority validation
 		if (priority != null && (priority < 0 || priority > 9)) {
 			valid = false;
@@ -477,16 +511,85 @@ public class Todo implements Constants {
 	 *
 	 * @return user data object
 	 */
+	/**
+	 * Auto-set status based on other properties for consistency.
+	 * This method should be called after setting COMPLETED date or PERCENT-COMPLETE.
+	 */
+	public void updateStatusFromProperties() {
+		if (completed != null) {
+			// If completed date is set, status should be COMPLETED
+			status = STATUS_COMPLETED;
+		} else if (percentComplete != null) {
+			if (percentComplete == 100) {
+				status = STATUS_COMPLETED;
+			} else if (percentComplete > 0) {
+				status = STATUS_IN_PROCESS;
+			} else if (status == STATUS_UNDEFINED) {
+				status = STATUS_NEEDS_ACTION;
+			}
+		} else if (status == STATUS_UNDEFINED) {
+			status = STATUS_NEEDS_ACTION;
+		}
+	}
+
+	/**
+	 * Set the completed date and automatically update status.
+	 *
+	 * @param completed the completion date
+	 */
+	public void setCompleted(Date completed) {
+		this.completed = completed;
+		if (completed != null) {
+			status = STATUS_COMPLETED;
+			percentComplete = 100;
+		}
+	}
+
+	/**
+	 * Set the percent complete and automatically update status.
+	 *
+	 * @param percentComplete the completion percentage (0-100)
+	 */
+	public void setPercentComplete(Integer percentComplete) {
+		this.percentComplete = percentComplete;
+		if (percentComplete != null) {
+			if (percentComplete == 100) {
+				status = STATUS_COMPLETED;
+				if (completed == null) {
+					completed = Date.getCurrentDateTime("COMPLETED");
+				}
+			} else if (percentComplete > 0) {
+				status = STATUS_IN_PROCESS;
+			} else {
+				status = STATUS_NEEDS_ACTION;
+			}
+		}
+	}
+
+	/**
+	 * Set the status with validation and automatic property updates.
+	 *
+	 * @param status the new status
+	 */
+	public void setStatus(int status) {
+		this.status = status;
+
+		// Auto-update related properties based on status
+		if (status == STATUS_COMPLETED) {
+			if (completed == null) {
+				completed = Date.getCurrentDateTime("COMPLETED");
+			}
+			percentComplete = 100;
+		} else if (status == STATUS_CANCELLED) {
+			// Cancelled items don't have completion dates
+			completed = null;
+		}
+	}
+
 	public Object getUserData() {
 		return userData;
 	}
 
-	/**
-	 * Set the user data object
-	 * 
-	 * @param userData
-	 *                User data object
-	 */
 	public void setUserData(Object userData) {
 		this.userData = userData;
 	}
@@ -698,6 +801,33 @@ public class Todo implements Constants {
 	 */
 	public Sequence getSequence() {
 		return sequence;
+	}
+
+	/**
+	 * Get the todo status
+	 *
+	 * @return the status (STATUS_NEEDS_ACTION, STATUS_IN_PROCESS, STATUS_COMPLETED, STATUS_CANCELLED)
+	 */
+	public int getStatus() {
+		return status;
+	}
+
+	/**
+	 * Get the percent complete
+	 *
+	 * @return the percent complete (0-100)
+	 */
+	public Integer getPercentComplete() {
+		return percentComplete;
+	}
+
+	/**
+	 * Get the completed date
+	 *
+	 * @return the completion date
+	 */
+	public Date getCompleted() {
+		return completed;
 	}
 
 	/**
