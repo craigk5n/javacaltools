@@ -166,4 +166,91 @@ public class EventEnhancementsTest {
 		assertEquals("40.7128;-74.0060", event.getGeo());
 		assertEquals(3, event.getRequestStatus()); // STATUS_IN_PROCESS for ACCEPTED
 	}
+
+	@Test
+	@DisplayName("Test EVENT with VALARM")
+	void testEventWithValarm() throws Exception {
+		String icalStr = "BEGIN:VEVENT\n" +
+			"DTSTAMP:20230101T120000Z\n" +
+			"UID:valarm-test@example.com\n" +
+			"DTSTART:20230101T090000Z\n" +
+			"DTEND:20230101T100000Z\n" +
+			"SUMMARY:Event with alarm\n" +
+			"BEGIN:VALARM\n" +
+			"ACTION:AUDIO\n" +
+			"TRIGGER:-PT15M\n" +
+			"END:VALARM\n" +
+			"END:VEVENT";
+
+		Event event = createEventFromICalendar(icalStr);
+		assertTrue(event.isValid());
+		assertNotNull(event.getAlarms());
+		assertEquals(1, event.getAlarms().size());
+		Valarm alarm = event.getAlarms().get(0);
+		assertEquals("AUDIO", alarm.getAction());
+		assertEquals("-PT15M", alarm.getTrigger());
+	}
+
+	@Test
+	@DisplayName("Test EVENT with multiple VALARMs")
+	void testEventWithMultipleValarms() throws Exception {
+		String icalStr = "BEGIN:VEVENT\n" +
+			"DTSTAMP:20230101T120000Z\n" +
+			"UID:multi-valarm-test@example.com\n" +
+			"DTSTART:20230101T090000Z\n" +
+			"DTEND:20230101T100000Z\n" +
+			"SUMMARY:Event with multiple alarms\n" +
+			"BEGIN:VALARM\n" +
+			"ACTION:AUDIO\n" +
+			"TRIGGER:-PT15M\n" +
+			"END:VALARM\n" +
+			"BEGIN:VALARM\n" +
+			"ACTION:DISPLAY\n" +
+			"TRIGGER:-PT1H\n" +
+			"DESCRIPTION:Meeting reminder\n" +
+			"END:VALARM\n" +
+			"END:VEVENT";
+
+		Event event = createEventFromICalendar(icalStr);
+		assertTrue(event.isValid());
+		assertNotNull(event.getAlarms());
+		assertEquals(2, event.getAlarms().size());
+
+		Valarm alarm1 = event.getAlarms().get(0);
+		assertEquals("AUDIO", alarm1.getAction());
+		assertEquals("-PT15M", alarm1.getTrigger());
+
+		Valarm alarm2 = event.getAlarms().get(1);
+		assertEquals("DISPLAY", alarm2.getAction());
+		assertEquals("-PT1H", alarm2.getTrigger());
+		assertEquals("Meeting reminder", alarm2.getDescription().getValue());
+	}
+
+	@Test
+	@DisplayName("Test EVENT toICalendar output includes VALARM")
+	void testEventToICalendarIncludesValarm() throws Exception {
+		// Create an event with VALARM by parsing
+		String icalStr = "BEGIN:VEVENT\n" +
+			"DTSTAMP:20230101T120000Z\n" +
+			"UID:icalendar-valarm-test@example.com\n" +
+			"DTSTART:20230101T090000Z\n" +
+			"DTEND:20230101T100000Z\n" +
+			"SUMMARY:Test event with alarm\n" +
+			"BEGIN:VALARM\n" +
+			"ACTION:AUDIO\n" +
+			"TRIGGER:-PT15M\n" +
+			"END:VALARM\n" +
+			"END:VEVENT";
+
+		Event event = createEventFromICalendar(icalStr);
+		String output = event.toICalendar();
+
+		// Verify the output contains VALARM
+		assertTrue(output.contains("BEGIN:VALARM"));
+		assertTrue(output.contains("ACTION:AUDIO"));
+		assertTrue(output.contains("TRIGGER:-PT15M"));
+		assertTrue(output.contains("END:VALARM"));
+		assertTrue(output.contains("BEGIN:VEVENT"));
+		assertTrue(output.contains("END:VEVENT"));
+	}
 }

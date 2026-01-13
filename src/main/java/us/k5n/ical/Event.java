@@ -31,6 +31,8 @@ import java.util.List;
 public class Event implements Constants {
 	// TODO: handle multiple instances of summary/description since
 	// there can be more than one if LANGUAGE attribute is specified
+	private boolean inValarm = false;
+	private List<String> valarmLines = null;
 	/** Unique Id */
 	protected Uid uid = null;
 	/** Sequence number (0 is first version) */
@@ -80,6 +82,8 @@ public class Event implements Constants {
 	protected List<Attachment> attachments = null;
 	/** Alarms (List of Valarm objects) */
 	protected List<Valarm> alarms = null;
+	/** Parser reference for sub-component parsing */
+	private CalendarParser parser = null;
 	/** Organizer */
 	protected Organizer organizer = null;
 	/** Contact */
@@ -111,6 +115,7 @@ public class Event implements Constants {
 	 *        List of iCalendar text lines
 	 */
 	public Event(CalendarParser parser, int initialLine, List<String> textLines) {
+		this.parser = parser;
 		for (int i = 0; i < textLines.size(); i++) {
 			String line = textLines.get(i);
 			try {
@@ -196,6 +201,28 @@ public class Event implements Constants {
 		String up = icalStr.toUpperCase();
 		if (up.equals("BEGIN:VEVENT") || up.equals("END:VEVENT")) {
 			// ignore
+		} else if (up.equals("BEGIN:VALARM")) {
+			inValarm = true;
+			valarmLines = new ArrayList<String>();
+			valarmLines.add(icalStr);
+		} else if (up.equals("END:VALARM")) {
+			if (inValarm && valarmLines != null) {
+				valarmLines.add(icalStr);
+				// Create the VALARM object
+				Valarm alarm = new Valarm(parser, 0, valarmLines);
+				if (alarm.isValid()) {
+					if (this.alarms == null)
+						this.alarms = new ArrayList<Valarm>();
+					this.alarms.add(alarm);
+				}
+				inValarm = false;
+				valarmLines = null;
+			}
+		} else if (inValarm) {
+			// We're inside a VALARM, collect the lines
+			if (valarmLines != null) {
+				valarmLines.add(icalStr);
+			}
 		} else if (up.trim().length() == 0) {
 			// ignore empty lines
 		} else if (up.startsWith("DESCRIPTION")) {
@@ -527,6 +554,15 @@ public class Event implements Constants {
 		this.attachments = attachments;
 	}
 
+	/**
+	 * Get alarms
+	 *
+	 * @return list of alarms
+	 */
+	public List<Valarm> getAlarms() {
+		return alarms;
+	}
+
 	public void addException(Date date) {
 		if (this.exdates != null)
 			this.exdates = new ArrayList<Date>();
@@ -747,6 +783,13 @@ public class Event implements Constants {
 					ret.append("STATUS:CANCELLED");
 					ret.append(CRLF);
 					break;
+			}
+		}
+
+		if (this.alarms != null) {
+			for (int i = 0; i < this.alarms.size(); i++) {
+				Valarm alarm = (Valarm) this.alarms.get(i);
+				ret.append(alarm.toICalendar());
 			}
 		}
 

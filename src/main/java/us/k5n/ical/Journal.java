@@ -65,6 +65,25 @@ public class Journal implements Constants {
 	protected List<Attachment> attachments = null;
 	/** Journal status */
 	protected int status = STATUS_UNDEFINED;
+	/** Organizer */
+	protected Organizer organizer = null;
+	/** Comment */
+	protected Comment comment = null;
+	/** Contact */
+	protected Contact contact = null;
+	/** Exception dates */
+	protected List<Date> exdates = null;
+	/** Recurrence dates */
+	protected List<Date> rdates = null;
+	/** Related to */
+	protected RelatedTo relatedTo = null;
+	/** Alarms (List of Valarm objects) */
+	protected List<Valarm> alarms = null;
+	/** Parser reference for sub-component parsing */
+	private CalendarParser parser = null;
+	/** VALARM parsing state */
+	private boolean inValarm = false;
+	private List<String> valarmLines = null;
 	/** Private user object for caller to set/get */
 	private Object userData = null;
 
@@ -86,6 +105,7 @@ public class Journal implements Constants {
 	 */
 	public Journal(CalendarParser parser, int initialLine,
 			List<String> textLines) {
+		this.parser = parser;
 		for (int i = 0; i < textLines.size(); i++) {
 			String line = textLines.get(i);
 			try {
@@ -155,6 +175,28 @@ public class Journal implements Constants {
 		String up = icalStr.toUpperCase();
 		if (up.equals("BEGIN:VJOURNAL") || up.equals("END:VJOURNAL")) {
 			// ignore
+		} else if (up.equals("BEGIN:VALARM")) {
+			inValarm = true;
+			valarmLines = new ArrayList<String>();
+			valarmLines.add(icalStr);
+		} else if (up.equals("END:VALARM")) {
+			if (inValarm && valarmLines != null) {
+				valarmLines.add(icalStr);
+				// Create the VALARM object
+				Valarm alarm = new Valarm(parser, 0, valarmLines);
+				if (alarm.isValid()) {
+					if (this.alarms == null)
+						this.alarms = new ArrayList<Valarm>();
+					this.alarms.add(alarm);
+				}
+				inValarm = false;
+				valarmLines = null;
+			}
+		} else if (inValarm) {
+			// We're inside a VALARM, collect the lines
+			if (valarmLines != null) {
+				valarmLines.add(icalStr);
+			}
 		} else if (up.trim().length() == 0) {
 			// ignore empty lines
 		} else if (up.startsWith("DESCRIPTION")) {
@@ -195,6 +237,57 @@ public class Journal implements Constants {
 			}
 		} else if (up.startsWith("URL")) {
 			url = new URL(icalStr, parseMethod);
+		} else if (up.startsWith("ORGANIZER")) {
+			organizer = new Organizer(icalStr);
+		} else if (up.startsWith("COMMENT")) {
+			comment = new Comment(icalStr);
+		} else if (up.startsWith("CONTACT")) {
+			contact = new Contact(icalStr);
+		} else if (up.startsWith("ATTENDEE")) {
+			Attendee attendee = new Attendee(icalStr);
+			if (this.attendees == null)
+				this.attendees = new ArrayList<Attendee>();
+			this.attendees.add(attendee);
+		} else if (up.startsWith("EXDATE")) {
+			// We could implement a class for EXDATE, but it's really just a Date
+			// modified to have mulitple date values.
+			// Since EXDATE supports multiple date values, we will create temporary
+			// iCalendar string values for each date.
+			// Note: this could will allow for multiple EXDATE lines.
+			String[] args = icalStr.split(":");
+			if (args.length != 2) {
+				if (parseMethod == PARSE_STRICT) {
+					throw new BogusDataException("Invalid EXDATE", icalStr);
+				}
+			} else {
+				if (this.exdates == null)
+					this.exdates = new ArrayList<Date>();
+				String[] dateVals = args[1].split(",");
+				for (int i = 0; i < dateVals.length; i++) {
+					String newIcalStr = args[0] + ':' + dateVals[i];
+					Date exdate = new Date(newIcalStr);
+					this.exdates.add(exdate);
+				}
+			}
+		} else if (up.startsWith("RDATE")) {
+			// Handle this the same way we handled EXDATE
+			String[] args = icalStr.split(":");
+			if (args.length != 2) {
+				if (parseMethod == PARSE_STRICT) {
+					throw new BogusDataException("Invalid RDATE", icalStr);
+				}
+			} else {
+				String[] dateVals = args[1].split(",");
+				if (this.rdates == null)
+					this.rdates = new ArrayList<Date>();
+				for (int i = 0; i < dateVals.length; i++) {
+					String newIcalStr = args[0] + ':' + dateVals[i];
+					Date rdate = new Date(newIcalStr);
+					this.rdates.add(rdate);
+				}
+			}
+		} else if (up.startsWith("RELATED-TO")) {
+			relatedTo = new RelatedTo(icalStr);
 		} else {
 			System.err.println("Ignoring VJOURNAL line: " + icalStr);
 		}
@@ -245,10 +338,48 @@ public class Journal implements Constants {
 			ret.append(lastModified.toICalendar());
 		if (classification != null)
 			ret.append(classification.toICalendar());
+		if (this.exdates != null && this.exdates.size() > 0) {
+			if (this.exdates.size() == 1) {
+				ret.append(this.exdates.get(0).toICalendar());
+			} else {
+				StringBuffer sb = new StringBuffer(25);
+				sb.append(this.exdates.get(0).toICalendar().trim());
+				for (int i = 1; i < this.exdates.size(); i++) {
+					sb.append(',');
+					String s = this.exdates.get(i).toICalendar().trim();
+					String[] args = s.split(":");
+					sb.append(args[1]);
+				}
+				sb.append(CRLF);
+			}
+		}
+		if (this.rdates != null && this.rdates.size() > 0) {
+			if (this.rdates.size() == 1) {
+				ret.append(this.rdates.get(0).toICalendar());
+			} else {
+				StringBuffer sb = new StringBuffer(25);
+				sb.append(this.rdates.get(0).toICalendar().trim());
+				for (int i = 1; i < this.rdates.size(); i++) {
+					sb.append(',');
+					String s = this.rdates.get(i).toICalendar().trim();
+					String[] args = s.split(":");
+					sb.append(args[1]);
+				}
+				sb.append(CRLF);
+			}
+		}
+		if (relatedTo != null)
+			ret.append(relatedTo.toICalendar());
 		if (categories != null)
 			ret.append(categories.toICalendar());
 		if (url != null)
 			ret.append(url.toICalendar());
+		if (organizer != null)
+			ret.append(organizer.toICalendar());
+		if (comment != null)
+			ret.append(comment.toICalendar());
+		if (contact != null)
+			ret.append(contact.toICalendar());
 		if (this.attachments != null) {
 			for (int i = 0; i < this.attachments.size(); i++) {
 				Attachment attach = (Attachment) this.attachments.get(i);
@@ -265,6 +396,19 @@ public class Journal implements Constants {
 					ret.append("STATUS:FINAL");
 					ret.append(CRLF);
 					break;
+			}
+		}
+		if (this.attendees != null) {
+			for (int i = 0; i < this.attendees.size(); i++) {
+				Attendee attendee = (Attendee) this.attendees.get(i);
+				ret.append(attendee.toICalendar());
+			}
+		}
+
+		if (this.alarms != null) {
+			for (int i = 0; i < this.alarms.size(); i++) {
+				Valarm alarm = (Valarm) this.alarms.get(i);
+				ret.append(alarm.toICalendar());
 			}
 		}
 
@@ -388,6 +532,69 @@ public class Journal implements Constants {
 
 	public void setStatus(int status) {
 		this.status = status;
+	}
+
+	/**
+	 * Get organizer
+	 *
+	 * @return organizer object
+	 */
+	public Organizer getOrganizer() {
+		return organizer;
+	}
+
+	/**
+	 * Get comment
+	 *
+	 * @return comment object
+	 */
+	public Comment getComment() {
+		return comment;
+	}
+
+	/**
+	 * Get contact
+	 *
+	 * @return contact object
+	 */
+	public Contact getContact() {
+		return contact;
+	}
+
+	/**
+	 * Get exception dates
+	 *
+	 * @return list of exception dates
+	 */
+	public List<Date> getExceptions() {
+		return this.exdates;
+	}
+
+	/**
+	 * Get recurrence dates
+	 *
+	 * @return list of recurrence dates
+	 */
+	public List<Date> getRdates() {
+		return this.rdates;
+	}
+
+	/**
+	 * Get related to
+	 *
+	 * @return related to object
+	 */
+	public RelatedTo getRelatedTo() {
+		return relatedTo;
+	}
+
+	/**
+	 * Get alarms
+	 *
+	 * @return list of alarms
+	 */
+	public List<Valarm> getAlarms() {
+		return alarms;
 	}
 
 	public Object getUserData() {

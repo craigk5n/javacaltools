@@ -80,6 +80,13 @@ public class Todo implements Constants {
 	protected List<Date> rdates = null;
 	/** Attachments */
 	protected List<Attachment> attachments = null;
+	/** Alarms (List of Valarm objects) */
+	protected List<Valarm> alarms = null;
+	/** Parser reference for sub-component parsing */
+	private CalendarParser parser = null;
+	/** VALARM parsing state */
+	private boolean inValarm = false;
+	private List<String> valarmLines = null;
 	/** Private user object for caller to set/get */
 	private Object userData = null;
 
@@ -94,10 +101,13 @@ public class Todo implements Constants {
 	 *        List of iCalendar text lines
 	 */
 	public Todo(CalendarParser parser, int initialLine, List<String> textLines) {
+		this.parser = parser;
 		attendees = new ArrayList<Attendee>();
 		exdates = new ArrayList<Date>();
 		rdates = new ArrayList<Date>();
 		attachments = new ArrayList<Attachment>();
+		alarms = new ArrayList<Valarm>();
+		alarms = new ArrayList<Valarm>();
 		
 		for (int i = 0; i < textLines.size(); i++) {
 			String line = textLines.get(i);
@@ -185,6 +195,28 @@ public class Todo implements Constants {
 		String up = icalStr.toUpperCase();
 		if (up.equals("BEGIN:VTODO") || up.equals("END:VTODO")) {
 			// ignore
+		} else if (up.equals("BEGIN:VALARM")) {
+			inValarm = true;
+			valarmLines = new ArrayList<String>();
+			valarmLines.add(icalStr);
+		} else if (up.equals("END:VALARM")) {
+			if (inValarm && valarmLines != null) {
+				valarmLines.add(icalStr);
+				// Create the VALARM object
+				Valarm alarm = new Valarm(parser, 0, valarmLines);
+				if (alarm.isValid()) {
+					if (this.alarms == null)
+						this.alarms = new ArrayList<Valarm>();
+					this.alarms.add(alarm);
+				}
+				inValarm = false;
+				valarmLines = null;
+			}
+		} else if (inValarm) {
+			// We're inside a VALARM, collect the lines
+			if (valarmLines != null) {
+				valarmLines.add(icalStr);
+			}
 		} else if (up.trim().length() == 0) {
 			// ignore empty lines
 		} else if (up.startsWith("DESCRIPTION")) {
@@ -351,8 +383,17 @@ public class Todo implements Constants {
 	}
 
 	/**
+	 * Get alarms
+	 *
+	 * @return list of alarms
+	 */
+	public List<Valarm> getAlarms() {
+		return alarms;
+	}
+
+	/**
 	 * Get user data object
-	 * 
+	 *
 	 * @return user data object
 	 */
 	public Object getUserData() {
@@ -698,6 +739,13 @@ public class Todo implements Constants {
 		if (completed != null) {
 			ret.append(completed.toICalendar());
 			ret.append(CRLF);
+		}
+
+		if (this.alarms != null) {
+			for (int i = 0; i < this.alarms.size(); i++) {
+				Valarm alarm = (Valarm) this.alarms.get(i);
+				ret.append(alarm.toICalendar());
+			}
 		}
 
 		ret.append("END:VTODO");
