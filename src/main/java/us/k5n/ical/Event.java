@@ -376,7 +376,17 @@ public class Event implements Constants {
 				}
 			}
 		} else if (up.startsWith("TRANSP")) {
-			transp = StringUtils.parseStatus(icalStr, parseMethod);
+			Property p = new Property(icalStr);
+			String transpValue = p.getValue().toUpperCase();
+			if ("OPAQUE".equals(transpValue)) {
+				transp = TRANSP_OPAQUE;
+			} else if ("TRANSPARENT".equals(transpValue)) {
+				transp = TRANSP_TRANSPARENT;
+			} else {
+				if (parseMethod == PARSE_STRICT) {
+					throw new BogusDataException("Invalid TRANSP value: " + transpValue, icalStr);
+				}
+			}
 		} else if (up.startsWith("STATUS")) {
 			status = StringUtils.parseStatus(icalStr, parseMethod);
 			// Only allow VEVENT status types

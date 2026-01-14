@@ -1,0 +1,12 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Test//Calendar//EN
+BEGIN:VEVENT
+UID:folded-test@example.com
+SUMMARY:This is a very long summary that should exceed the 75 octet folding
+ rule and be split across multiple lines with proper CRLF space folding as
+ per RFC 5545 section 3.2
+DTSTART:20230101T100000Z
+DTEND:20230101T110000Z
+END:VEVENT
+END:VCALENDAR
