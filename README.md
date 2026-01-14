@@ -26,9 +26,9 @@ A comprehensive, RFC-compliant Java library for parsing, generating, and manipul
 
 ## ✨ Features
 
-- **Complete RFC 5545 Compliance**: Full support for iCalendar core specification
-- **Modern Extensions**: RFC 7986, 9073, 9074, and RFC 5546 iTIP METHOD property support
-- **Component Support**: VEVENT, VTODO, VJOURNAL, VFREEBUSY, VTIMEZONE, VALARM
+- **Strong RFC 5545 Compliance**: 95%+ support for iCalendar core specification
+- **Modern Extensions**: RFC 7986 (75%), RFC 9073 (60%), RFC 9074 (90%), RFC 5546 iTIP (80%)
+- **Component Support**: VEVENT, VTODO, VJOURNAL, VFREEBUSY, VTIMEZONE, VALARM, VLOCATION, VRESOURCE
 - **Property Support**: All standard iCalendar properties with validation
 - **Recurrence Rules**: Full RRULE support with complex patterns and exceptions
 - **Timezone Handling**: VTIMEZONE component support with daylight saving
@@ -37,6 +37,18 @@ A comprehensive, RFC-compliant Java library for parsing, generating, and manipul
 - **Validation**: Comprehensive validation with detailed error reporting
 - **Java 17+**: Modern Java with minimal, secure dependencies
 - **Thread-Safe**: Designed for concurrent applications
+
+### 🚧 Planned Enhancements
+
+The following features are planned to achieve 95%+ compliance across all RFCs:
+
+- **PARTICIPANT Component** (RFC 9073) - Rich participant metadata beyond ATTENDEE
+- **STYLED-DESCRIPTION Property** (RFC 9073) - HTML and rich-text descriptions
+- **CALENDAR-ADDRESS Property** (RFC 9073) - Calendar user addresses
+- **Calendar-Level Properties** (RFC 7986) - VCALENDAR metadata extensions
+- **Full iTIP Protocol Logic** (RFC 5546) - Complete scheduling state management
+
+See [ROADMAP.md](ROADMAP.md) for detailed implementation plan and current progress toward 95%+ RFC compliance across all supported specifications.
 
 ## 🚀 Quick Start
 
@@ -175,22 +187,39 @@ event.setEndDate(new Date("20230101T110000", "America/New_York"));
 
 ## 📋 RFC Compliance
 
-JavaCalTools provides comprehensive support for iCalendar standards:
+JavaCalTools provides strong support for iCalendar standards with current compliance levels:
 
-- ✅ **RFC 5545** - Internet Calendaring and Scheduling Core Object Specification (iCalendar)
-- ✅ **RFC 7986** - New Properties for iCalendar (COLOR, IMAGE, CONFERENCE)
-- ✅ **RFC 9073** - Event Publishing Extensions to iCalendar
-- ✅ **RFC 9074** - VALARM Extensions for iCalendar
-- ✅ **RFC 5546** - iTIP METHOD property support with validation (PUBLISH, REQUEST, REPLY, ADD, CANCEL, REFRESH, COUNTER, DECLINECOUNTER)
+- ✅ **RFC 5545** - Internet Calendaring and Scheduling Core Object Specification (iCalendar) - **95%+ Complete**
+  - Full support for VEVENT, VTODO, VJOURNAL, VFREEBUSY, VTIMEZONE, VALARM components
+  - Complete property and parameter support with validation
+  - Comprehensive recurrence rule handling (RRULE, EXDATE, RDATE)
+
+- ⚠️ **RFC 7986** - New Properties for iCalendar - **75% Complete**
+  - ✅ COLOR, IMAGE, CONFERENCE, STRUCTURED-DATA properties implemented
+  - ❌ Missing: Calendar-level NAME, DESCRIPTION, UID, URL, LAST-MODIFIED properties
+
+- ⚠️ **RFC 9073** - Event Publishing Extensions to iCalendar - **60% Complete**
+  - ✅ LOCATION-TYPE, RESOURCE-TYPE, PARTICIPANT-TYPE properties
+  - ✅ VLOCATION, VRESOURCE component support
+  - ❌ Missing: PARTICIPANT component, STYLED-DESCRIPTION property, CALENDAR-ADDRESS property
+
+- ✅ **RFC 9074** - VALARM Extensions for iCalendar - **90% Complete**
+  - ✅ PROXIMITY and STRUCTURED-DATA properties in VALARM
+  - Full location-based alarm support
+
+- ⚠️ **RFC 5546** - iCalendar Transport-Independent Interoperability Protocol (iTIP) - **80% Complete**
+  - ✅ All iTIP METHOD values supported with validation (PUBLISH, REQUEST, REPLY, ADD, CANCEL, REFRESH, COUNTER, DECLINECOUNTER)
+  - ❌ Missing: Full iTIP protocol logic and scheduling state management
 
 ### Compliance Validation
 
-The library includes 376 comprehensive tests covering:
+The library includes 45 test classes with 430+ comprehensive tests covering:
 - All RFC 5545 sections (3.1-4.0)
 - Component validation and property handling
 - Data type parsing and formatting
 - Internationalization and Unicode support
 - Edge cases and error conditions
+- RFC extension properties and components
 
 ## 🧪 Testing
 
