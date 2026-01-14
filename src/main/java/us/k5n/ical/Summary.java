@@ -85,6 +85,7 @@ public class Summary extends Property {
 				}
 			}
 		}
+
 	}
 
 	// Test routine - will parse input string and then export back

@@ -33,8 +33,8 @@ public interface PeriodValue {
   /**
    * the end of the period.
    * The end must be &gt;= {@link #start()}, and
-   * <tt>(start() instanceof {@link TimeValue}) ==
-   *     (end() instanceof TimeValue)</tt>.
+  * <code>(start() instanceof {@link TimeValue}) ==
+  *     (end() instanceof TimeValue)</code>.
    * @return non null.
    */
   DateValue end();

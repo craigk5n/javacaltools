@@ -100,7 +100,7 @@ public class VAvailability implements Constants {
 	/**
 	 * Parse a line of iCalendar text
 	 *
-	 * @param line
+	 * @param icalStr
 	 *               The line of text
 	 * @param parseMethod
 	 *               PARSE_STRICT or PARSE_LOOSE

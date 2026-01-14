@@ -360,7 +360,7 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 
 	/**
 	 * Set a new line wrap and text formatter for converting event details into
-	 * a List<String> for display on the panel as a tooltip.
+	 * a List of Strings for display on the panel as a tooltip.
 	 *
 	 * @param newFormatter
 	 */
@@ -558,7 +558,7 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 	 * default behavior where the user can scroll indefinitely and the UI will
 	 * keep adding weeks to the display.
 	 *
-	 * @param firstDate
+	 * @param absoluteStartDate
 	 */
 	public void setAbsoluteStartDay(Calendar absoluteStartDate) {
 		absoluteStart = (Calendar) absoluteStartDate.clone();
@@ -584,7 +584,7 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 	 * the default behavior where the user can scroll indefinitely and the UI
 	 * will keep adding weeks to the display.
 	 *
-	 * @param firstDate
+	 * @param absoluteEndDate
 	 */
 	public void setAbsoluteEndDay(Calendar absoluteEndDate) {
 		absoluteEnd = (Calendar) absoluteEndDate.clone();

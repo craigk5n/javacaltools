@@ -94,7 +94,7 @@ public class FreebusyPeriod {
 	/**
 	 * Get start date
 	 * 
-	 * @return: start date
+	 * @return start date
 	 */
 	public Date getStartDate() {
 		return startDate;
@@ -103,7 +103,7 @@ public class FreebusyPeriod {
 	/**
 	 * Get end date
 	 * 
-	 * @return: end date
+	 * @return end date
 	 */
 	public Date getEndDate() {
 		return endDate;
@@ -112,7 +112,7 @@ public class FreebusyPeriod {
 	/**
 	 * Get duration
 	 * 
-	 * @return: duration
+	 * @return duration
 	 */
 	public Duration getDuration() {
 		return duration;

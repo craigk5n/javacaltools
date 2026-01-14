@@ -65,8 +65,8 @@ public class Categories extends Property {
 
 		for ( int i = 0; i < attributeList.size (); i++ ) {
 			Attribute a = attributeAt ( i );
-			String aval = a.value.toUpperCase ();
-			if ( aval.equals ( "LANGUAGE" ) ) {
+			String aname = a.name.toUpperCase ();
+			if ( aname.equals ( "LANGUAGE" ) ) {
 				// Can only have one of these
 				if ( language != null && parseMode == PARSE_STRICT ) {
 					throw new ParseException ( "More than one LANGUAGE found", icalStr );

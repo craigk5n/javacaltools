@@ -153,4 +153,19 @@ public class ValarmTest {
 		assertTrue(output.contains("SUMMARY:Reminder"));
 		assertTrue(output.contains("END:VALARM"));
 	}
+
+	@Test
+	@DisplayName("RFC9074: STRUCTURED-DATA property in VALARM")
+	void testStructuredDataInValarm() {
+		try {
+			Valarm alarm = new Valarm("BEGIN:VALARM\nACTION:DISPLAY\nTRIGGER:-PT15M\nSUMMARY:Reminder\nSTRUCTURED-DATA;VALUE=BINARY;ENCODING=BASE64;FMTTYPE=application/xml:PGhlbGxvIHdvcmxkPg==\nEND:VALARM");
+			assertNotNull(alarm, "VALARM with STRUCTURED-DATA should parse");
+
+			String output = alarm.toICalendar();
+			assertTrue(output.contains("STRUCTURED-DATA"), "Output should contain STRUCTURED-DATA");
+			assertTrue(output.contains("PGhlbGxvIHdvcmxkPg=="), "Output should contain structured data value");
+		} catch (Exception e) {
+			fail("VALARM with STRUCTURED-DATA should parse: " + e.getMessage());
+		}
+	}
 }

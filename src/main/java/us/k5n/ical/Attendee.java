@@ -142,7 +142,7 @@ public class Attendee extends Property {
 				if ( aval.equals ( "TRUE" ) ) {
 					rsvp = true;
 				} else if ( aval.equals ( "FALSE" ) ) {
-					rsvp = true;
+					rsvp = false;
 				} else {
 					if ( parseMode == PARSE_STRICT ) {
 						throw new ParseException ( "Unknown RSVP '" + a.value + "'",
@@ -175,6 +175,11 @@ public class Attendee extends Property {
 				System.out.println ( "Ignoring unknown attribute '" + a.name + "' in "
 				    + this.getName () );
 			}
+		}
+
+		// Validate CAL-ADDRESS format
+		if (parseMode == PARSE_STRICT && !Utils.isValidCalAddress(this.getValue())) {
+			throw new ParseException("Invalid CAL-ADDRESS format: " + this.getValue(), icalStr);
 		}
 	}
 }

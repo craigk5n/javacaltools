@@ -36,6 +36,11 @@ public class Organizer extends Property {
 	public Organizer(String icalStr, int parseMode) throws ParseException {
 		super(icalStr, parseMode);
 		organizerValue = value;
+
+		// Validate CAL-ADDRESS format
+		if (parseMode == PARSE_STRICT && !Utils.isValidCalAddress(this.getValue())) {
+			throw new ParseException("Invalid CAL-ADDRESS format: " + this.getValue(), icalStr);
+		}
 	}
 
 	public String getOrganizer() {

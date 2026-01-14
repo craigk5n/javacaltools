@@ -22,15 +22,9 @@ package us.k5n.ical;
 
 /**
  * iCalendar URL class - This object represents a URL and corresponds to the URL
- * iCalendar property. <br/> From the RFC: <br/> <quote>
- * This property may be used in a calendar component to
- * convey a location where a more dynamic rendition of the calendar
- * information associated with the calendar component can be found. This
- * memo does not attempt to standardize the form of the URI, nor the
- * format of the resource pointed to by the property value. If the URL
- * property and Content-Location MIME header are both specified, they
- * MUST point to the same resource.
- * </quote>
+ * iCalendar property. <br/> From the RFC: <br/>
+ * This property may be used in any calendar component to define a Uniform
+ * Resource Locator (URL) associated with the calendar component.
  * 
  * @author Craig Knudsen, craig@k5n.us
  */

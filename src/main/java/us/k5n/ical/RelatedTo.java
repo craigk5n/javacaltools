@@ -23,12 +23,10 @@ package us.k5n.ical;
 /**
  * iCalendar RELATED-TO class - This object represents a relationship to another
  * calendar component and corresponds to the RELATED-TO iCalendar property. <br/>
- * From RFC 5545: <br/> <quote>
- * This property is used in conjunction with the "UID" and "SEQUENCE"
- * properties to identify a specific instance of a recurring "VEVENT",
- * "VTODO", or "VJOURNAL" calendar component. The property value is the
- * effective value of the "UID" property of the recurrence instance.
- * </quote>
+ * From RFC 5545: <br/>
+ * The property can be specified in several components and implies
+ * there is a relationship of some kind (for example, "child" or "sibling")
+ * between the different calendar components specified by each UID parameter value.
  *
  * @author Craig Knudsen, craig@k5n.us
  */

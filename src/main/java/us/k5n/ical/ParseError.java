@@ -40,7 +40,7 @@ public class ParseError {
 	 *          Line number of error (if available)
 	 * @param error
 	 *          Error message
-	 * @param icainputDatalStr
+	 * @param inputData
 	 *          Offending String data
 	 */
 	public ParseError(int lineNo, String error, String inputData) {
@@ -56,8 +56,6 @@ public class ParseError {
 	 *          Line number of error (if available)
 	 * @param error
 	 *          Error message
-	 * @param icalStr
-	 *          Offending String data
 	 */
 	public ParseError(int lineNo, String error) {
 		this.lineNo = lineNo;

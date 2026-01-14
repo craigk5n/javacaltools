@@ -75,7 +75,7 @@ public class TimezoneDaylight implements Constants {
 	/**
 	 * Parse a line of iCalendar text
 	 * 
-	 * @param line
+	 * @param icalStr
 	 *               The line of text
 	 * @param parseMethod
 	 *               PARSE_STRICT or PARSE_LOOSE
@@ -188,7 +188,7 @@ public class TimezoneDaylight implements Constants {
 	/**
 	 * Get the start date/time
 	 * 
-	 * @return: start date
+	 * @return start date
 	 */
 	public Date getDtstart() {
 		return dtstart;
@@ -197,7 +197,7 @@ public class TimezoneDaylight implements Constants {
 	/**
 	 * Get the offset from UTC
 	 * 
-	 * @return: offset from UTC
+	 * @return offset from UTC
 	 */
 	public String getTzOffsetFrom() {
 		return tzOffsetFrom;
@@ -206,7 +206,7 @@ public class TimezoneDaylight implements Constants {
 	/**
 	 * Get the offset to UTC
 	 * 
-	 * @return: offset to UTC
+	 * @return offset to UTC
 	 */
 	public String getTzOffsetTo() {
 		return tzOffsetTo;
@@ -215,7 +215,7 @@ public class TimezoneDaylight implements Constants {
 	/**
 	 * Get the timezone name
 	 * 
-	 * @return: timezone name
+	 * @return timezone name
 	 */
 	public String getTzName() {
 		return tzName;
@@ -224,7 +224,7 @@ public class TimezoneDaylight implements Constants {
 	/**
 	 * Get the recurrence rule
 	 * 
-	 * @return: recurrence rule
+	 * @return recurrence rule
 	 */
 	public Rrule getRrule() {
 		return rrule;
@@ -233,7 +233,7 @@ public class TimezoneDaylight implements Constants {
 	/**
 	 * Get the recurrence dates
 	 * 
-	 * @return: list of recurrence dates
+	 * @return list of recurrence dates
 	 */
 	public List<Date> getRdates() {
 		return rdates;

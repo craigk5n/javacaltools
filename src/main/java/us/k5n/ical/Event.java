@@ -126,7 +126,7 @@ public class Event implements Constants {
 	 *                    The IcalParser object
 	 * @param initialLine
 	 *                    The starting line number
-	 * @Param textLines
+	 * @param textLines
 	 *        List of iCalendar text lines
 	 */
 	public Event(CalendarParser parser, int initialLine, List<String> textLines) {
@@ -274,7 +274,7 @@ public class Event implements Constants {
 	/**
 	 * Parse a line of iCalendar test.
 	 * 
-	 * @param line
+	 * @param icalStr
 	 *                    The line of text
 	 * @param parseMethod
 	 *                    PARSE_STRICT or PARSE_LOOSE
@@ -478,7 +478,7 @@ public class Event implements Constants {
 	 * Get the event summary for the specified language. If not available, then
 	 * the primary summary will be returned.
 	 * 
-	 * @param langage
+	 * @param language
 	 *                The language ("EN", "FR", etc.)
 	 */
 	public Summary getSummary(String language) {
@@ -1026,6 +1026,33 @@ public class Event implements Constants {
 		// Note: Simple removeAll may not handle date equality properly, but for now assume Date.equals works
 
 		return occurrences;
+	}
+
+	/**
+	 * Get the IMAGE URI for this event (RFC 7986).
+	 *
+	 * @return the IMAGE URI, or null if not set
+	 */
+	public String getImageUri() {
+		return imageUri;
+	}
+
+	/**
+	 * Get the CONFERENCE URI for this event (RFC 7986).
+	 *
+	 * @return the CONFERENCE URI, or null if not set
+	 */
+	public String getConferenceUri() {
+		return conferenceUri;
+	}
+
+	/**
+	 * Get the STRUCTURED-DATA for this event (RFC 7986).
+	 *
+	 * @return the STRUCTURED-DATA value, or null if not set
+	 */
+	public String getStructuredData() {
+		return structuredData;
 	}
 
 }

@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test cases for Summary.
- * 
+ *
  * @author Craig Knudsen
  */
 public class SummaryTest implements Constants {
@@ -22,14 +22,13 @@ public class SummaryTest implements Constants {
 	}
 
 	@Test
-	public void testSummaryWithLanguageAndNewline() {
-		String str = "SUMMARY;LANGUAGE=EN:This is\\na summary.";
+	public void testSummaryWithLanguage() {
+		String str = "SUMMARY;LANGUAGE=en:Meeting Summary";
 		try {
-			Description description = new Description(str, PARSE_STRICT);
-			assertNotNull(description, "Description should not be null");
-			assertNotNull(description.language, "Language should not be null");
-			assertNotNull(description.value, "Text should not be null");
-			assertTrue(description.value.startsWith("This is"), "Text should start with 'This is'");
+			Summary summary = new Summary(str, PARSE_STRICT);
+			assertNotNull(summary, "Summary should not be null");
+			assertEquals("en", summary.language, "Language should be 'en'");
+			assertEquals("Meeting Summary", summary.getValue(), "Value should be correct");
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail("Test failed due to exception: " + e.toString());
@@ -37,14 +36,28 @@ public class SummaryTest implements Constants {
 	}
 
 	@Test
-	public void testSummaryWithoutLanguage() {
+	public void testSummaryWithAltRep() {
+		String str = "SUMMARY;ALTREP=\"http://example.com/summary\":Meeting Summary";
+		try {
+			Summary summary = new Summary(str, PARSE_STRICT);
+			assertNotNull(summary, "Summary should not be null");
+			assertEquals("http://example.com/summary", summary.altrep, "ALTREP should be parsed");
+			assertEquals("Meeting Summary", summary.getValue(), "Value should be correct");
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("Test failed due to exception: " + e.toString());
+		}
+	}
+
+	@Test
+	public void testSummaryWithoutAttributes() {
 		String str = "SUMMARY:This is a summary.";
 		try {
-			Description description = new Description(str, PARSE_STRICT);
-			assertNotNull(description, "Description should not be null");
-			assertNull(description.language, "Language should be null when not specified");
-			assertNotNull(description.value, "Text should not be null");
-			assertEquals("This is a summary.", description.value, "Incorrect summary text");
+			Summary summary = new Summary(str, PARSE_STRICT);
+			assertNotNull(summary, "Summary should not be null");
+			assertNull(summary.language, "Language should be null when not specified");
+			assertNull(summary.altrep, "ALTREP should be null when not specified");
+			assertEquals("This is a summary.", summary.getValue(), "Value should be correct");
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail("Test failed due to exception: " + e.toString());
@@ -55,10 +68,11 @@ public class SummaryTest implements Constants {
 	public void testEmptySummary() {
 		String str = "SUMMARY:";
 		try {
-			Description description = new Description(str, PARSE_STRICT);
-			assertNotNull(description, "Description should not be null");
-			assertNull(description.language, "Language should be null when not specified");
-			assertEquals("", description.value, "Text should be empty for an empty summary");
+			Summary summary = new Summary(str, PARSE_STRICT);
+			assertNotNull(summary, "Summary should not be null");
+			assertNull(summary.language, "Language should be null when not specified");
+			assertNull(summary.altrep, "ALTREP should be null when not specified");
+			assertEquals("", summary.getValue(), "Value should be empty");
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail("Test failed due to exception: " + e.toString());
@@ -66,16 +80,70 @@ public class SummaryTest implements Constants {
 	}
 
 	@Test
-	public void testSummaryWithSpecialCharacters() {
-		String str = "SUMMARY:This is a summary with special characters: \\n, \\t, \\ ;";
+	public void testSummaryWithBothAttributes() {
+		String str = "SUMMARY;LANGUAGE=fr;ALTREP=\"http://example.com/summary\":Résumé de réunion";
 		try {
-			Description description = new Description(str, PARSE_STRICT);
-			assertNotNull(description, "Description should not be null");
-			assertNull(description.language, "Language should be null when not specified");
-			assertTrue(description.value.contains("\n, \t, \\ ;"));
+			Summary summary = new Summary(str, PARSE_STRICT);
+			assertNotNull(summary, "Summary should not be null");
+			assertEquals("fr", summary.language, "Language should be 'fr'");
+			assertEquals("http://example.com/summary", summary.altrep, "ALTREP should be parsed");
+			assertEquals("Résumé de réunion", summary.getValue(), "Value should be correct");
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail("Test failed due to exception: " + e.toString());
+		}
+	}
+
+	@Test
+	public void testInvalidAttribute() {
+		String str = "SUMMARY;INVALID=value:Test Summary";
+		try {
+			Summary summary = new Summary(str, PARSE_STRICT);
+			fail("Should throw exception for invalid attribute");
+		} catch (ParseException e) {
+			// Expected for strict parsing
+		} catch (Exception e) {
+			fail("Wrong exception type: " + e.getMessage());
+		}
+	}
+
+    @Test
+    public void testLanguageOverride() {
+        // iCalendar allows attribute override, so duplicate attributes replace previous ones
+        String str = "SUMMARY;LANGUAGE=en;LANGUAGE=fr:Test Summary";
+        try {
+            Summary summary = new Summary(str, PARSE_STRICT);
+            // Should keep the last value (fr)
+            assertEquals("fr", summary.language, "Should keep the last LANGUAGE value");
+            assertEquals("Test Summary", summary.getValue(), "Value should be parsed correctly");
+        } catch (Exception e) {
+            fail("Should parse successfully: " + e.getMessage());
+        }
+    }
+
+    @Test
+    public void testAltRepOverride() {
+        // iCalendar allows attribute override, so duplicate attributes replace previous ones
+        String str = "SUMMARY;ALTREP=\"http://a.com\";ALTREP=\"http://b.com\":Test Summary";
+        try {
+            Summary summary = new Summary(str, PARSE_STRICT);
+            // Should keep the last value
+            assertEquals("http://b.com", summary.altrep, "Should keep the last ALTREP value");
+            assertEquals("Test Summary", summary.getValue(), "Value should be parsed correctly");
+        } catch (Exception e) {
+            fail("Should parse successfully: " + e.getMessage());
+        }
+    }
+
+	@Test
+	public void testLooseParsingWithInvalidAttribute() {
+		String str = "SUMMARY;INVALID=value:Test Summary";
+		try {
+			Summary summary = new Summary(str, PARSE_LOOSE);
+			assertNotNull(summary, "Summary should not be null in loose mode");
+			assertEquals("Test Summary", summary.getValue(), "Value should be parsed correctly");
+		} catch (Exception e) {
+			fail("Loose parsing should not fail: " + e.getMessage());
 		}
 	}
 }

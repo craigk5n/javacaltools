@@ -542,4 +542,68 @@ public class Utils implements Constants {
 		return sb.toString();
 	}
 
+	/**
+	 * Validates a CAL-ADDRESS value according to RFC 5545.
+	 * CAL-ADDRESS is a URI, typically mailto: for email addresses.
+	 * For backward compatibility, also accepts plain email addresses.
+	 *
+	 * @param calAddress the CAL-ADDRESS value to validate
+	 * @return true if valid, false otherwise
+	 */
+	public static boolean isValidCalAddress(String calAddress) {
+		if (calAddress == null || calAddress.trim().isEmpty()) {
+			return false;
+		}
+
+		String trimmed = calAddress.trim();
+
+		// Allow plain email addresses for backward compatibility
+		if (isValidEmailAddress(trimmed)) {
+			return true;
+		}
+
+		// For URIs, basic validation
+		try {
+			new java.net.URI(trimmed);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	/**
+	 * Validates an email address format.
+	 *
+	 * @param email the email address to validate
+	 * @return true if valid email format, false otherwise
+	 */
+	public static boolean isValidEmailAddress(String email) {
+		if (email == null || email.trim().isEmpty()) {
+			return false;
+		}
+
+		String trimmed = email.trim();
+
+		// Basic email validation: local@domain
+		int atIndex = trimmed.indexOf('@');
+		if (atIndex <= 0 || atIndex >= trimmed.length() - 1) {
+			return false;
+		}
+
+		String local = trimmed.substring(0, atIndex);
+		String domain = trimmed.substring(atIndex + 1);
+
+		// Local part should not be empty and contain valid characters
+		if (local.isEmpty() || !local.matches("[A-Za-z0-9._%+-]+")) {
+			return false;
+		}
+
+		// Domain should contain at least one dot and valid characters
+		if (domain.isEmpty() || !domain.contains(".") || !domain.matches("[A-Za-z0-9.-]+")) {
+			return false;
+		}
+
+		return true;
+	}
+
 }

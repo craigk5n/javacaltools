@@ -384,6 +384,18 @@ public class ICalendarParser extends CalendarParser implements Constants {
 						} else if (lineUp.startsWith("METHOD")) {
 							try {
 								method = new Property(line, getParseMethod());
+
+								// Validate METHOD value against RFC 5546 iTIP methods
+								if (getParseMethod() == PARSE_STRICT) {
+									String methodValue = method.getValue();
+									if (!isValidItipMethod(methodValue)) {
+										reportParseError(new ParseError(ln,
+												"Invalid METHOD value '" + methodValue +
+												"'. Must be one of: PUBLISH, REQUEST, REPLY, ADD, CANCEL, REFRESH, COUNTER, DECLINECOUNTER",
+												line));
+									}
+								}
+
 								for (int i = 0; i < dataStores.size(); i++) {
 									DataStore ds = (DataStore) dataStores.get(i);
 									ds.setMethod(method);
@@ -653,6 +665,28 @@ public class ICalendarParser extends CalendarParser implements Constants {
 		// TODO: split into event, todo, timezone and journal strings
 
 		return noErrors;
+	}
+
+	/**
+	 * Validate that a METHOD value is a valid iTIP method according to RFC 5546.
+	 *
+	 * @param methodValue the METHOD value to validate
+	 * @return true if valid, false otherwise
+	 */
+	private boolean isValidItipMethod(String methodValue) {
+		if (methodValue == null) {
+			return false;
+		}
+
+		String upperValue = methodValue.toUpperCase();
+		return Constants.METHOD_PUBLISH.equals(upperValue) ||
+			   Constants.METHOD_REQUEST.equals(upperValue) ||
+			   Constants.METHOD_REPLY.equals(upperValue) ||
+			   Constants.METHOD_ADD.equals(upperValue) ||
+			   Constants.METHOD_CANCEL.equals(upperValue) ||
+			   Constants.METHOD_REFRESH.equals(upperValue) ||
+			   Constants.METHOD_COUNTER.equals(upperValue) ||
+			   Constants.METHOD_DECLINECOUNTER.equals(upperValue);
 	}
 
 }

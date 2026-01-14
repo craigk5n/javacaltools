@@ -197,7 +197,7 @@ public class Todo implements Constants {
 	/**
 	 * Parse a line of iCalendar text
 	 * 
-	 * @param line
+	 * @param icalStr
 	 *                    The line of text
 	 * @param parseMethod
 	 *                    PARSE_STRICT or PARSE_LOOSE
@@ -492,7 +492,7 @@ public class Todo implements Constants {
 	/**
 	 * Get recurrence rule
 	 * 
-	 * @return: RRULE object
+	 * @return RRULE object
 	 */
 	public Rrule getRrule() {
 		return rrule;
@@ -633,7 +633,7 @@ public class Todo implements Constants {
 	 * Get todo summary for specified language. If not available, then
 	 * primary summary will be returned.
 	 * 
-	 * @param langage
+	 * @param language
 	 *                The language ("EN", "FR", etc.)
 	 */
 	public Summary getSummary(String language) {
@@ -645,7 +645,7 @@ public class Todo implements Constants {
 	/**
 	 * Get description
 	 * 
-	 * @return: description object
+	 * @return description object
 	 */
 	public Description getDescription() {
 		return description;
@@ -654,7 +654,7 @@ public class Todo implements Constants {
 	/**
 	 * Get comment
 	 * 
-	 * @return: comment object
+	 * @return comment object
 	 */
 	public Comment getComment() {
 		return comment;
@@ -663,7 +663,7 @@ public class Todo implements Constants {
 	/**
 	 * Get classification
 	 * 
-	 * @return: classification object
+	 * @return classification object
 	 */
 	public Classification getClassification() {
 		return classification;
@@ -672,7 +672,7 @@ public class Todo implements Constants {
 	/**
 	 * Get categories
 	 * 
-	 * @return: categories object
+	 * @return categories object
 	 */
 	public Categories getCategories() {
 		return categories;
@@ -681,7 +681,7 @@ public class Todo implements Constants {
 	/**
 	 * Get created date
 	 * 
-	 * @return: Date object
+	 * @return Date object
 	 */
 	public Date getCreatedDate() {
 		return createdDate;
@@ -690,7 +690,7 @@ public class Todo implements Constants {
 	/**
 	 * Get start date
 	 * 
-	 * @return: start date
+	 * @return start date
 	 */
 	public Date getStartDate() {
 		return startDate;
@@ -699,7 +699,7 @@ public class Todo implements Constants {
 	/**
 	 * Get end date
 	 * 
-	 * @return: end date
+	 * @return end date
 	 */
 	public Date getEndDate() {
 		return endDate;
@@ -708,7 +708,7 @@ public class Todo implements Constants {
 	/**
 	 * Get due date
 	 * 
-	 * @return: due date
+	 * @return due date
 	 */
 	public Date getDueDate() {
 		return dueDate;
@@ -717,7 +717,7 @@ public class Todo implements Constants {
 	/**
 	 * Get dtstamp
 	 * 
-	 * @return: dtstamp
+	 * @return dtstamp
 	 */
 	public Date getDtstamp() {
 		return dtstamp;
@@ -726,7 +726,7 @@ public class Todo implements Constants {
 	/**
 	 * Get last modified
 	 * 
-	 * @return: last modified
+	 * @return last modified
 	 */
 	public Date getLastModified() {
 		return lastModified;
@@ -735,7 +735,7 @@ public class Todo implements Constants {
 	/**
 	 * Get URL
 	 * 
-	 * @return: URL object
+	 * @return URL object
 	 */
 	public URL getURL() {
 		return url;
@@ -744,7 +744,7 @@ public class Todo implements Constants {
 	/**
 	 * Get location
 	 * 
-	 * @return: location object
+	 * @return location object
 	 */
 	public Location getLocation() {
 		return location;
@@ -807,7 +807,7 @@ public class Todo implements Constants {
 	/**
 	 * Get geographic position
 	 * 
-	 * @return: geographic position string
+	 * @return geographic position string
 	 */
 	public String getGeo() {
 		return geo;
@@ -816,7 +816,7 @@ public class Todo implements Constants {
 	/**
 	 * Get Unique Id
 	 * 
-	 * @return: UID object
+	 * @return UID object
 	 */
 	public Uid getUid() {
 		return uid;
@@ -825,7 +825,7 @@ public class Todo implements Constants {
 	/**
 	 * Get Sequence number
 	 * 
-	 * @return: Sequence object
+	 * @return Sequence object
 	 */
 	public Sequence getSequence() {
 		return sequence;

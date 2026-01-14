@@ -99,7 +99,7 @@ public class Freebusy implements Constants {
 	/**
 	 * Parse a line of iCalendar text
 	 * 
-	 * @param line
+	 * @param icalStr
 	 *               The line of text
 	 * @param parseMethod
 	 *               PARSE_STRICT or PARSE_LOOSE
@@ -321,7 +321,7 @@ public class Freebusy implements Constants {
 	/**
 	 * Get summary
 	 * 
-	 * @return: summary object
+	 * @return summary object
 	 */
 	public Summary getSummary() {
 		return summary;
@@ -330,7 +330,7 @@ public class Freebusy implements Constants {
 	/**
 	 * Get UID
 	 * 
-	 * @return: UID object
+	 * @return UID object
 	 */
 	public Uid getUid() {
 		return uid;
@@ -339,7 +339,7 @@ public class Freebusy implements Constants {
 	/**
 	 * Get start date
 	 * 
-	 * @return: start date
+	 * @return start date
 	 */
 	public Date getStartDate() {
 		return startDate;
@@ -348,7 +348,7 @@ public class Freebusy implements Constants {
 	/**
 	 * Get end date
 	 * 
-	 * @return: end date
+	 * @return end date
 	 */
 	public Date getEndDate() {
 		return endDate;
@@ -357,7 +357,7 @@ public class Freebusy implements Constants {
 	/**
 	 * Get duration
 	 * 
-	 * @return: duration
+	 * @return duration
 	 */
 	public Duration getDuration() {
 		return duration;
@@ -366,7 +366,7 @@ public class Freebusy implements Constants {
 	/**
 	 * Get organizer
 	 * 
-	 * @return: organizer
+	 * @return organizer
 	 */
 	public Attendee getOrganizer() {
 		return organizer;
@@ -375,7 +375,7 @@ public class Freebusy implements Constants {
 	/**
 	 * Get contact
 	 * 
-	 * @return: contact
+	 * @return contact
 	 */
 	public Contact getContact() {
 		return contact;
@@ -384,7 +384,7 @@ public class Freebusy implements Constants {
 	/**
 	 * Get dtstamp
 	 * 
-	 * @return: dtstamp
+	 * @return dtstamp
 	 */
 	public Date getDtstamp() {
 		return dtstamp;
@@ -393,7 +393,7 @@ public class Freebusy implements Constants {
 	/**
 	 * Get last modified
 	 * 
-	 * @return: last modified
+	 * @return last modified
 	 */
 	public Date getLastModified() {
 		return lastModified;
@@ -402,7 +402,7 @@ public class Freebusy implements Constants {
 	/**
 	 * Get URL
 	 * 
-	 * @return: URL
+	 * @return URL
 	 */
 	public URL getURL() {
 		return url;
@@ -411,7 +411,7 @@ public class Freebusy implements Constants {
 	/**
 	 * Get comment
 	 * 
-	 * @return: comment
+	 * @return comment
 	 */
 	public Comment getComment() {
 		return comment;
@@ -420,7 +420,7 @@ public class Freebusy implements Constants {
 	/**
 	 * Get sequence
 	 * 
-	 * @return: sequence object
+	 * @return sequence object
 	 */
 	public Sequence getSequence() {
 		return sequence;

@@ -191,7 +191,7 @@ public class Rrule extends Property {
 	/**
 	 * Create an Rrule.
 	 * 
-	 * @param frequence
+	 * @param frequency
 	 *                  The frequency of the recurrence (FREQ_DAILY, FREQ_WEEKLY,
 	 *                  etc.)
 	 */

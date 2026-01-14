@@ -41,14 +41,14 @@ import java.util.regex.Pattern;
  * for calculating the occurrences of an individual RFC 2445 RRULE or groups of
  * RRULES, RDATES, EXRULES, and EXDATES.
  *
- * <h4>Glossary</h4>
+ * <strong>Glossary</strong>
  * Period - year|month|day|...<br>
  * Day of the week - an int in [0-6].  See RRULE_WDAY_* in rrule.js<br>
  * Day of the year - zero indexed in [0,365]<br>
  * Day of the month - 1 indexed in [1,31]<br>
  * Month - 1 indexed integer in [1,12]
  *
- * <h4>Abstractions</h4>
+ * <strong>Abstractions</strong>
  * Generator - a function corresponding to an RRULE part that takes a date and
  *   returns a later (year or month or day depending on its period) within the
  *   next larger period.

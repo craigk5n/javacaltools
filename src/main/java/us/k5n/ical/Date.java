@@ -20,10 +20,10 @@
 
 package us.k5n.ical;
 
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.Calendar;
-
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 
 /**
  * Base class for use with a variety of date-related iCalendar fields including
@@ -224,12 +224,12 @@ public class Date extends Property implements Comparable {
 				this.tzid = a.value;
 				// Validate timezone
 				try {
-					DateTimeZone timezone = DateTimeZone.forID(tzid);
+					ZoneId timezone = ZoneId.of(tzid);
 					if (timezone == null) {
 						System.err.println("Ignoring unrecognized timezone '" + tzid
 								+ "' in Date " + this.getName());
 					}
-				} catch (IllegalArgumentException e1) {
+				} catch (Exception e1) {
 					System.err.println("Ignoring unrecognized timezone '" + tzid
 							+ "' in Date " + this.getName());
 				}
@@ -304,25 +304,24 @@ public class Date extends Property implements Comparable {
 		}
 
 		if (isUTC && !dateOnly) {
-			// Use Joda Time to convert UTC to localtime
-			DateTime utcDateTime = new DateTime(DateTimeZone.UTC);
-			utcDateTime = utcDateTime.withDate(year, month, day).withTime(hour,
-					minute, second, 0);
-			DateTime localDateTime = utcDateTime.withZone(DateTimeZone
-					.getDefault());
+			// Convert UTC to localtime
+			ZonedDateTime utcDateTime = ZonedDateTime.of(year, month, day, hour,
+					minute, second, 0, ZoneOffset.UTC);
+			ZonedDateTime localDateTime = utcDateTime.withZoneSameInstant(ZoneId
+					.systemDefault());
 			year = localDateTime.getYear();
-			month = localDateTime.getMonthOfYear();
+			month = localDateTime.getMonthValue();
 			day = localDateTime.getDayOfMonth();
-			hour = localDateTime.getHourOfDay();
-			minute = localDateTime.getMinuteOfHour();
-			second = localDateTime.getSecondOfMinute();
+			hour = localDateTime.getHour();
+			minute = localDateTime.getMinute();
+			second = localDateTime.getSecond();
 			// Now set timezone to local since we converted.
-			this.tzid = DateTimeZone.getDefault().getID();
+			this.tzid = ZoneId.systemDefault().getId();
 			this.addAttribute("TZID", this.tzid);
 		} else if (this.tzid != null) {
-			DateTimeZone tz = null;
+			ZoneId tz = null;
 			try {
-				tz = DateTimeZone.forID(this.tzid);
+				tz = ZoneId.of(this.tzid);
 			} catch (IllegalArgumentException e1) {
 				if (parseMode == PARSE_STRICT)
 					throw new BogusDataException(
@@ -334,21 +333,20 @@ public class Date extends Property implements Comparable {
 			}
 			if (tz != null) {
 				// Convert to localtime
-				DateTime utcDateTime = new DateTime(tz);
-				utcDateTime = utcDateTime.withDate(year, month, day).withTime(
-						hour, minute, second, 0);
-				DateTime localDateTime = utcDateTime.withZone(DateTimeZone
-						.getDefault());
+				ZonedDateTime utcDateTime = ZonedDateTime.of(year, month, day,
+						hour, minute, second, 0, tz);
+				ZonedDateTime localDateTime = utcDateTime.withZoneSameInstant(ZoneId
+						.systemDefault());
 				year = localDateTime.getYear();
-				month = localDateTime.getMonthOfYear();
+				month = localDateTime.getMonthValue();
 				day = localDateTime.getDayOfMonth();
-				hour = localDateTime.getHourOfDay();
-				minute = localDateTime.getMinuteOfHour();
-				second = localDateTime.getSecondOfMinute();
+				hour = localDateTime.getHour();
+				minute = localDateTime.getMinute();
+				second = localDateTime.getSecond();
 				// Since we have converted to localtime, remove the TZID attribute
 				// and replace with our own timezone
 				this.removeNamedAttribute("TZID");
-				this.tzid = DateTimeZone.getDefault().getID();
+				this.tzid = ZoneId.systemDefault().getId();
 				this.addAttribute("TZID", this.tzid);
 			}
 		} else if (!isUTC && this.tzid == null) {
@@ -429,7 +427,7 @@ public class Date extends Property implements Comparable {
 			d.setMinute(c.get(Calendar.MINUTE));
 			d.setSecond(c.get(Calendar.SECOND));
 			d.setDateOnly(false);
-			d.addAttribute("TZID", DateTimeZone.getDefault().getID());
+			d.addAttribute("TZID", ZoneId.systemDefault().getId());
 		} catch (BogusDataException e2) {
 			// This should never happen since we're setting the m/d/y
 			System.err.println(e2.toString());
@@ -471,35 +469,35 @@ public class Date extends Property implements Comparable {
 		// Convert from timezone specified to GMT
 		String timezoneId = this.tzid;
 		if (timezoneId == null)
-			timezoneId = DateTimeZone.getDefault().getID();
-		DateTimeZone tz = null;
+			timezoneId = ZoneId.systemDefault().getId();
+		ZoneId tz = null;
 		try {
-			tz = DateTimeZone.forID(this.tzid);
-		} catch (IllegalArgumentException e1) {
+			tz = ZoneId.of(this.tzid);
+		} catch (Exception e1) {
 			// Invalid timezone
 		}
 		if (tz != null) {
-			DateTime dt = new DateTime(year, month, day, hour, minute, second, 0,
+			ZonedDateTime dt = ZonedDateTime.of(year, month, day, hour, minute, second, 0,
 					tz);
-			DateTime utc = dt.withZone(DateTimeZone.forID("GMT"));
+			ZonedDateTime utc = dt.withZoneSameInstant(ZoneOffset.UTC);
 			sb.append(utc.getYear());
-			if (utc.getMonthOfYear() < 10)
+			if (utc.getMonthValue() < 10)
 				sb.append('0');
-			sb.append(utc.getMonthOfYear());
+			sb.append(utc.getMonthValue());
 			if (utc.getDayOfMonth() < 10)
 				sb.append('0');
 			sb.append(utc.getDayOfMonth());
 
 			sb.append('T');
-			if (utc.getHourOfDay() < 10)
+			if (utc.getHour() < 10)
 				sb.append('0');
-			sb.append(utc.getHourOfDay());
-			if (utc.getMinuteOfHour() < 10)
+			sb.append(utc.getHour());
+			if (utc.getMinute() < 10)
 				sb.append('0');
-			sb.append(utc.getMinuteOfHour());
-			if (utc.getSecondOfMinute() < 10)
+			sb.append(utc.getMinute());
+			if (utc.getSecond() < 10)
 				sb.append('0');
-			sb.append(utc.getSecondOfMinute());
+			sb.append(utc.getSecond());
 			sb.append('Z');
 			value = sb.toString();
 			return super.toICalendar();

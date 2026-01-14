@@ -75,8 +75,18 @@ public class Property implements Constants {
 		attributeList = new ArrayList<Attribute>();
 		String s = StringUtils.unfoldLine(line, parseMode);
 
-		// Find first ':'
-		int loc = s.indexOf(':');
+		// Find the property separator ':' (first colon not inside quotes)
+		int loc = -1;
+		boolean inQuotes = false;
+		for (int i = 0; i < s.length(); i++) {
+			char ch = s.charAt(i);
+			if (ch == '"') {
+				inQuotes = !inQuotes;
+			} else if (ch == ':' && !inQuotes) {
+				loc = i;
+				break; // Found the first one
+			}
+		}
 		if (loc < 0) {
 			throw new ParseException("Could not find ':'", line);
 		}

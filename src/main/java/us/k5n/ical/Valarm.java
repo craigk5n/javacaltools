@@ -104,7 +104,7 @@ public class Valarm implements Constants {
 	/**
 	 * Parse a line of iCalendar text
 	 * 
-	 * @param line
+	 * @param icalStr
 	 *               The line of text
 	 * @param parseMethod
 	 *               PARSE_STRICT or PARSE_LOOSE
@@ -142,7 +142,7 @@ public class Valarm implements Constants {
 			if (attendees == null)
 				attendees = new ArrayList<Attendee>();
 			attendees.add(attendee);
-		} else if (up.startsWith("ATTACH:")) {
+		} else if (up.startsWith("ATTACH")) {
 			Attachment attach = new Attachment(icalStr);
 			if (attachments == null)
 				attachments = new ArrayList<Attachment>();
@@ -150,7 +150,7 @@ public class Valarm implements Constants {
 		} else if (up.startsWith("PROXIMITY:")) {
 			Property p = new Property(icalStr);
 			proximity = p.value;
-		} else if (up.startsWith("STRUCTURED-DATA:")) {
+		} else if (up.startsWith("STRUCTURED-DATA")) {
 			Property p = new Property(icalStr);
 			structuredData = p.value;
 		} else if (isParseStrict(parseMethod)) {
@@ -196,7 +196,7 @@ public class Valarm implements Constants {
 	/**
 	 * Get the summary
 	 * 
-	 * @return: summary object
+	 * @return summary object
 	 */
 	public Summary getSummary() {
 		return summary;
@@ -205,7 +205,7 @@ public class Valarm implements Constants {
 	/**
 	 * Get the description
 	 * 
-	 * @return: description object
+	 * @return description object
 	 */
 	public Description getDescription() {
 		return description;
@@ -214,7 +214,7 @@ public class Valarm implements Constants {
 	/**
 	 * Get the duration
 	 * 
-	 * @return: duration
+	 * @return duration
 	 */
 	public Duration getDuration() {
 		return duration;
@@ -223,7 +223,7 @@ public class Valarm implements Constants {
 	/**
 	 * Get the repeat count
 	 * 
-	 * @return: repeat count
+	 * @return repeat count
 	 */
 	public Integer getRepeat() {
 		return repeat;
@@ -232,7 +232,7 @@ public class Valarm implements Constants {
 	/**
 	 * Get the attendees
 	 *
-	 * @return: list of attendee objects
+	 * @return list of attendee objects
 	 */
 	public List<Attendee> getAttendees() {
 		return attendees;
@@ -241,7 +241,7 @@ public class Valarm implements Constants {
 	/**
 	 * Get the attachments
 	 *
-	 * @return: list of attachment objects
+	 * @return list of attachment objects
 	 */
 	public List<Attachment> getAttachments() {
 		return attachments;

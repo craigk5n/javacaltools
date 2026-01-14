@@ -30,7 +30,6 @@ import org.apache.commons.codec.binary.Base64;
  * iCalendar Attachment class - This object represents the iCalendar ATTACH
  * object <br/>
  * From the RFC: <br/>
- * <quote>
  * Purpose: The property provides the capability to associate a document
  * object with a calendar component.
  * <br/>
@@ -48,7 +47,6 @@ import org.apache.commons.codec.binary.Base64;
  * Description: The property can be specified within "VEVENT", "VTODO",
  * "VJOURNAL", or "VALARM" calendar components. This property can be
  * specified multiple times within an iCalendar object.
- * </quote>
  * 
  * @author Craig Knudsen, craig@k5n.us
  */
@@ -152,7 +150,6 @@ public class Attachment extends Property {
 	 *            The URL of the attachment. (No attempt is made to validate that
 	 *            the content is at the specified URL.)
 	 * @throws ParseException
-	 * @throws IOException
 	 */
 	public Attachment(URL url) throws ParseException {
 		super("ATTACH", "");

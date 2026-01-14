@@ -97,7 +97,7 @@ public final class IcalParseUtil {
   /**
    * unfolds ical content lines as per RFC 2445 section 4.1.
    *
-   * <h3>4.1 Content Lines</h3>
+   * <h4>4.1 Content Lines</h4>
    *
    * <p>The iCalendar object is organized into individual lines of text, called
    * content lines. Content lines are delimited by a line break, which is a CRLF

@@ -105,7 +105,7 @@ public class Journal implements Constants {
 	 *                    The IcalParser object
 	 * @param initialLine
 	 *                    The starting line number
-	 * @Param textLines List of iCalendar text lines
+	 * @param textLines List of iCalendar text lines
 	 */
 	public Journal(CalendarParser parser, int initialLine,
 			List<String> textLines) {
@@ -210,7 +210,7 @@ public class Journal implements Constants {
 	/**
 	 * Parse a line of iCalendar test.
 	 * 
-	 * @param line
+	 * @param icalStr
 	 *                    The line of text
 	 * @param parseMethod
 	 *                    PARSE_STRICT or PARSE_LOOSE
@@ -355,7 +355,7 @@ public class Journal implements Constants {
 	 * Get the journal entry summary for the specified language. If not available,
 	 * then the primary summary will be returned.
 	 * 
-	 * @param langage
+	 * @param language
 	 *                The language ("EN", "FR", etc.)
 	 */
 	public Summary getSummary(String language) {

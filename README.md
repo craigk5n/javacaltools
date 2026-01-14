@@ -1,9 +1,10 @@
 # JavaCalTools - iCalendar Library for Java
 
-[![Java Version](https://img.shields.io/badge/Java-11+-blue.svg)](https://openjdk.java.net/)
-[![License](https://img.shields.io/badge/License-LGPL%202.1-green.svg)](https://opensource.org/licenses/LGPL-2.1)
+[![Java Version](https://img.shields.io/badge/Java-17+-blue.svg)](https://openjdk.java.net/)
+[![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://www.apache.org/licenses/LICENSE-2.0.txt)
 [![Maven Central](https://img.shields.io/maven-central/v/us.k5n/javacaltools)](https://search.maven.org/artifact/us.k5n/javacaltools)
-[![Build Status](https://img.shields.io/github/actions/workflow/status/craigk5n/javacaltools/ci.yml)](https://github.com/craigk5n/javacaltools/actions)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/k5n/javacaltools/unit-tests.yml)](https://github.com/k5n/javacaltools/actions)
+[![codecov](https://codecov.io/gh/k5n/javacaltools/branch/master/graph/badge.svg)](https://codecov.io/gh/k5n/javacaltools)
 [![Test Coverage](https://img.shields.io/badge/tests-376%20passing-brightgreen)](#testing)
 [![RFC Compliance](https://img.shields.io/badge/RFC%20Compliance-5545%2C%207986%2C%209073%2C%209074%2C%205546-blue)](#compliance)
 
@@ -26,7 +27,7 @@ A comprehensive, RFC-compliant Java library for parsing, generating, and manipul
 ## ✨ Features
 
 - **Complete RFC 5545 Compliance**: Full support for iCalendar core specification
-- **Modern Extensions**: RFC 7986, 9073, 9074, and 5546 support
+- **Modern Extensions**: RFC 7986, 9073, 9074, and RFC 5546 iTIP METHOD property support
 - **Component Support**: VEVENT, VTODO, VJOURNAL, VFREEBUSY, VTIMEZONE, VALARM
 - **Property Support**: All standard iCalendar properties with validation
 - **Recurrence Rules**: Full RRULE support with complex patterns and exceptions
@@ -34,7 +35,7 @@ A comprehensive, RFC-compliant Java library for parsing, generating, and manipul
 - **UTF-8 & Unicode**: Complete internationalization support
 - **Streaming Parser**: Memory-efficient parsing of large calendar files
 - **Validation**: Comprehensive validation with detailed error reporting
-- **Java 11+**: Modern Java with no external dependencies
+- **Java 17+**: Modern Java with minimal, secure dependencies
 - **Thread-Safe**: Designed for concurrent applications
 
 ## 🚀 Quick Start
@@ -76,17 +77,17 @@ System.out.println("Event: " + event.getSummary().getValue());
 <dependency>
     <groupId>us.k5n</groupId>
     <artifactId>javacaltools</artifactId>
-    <version>1.0.2</version>
+    <version>2.0.0</version>
 </dependency>
 ```
 
 ### Gradle
 ```gradle
-implementation 'us.k5n:javacaltools:1.0.2'
+implementation 'us.k5n:javacaltools:2.0.0'
 ```
 
 ### Manual Download
-Download the latest JAR from [Maven Central](https://search.maven.org/artifact/us.k5n/javacaltools) or [GitHub Releases](https://github.com/craigk5n/javacaltools/releases).
+Download the latest JAR from [Maven Central](https://search.maven.org/artifact/us.k5n/javacaltools) or [GitHub Releases](https://github.com/k5n/javacaltools/releases).
 
 ## 💡 Usage
 
@@ -180,7 +181,7 @@ JavaCalTools provides comprehensive support for iCalendar standards:
 - ✅ **RFC 7986** - New Properties for iCalendar (COLOR, IMAGE, CONFERENCE)
 - ✅ **RFC 9073** - Event Publishing Extensions to iCalendar
 - ✅ **RFC 9074** - VALARM Extensions for iCalendar
-- ✅ **RFC 5546** - iCalendar Transport-Independent Interoperability Protocol (iTIP)
+- ✅ **RFC 5546** - iTIP METHOD property support with validation (PUBLISH, REQUEST, REPLY, ADD, CANCEL, REFRESH, COUNTER, DECLINECOUNTER)
 
 ### Compliance Validation
 
@@ -247,8 +248,8 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 
 ### Requirements
 
-- Java 11 or higher
-- Maven 3.6+ (for building)
+- Java 17 or higher
+- Maven 3.8+ (for building)
 
 ### Build Commands
 
@@ -268,9 +269,31 @@ mvn source:jar
 
 ### Build Artifacts
 
-- `target/javacaltools-1.0.2.jar` - Main JAR file
-- `target/javacaltools-1.0.2-sources.jar` - Source JAR
-- `target/javacaltools-1.0.2-javadoc.jar` - Javadoc JAR
+- `target/javacaltools-2.0.0.jar` - Main JAR file
+- `target/javacaltools-2.0.0-sources.jar` - Source JAR
+- `target/javacaltools-2.0.0-javadoc.jar` - Javadoc JAR
+
+### Security Scanning
+
+```bash
+# Run OWASP dependency vulnerability check
+mvn org.owasp:dependency-check-maven:check
+```
+
+### Code Coverage
+
+```bash
+# Generate JaCoCo coverage report
+mvn test jacoco:report
+```
+
+### Publishing to Maven Central
+
+This project is published to Maven Central. To deploy a new version:
+
+1. Create a release on GitHub
+2. The CI/CD pipeline will automatically deploy to OSSRH/Maven Central
+3. Requires GPG signing and OSSRH credentials in repository secrets
 
 ## 📄 License
 

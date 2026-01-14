@@ -3,7 +3,8 @@ package us.k5n.ical;
 import java.io.IOException;
 import java.io.Reader;
 
-import com.csvreader.CsvReader;
+import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvValidationException;
 
 /**
  * A CSV data parser for calendar data. This class was specifically created to
@@ -60,18 +61,26 @@ public class CSVParser extends CalendarParser {
 	public boolean parse(Reader reader) throws IOException {
 		int nerrors = 0;
 
-		CsvReader csv = new CsvReader(reader);
-		if (!csv.readHeaders()) {
+		CSVReader csv = new CSVReader(reader);
+		String[] headers;
+		try {
+			headers = csv.readNext();
+		} catch (CsvValidationException e) {
 			this.reportParseError(new ParseError(0,
 					"Error parsing 1st line as header"));
 			return true;
 		}
-		// for ( int i = 0; i < csv.getHeaderCount (); i++ ) {
-		// System.out.println ( "header#" + i + ": " + csv.getHeader ( i ) );
+		if (headers == null) {
+			this.reportParseError(new ParseError(0,
+					"Error parsing 1st line as header"));
+			return true;
+		}
+		// for ( int i = 0; i < headers.length; i++ ) {
+		// System.out.println ( "header#" + i + ": " + headers[i] );
 		// }
 		if (this.scanHeaderForColumnLocations) {
-			for (int i = 0; i < csv.getHeaderCount(); i++) {
-				String h = csv.getHeader(i);
+			for (int i = 0; i < headers.length; i++) {
+				String h = headers[i];
 				if (h.equalsIgnoreCase(this.titleName))
 					this.titleColumn = i;
 				else if (h.equalsIgnoreCase(this.descriptionName))
@@ -113,69 +122,77 @@ public class CSVParser extends CalendarParser {
 		}
 
 		int recNum = 1;
-		while (csv.readRecord()) {
-			String title = "Untitled", description = null, location = null;
-			Date startDate = null, endDate = null;
-			boolean allDay = false;
-			boolean valid = true;
-			if (this.titleColumn >= 0)
-				title = csv.get(this.titleColumn);
-			if (this.allDayColumn >= 0) {
-				String allDayStr = csv.get(this.allDayColumn);
-				if (this.booleanFalseValue.equalsIgnoreCase(allDayStr))
-					allDay = false;
-				else if (this.booleanTrueValue.equalsIgnoreCase(allDayStr))
-					allDay = true;
-				else {
-					// This is an error, but we may still be able to parse it
+		String[] record;
+		try {
+			while ((record = csv.readNext()) != null) {
+				String title = "Untitled", description = null, location = null;
+				Date startDate = null, endDate = null;
+				boolean allDay = false;
+				boolean valid = true;
+				String rawRecord = String.join(",", record);
+				if (this.titleColumn >= 0 && this.titleColumn < record.length)
+					title = record[this.titleColumn];
+				if (this.allDayColumn >= 0 && this.allDayColumn < record.length) {
+					String allDayStr = record[this.allDayColumn];
+					if (this.booleanFalseValue.equalsIgnoreCase(allDayStr))
+						allDay = false;
+					else if (this.booleanTrueValue.equalsIgnoreCase(allDayStr))
+						allDay = true;
+					else {
+						// This is an error, but we may still be able to parse it
+					}
 				}
-			}
-			if (this.startDateColumn >= 0) {
-				String dateStr = csv.get(this.startDateColumn);
-				String timeStr = null;
-				if (this.startTimeColumn >= 0)
-					timeStr = csv.get(this.startTimeColumn);
-				try {
-					startDate = parseDateTime("DTSTART", dateStr, allDay ? null
-							: timeStr);
-				} catch (ParseException e1) {
-					this.reportParseError(new ParseError(recNum++,
-							"Invalid start date '" + dateStr + "'", csv.getRawRecord()));
-					valid = false;
+				if (this.startDateColumn >= 0 && this.startDateColumn < record.length) {
+					String dateStr = record[this.startDateColumn];
+					String timeStr = null;
+					if (this.startTimeColumn >= 0 && this.startTimeColumn < record.length)
+						timeStr = record[this.startTimeColumn];
+					try {
+						startDate = parseDateTime("DTSTART", dateStr, allDay ? null
+								: timeStr);
+					} catch (ParseException e1) {
+						this.reportParseError(new ParseError(recNum++,
+								"Invalid start date '" + dateStr + "'", rawRecord));
+						valid = false;
+					}
 				}
-			}
-			if (this.startDateColumn >= 0) {
-				String dateStr = csv.get(this.endDateColumn);
-				String timeStr = null;
-				if (this.endTimeColumn >= 0)
-					timeStr = csv.get(this.endTimeColumn);
-				try {
-					endDate = parseDateTime("DTEND", dateStr, allDay ? null : timeStr);
-				} catch (ParseException e1) {
-					this.reportParseError(new ParseError(recNum++,
-							"Invalid end date '" + dateStr + "'", csv.getRawRecord()));
-					valid = false;
+				if (this.endDateColumn >= 0 && this.endDateColumn < record.length) {
+					String dateStr = record[this.endDateColumn];
+					String timeStr = null;
+					if (this.endTimeColumn >= 0 && this.endTimeColumn < record.length)
+						timeStr = record[this.endTimeColumn];
+					try {
+						endDate = parseDateTime("DTEND", dateStr, allDay ? null : timeStr);
+					} catch (ParseException e1) {
+						this.reportParseError(new ParseError(recNum++,
+								"Invalid end date '" + dateStr + "'", rawRecord));
+						valid = false;
+					}
 				}
+				if (this.locationColumn >= 0 && this.locationColumn < record.length) {
+					location = record[this.locationColumn];
+				}
+				if (this.descriptionColumn >= 0 && this.descriptionColumn < record.length) {
+					description = record[this.descriptionColumn];
+				}
+				Event event = new Event(title, description, startDate);
+				if (endDate != null) {
+					event.setEndDate(endDate);
+				}
+				if (startDate != null) {
+					event.setStartDate(startDate);
+				}
+				// Add event to all DataStore objects
+				for (int i = 0; i < super.numDataStores(); i++) {
+					DataStore ds = super.getDataStoreAt(i);
+					ds.storeEvent(event);
+				}
+				recNum++;
 			}
-			if (this.locationColumn >= 0) {
-				location = csv.get(this.locationColumn);
-			}
-			if (this.descriptionColumn >= 0) {
-				description = csv.get(this.descriptionColumn);
-			}
-			Event event = new Event(title, description, startDate);
-			if (endDate != null) {
-				event.setEndDate(endDate);
-			}
-			if (startDate != null) {
-				event.setStartDate(startDate);
-			}
-			// Add event to all DataStore objects
-			for (int i = 0; i < super.numDataStores(); i++) {
-				DataStore ds = super.getDataStoreAt(i);
-				ds.storeEvent(event);
-			}
-			recNum++;
+		} catch (CsvValidationException e) {
+			this.reportParseError(new ParseError(recNum,
+					"Error parsing CSV record: " + e.getMessage()));
+			return true;
 		}
 		return false;
 	}

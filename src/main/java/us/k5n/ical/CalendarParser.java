@@ -126,7 +126,7 @@ public abstract class CalendarParser implements Constants {
 	/**
 	 * Add a listener for parse error messages.
 	 * 
-	 * @pel The listener for parse errors
+	 * @param pel The listener for parse errors
 	 */
 	public void addParseErrorListener(ParseErrorListener pel) {
 		errorListeners.add(pel);
@@ -135,10 +135,8 @@ public abstract class CalendarParser implements Constants {
 	/**
 	 * Send a parse error message to all parse error listeners
 	 * 
-	 * @param msg
-	 *                The error message
-	 * @param icalStr
-	 *                The offending line(s) of iCalendar
+	 * @param error
+	 *                The parse error object containing message and offending data
 	 */
 	public void reportParseError(ParseError error) {
 		errors.add(error);
