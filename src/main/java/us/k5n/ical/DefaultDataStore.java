@@ -168,6 +168,15 @@ public class DefaultDataStore implements DataStore {
 	}
 
 	/**
+	 * Get the METHOD value as string.
+	 *
+	 * @return The METHOD value, or null if not set
+	 */
+	public String getMethodValue() {
+		return method != null ? method.value : null;
+	}
+
+	/**
 	 * Set the NAME property for VCALENDAR.
 	 *
 	 * @param name the name

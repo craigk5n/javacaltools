@@ -93,4 +93,14 @@ public interface Constants {
 	/* iCalendar version (in N.N String format) */
 	static public final String ICAL_VERSION = ICAL_VERSION_MAJOR + "."
 	    + ICAL_VERSION_MINOR;
+
+	/* iTIP METHOD types */
+	static public final String METHOD_PUBLISH = "PUBLISH";
+	static public final String METHOD_REQUEST = "REQUEST";
+	static public final String METHOD_REPLY = "REPLY";
+	static public final String METHOD_ADD = "ADD";
+	static public final String METHOD_CANCEL = "CANCEL";
+	static public final String METHOD_REFRESH = "REFRESH";
+	static public final String METHOD_COUNTER = "COUNTER";
+	static public final String METHOD_DECLINECOUNTER = "DECLINECOUNTER";
 }

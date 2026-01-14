@@ -139,4 +139,18 @@ public class ValarmTest {
 		assertTrue(output.contains("ATTACH:http://example.com/alert.wav"));
 		assertTrue(output.contains("END:VALARM"));
 	}
+
+	@Test
+	public void testValarmProximityProperty() throws Exception {
+		Valarm alarm = new Valarm("BEGIN:VALARM\nACTION:DISPLAY\nTRIGGER:-PT15M\nPROXIMITY:DEPART\nSUMMARY:Reminder\nEND:VALARM");
+
+		String output = alarm.toICalendar();
+
+		assertTrue(output.contains("BEGIN:VALARM"));
+		assertTrue(output.contains("ACTION:DISPLAY"));
+		assertTrue(output.contains("TRIGGER:-PT15M"));
+		assertTrue(output.contains("PROXIMITY:DEPART"));
+		assertTrue(output.contains("SUMMARY:Reminder"));
+		assertTrue(output.contains("END:VALARM"));
+	}
 }

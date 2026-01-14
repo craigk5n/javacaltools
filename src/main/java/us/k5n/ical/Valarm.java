@@ -46,6 +46,10 @@ public class Valarm implements Constants {
 	protected List<Attendee> attendees = null;
 	/** Attachments for the alarm */
 	protected List<Attachment> attachments = null;
+	/** Proximity trigger */
+	protected String proximity = null;
+	/** Structured data */
+	protected String structuredData = null;
 
 	/**
 	 * Create a Valarm object based on specified iCalendar data
@@ -143,6 +147,12 @@ public class Valarm implements Constants {
 			if (attachments == null)
 				attachments = new ArrayList<Attachment>();
 			attachments.add(attach);
+		} else if (up.startsWith("PROXIMITY:")) {
+			Property p = new Property(icalStr);
+			proximity = p.value;
+		} else if (up.startsWith("STRUCTURED-DATA:")) {
+			Property p = new Property(icalStr);
+			structuredData = p.value;
 		} else if (isParseStrict(parseMethod)) {
 			throw new ParseException("Unrecognized data in VALARM: " + icalStr, icalStr);
 		}
@@ -290,7 +300,14 @@ public class Valarm implements Constants {
 				ret.append(CRLF);
 			}
 		}
-		
+
+		if (proximity != null) {
+			ret.append("PROXIMITY:").append(proximity).append(CRLF);
+		}
+		if (structuredData != null) {
+			ret.append("STRUCTURED-DATA:").append(structuredData).append(CRLF);
+		}
+
 		ret.append("END:VALARM");
 		ret.append(CRLF);
 		return ret.toString();
