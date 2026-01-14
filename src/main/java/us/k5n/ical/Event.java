@@ -27,7 +27,7 @@ import java.util.List;
 /**
  * iCalendar Event class that corresponds to the VEVENT iCalendarendar object.
  * 
- * @author Craig Knudsen, craig@k5n.us
+ * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
  */
 public class Event implements Constants {
 	// TODO: handle multiple instances of summary/description since

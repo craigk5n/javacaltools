@@ -32,7 +32,7 @@ import java.util.List;
 /**
  * Test class for VJOURNAL enhancements - new properties added in ICAL-06
  *
- * @author Craig Knudsen, craig@k5n.us
+ * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
  */
 public class JournalEnhancementsTest {
 	private ICalendarParser parser;

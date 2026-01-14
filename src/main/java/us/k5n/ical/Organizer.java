@@ -24,7 +24,7 @@ package us.k5n.ical;
  * iCalendar Organizer class - This object represents an organizer and corresponds to
  * ORGANIZER iCalendar property.
  * 
- * @author Craig Knudsen, craig@k5n.us
+ * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
  */
 public class Organizer extends Property {
 	String organizerValue = null;

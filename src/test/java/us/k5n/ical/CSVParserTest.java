@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Test;
  * The tests focus on different date formats and ensure that the parsed events
  * are correctly processed and stored.
  * 
- * @author Craig Knudsen, craig@k5n.us
+ * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
  */
 public class CSVParserTest implements Constants {
 	private CSVParser parser;

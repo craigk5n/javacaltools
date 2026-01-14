@@ -28,7 +28,7 @@ import java.util.List;
  * data (ATTENDEE, DTSTART, SUMMARY, etc.) A Property can contain multiple
  * attributes. See section 4.1.1 of RFC 2445 for details.
  * 
- * @author Craig Knudsen, craig@k5n.us
+ * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
  */
 public class Property implements Constants {
 	/** Property name (DTSTART, SUMMARY, etc.) This is always uppercase */

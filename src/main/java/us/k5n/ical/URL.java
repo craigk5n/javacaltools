@@ -26,7 +26,7 @@ package us.k5n.ical;
  * This property may be used in any calendar component to define a Uniform
  * Resource Locator (URL) associated with the calendar component.
  * 
- * @author Craig Knudsen, craig@k5n.us
+ * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
  */
 public class URL extends Property {
 	/**

@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * Test class for VFREEBUSY component parsing and functionality
  * 
- * @author Craig Knudsen, craig@k5n.us
+ * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
  */
 public class FreebusyTest {
 	private ICalendarParser parser;

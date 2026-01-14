@@ -152,7 +152,7 @@ class RruleByday {
  * href=
  * "http://code.google.com/p/google-rfc-2445/">http://code.google.com/p/google-rfc-2445/</a>
  * 
- * @author Craig Knudsen, craig@k5n.us
+ * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
  */
 public class Rrule extends Property {
 	/** Repeat frequency (required) */

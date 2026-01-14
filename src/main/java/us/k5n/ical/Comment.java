@@ -24,7 +24,7 @@ package us.k5n.ical;
  * iCalendar Comment class - This object represents a comment and corresponds to
  * the COMMENT iCalendar property.
  * 
- * @author Craig Knudsen, craig@k5n.us
+ * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
  */
 public class Comment extends Property {
 	/** Alternate representation URI */

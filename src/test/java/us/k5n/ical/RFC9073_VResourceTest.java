@@ -16,8 +16,7 @@
  * VRESOURCE provides typed references to external information about resources
  * used by calendar entities (rooms, projectors, conferencing capabilities, etc.).
  *
- * @author Craig Knudsen, craig@k5n.us
- * @ai-generated Grok-4.1-Fast
+ * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
  */
  public class RFC9073_VResourceTest {
 

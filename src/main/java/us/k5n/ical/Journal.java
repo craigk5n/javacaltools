@@ -30,7 +30,7 @@ import java.util.List;
  * "VJOURNAL" calendar component does not take up time on, so it has no affect
  * on free or busy time (just like TRANSPARENT entries).
  * 
- * @author Craig Knudsen, craig@k5n.us
+ * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
  */
 public class Journal implements Constants {
 	// TODO: handle multiple instances of summary/description since

@@ -24,7 +24,7 @@ package us.k5n.ical;
  * iCalendar Attendee class - This object represents either an individual or a
  * resource and corresponds to the ATTENDEE iCalendar property.
  * 
- * @author Craig Knudsen, craig@k5n.us
+ * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
  */
 public class Attendee extends Property {
 	static final int TYPE_INDIVIDUAL = 1;

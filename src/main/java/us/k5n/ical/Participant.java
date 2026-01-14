@@ -30,8 +30,7 @@ import java.util.List;
  * The PARTICIPANT component provides rich participant metadata beyond the
  * basic ATTENDEE property.
  *
- * @author Craig Knudsen, craig@k5n.us
- * @ai-generated Grok-4.1-Fast
+ * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
  */
 public class Participant extends Property {
     /** Participant UID */

@@ -15,8 +15,7 @@
  * Tests for the SOURCE property as defined in RFC 7986, Section 5.8.
  * SOURCE identifies a URI where calendar data can be refreshed from.
  *
- * @author Craig Knudsen, craig@k5n.us
- * @ai-generated Grok-4.1-Fast
+ * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
  */
  public class RFC7986_SourceTest {
 

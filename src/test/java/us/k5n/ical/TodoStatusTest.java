@@ -32,7 +32,7 @@ import java.util.List;
 /**
  * Test class for enhanced VTODO status handling and validation
  *
- * @author Craig Knudsen, craig@k5n.us
+ * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
  */
 public class TodoStatusTest {
 	private ICalendarParser parser;

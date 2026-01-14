@@ -35,7 +35,7 @@ import java.util.Calendar;
  * class will assume the user's local timezone unless they specifically set the
  * object to be floating.
  * 
- * @author Craig Knudsen, craig@k5n.us
+ * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
  */
 public class Date extends Property implements Comparable {
 	int year, month, day;

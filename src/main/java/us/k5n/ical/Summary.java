@@ -24,7 +24,7 @@ package us.k5n.ical;
  * iCalendar Summary class - This object represents a summary and corresponds to
  * the SUMMARY iCalendar property.
  * 
- * @author Craig Knudsen, craig@k5n.us
+ * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
  */
 public class Summary extends Property {
 	/** Alternate representation URI */

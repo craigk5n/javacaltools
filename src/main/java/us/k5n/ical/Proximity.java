@@ -26,8 +26,7 @@ package us.k5n.ical;
  *
  * PROXIMITY indicates that a location-based trigger is applied to an alarm.
  *
- * @author Craig Knudsen, craig@k5n.us
- * @ai-generated Grok-4.1-Fast
+ * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
  */
 public class Proximity extends Property {
 

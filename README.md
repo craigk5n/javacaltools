@@ -27,7 +27,7 @@ A comprehensive, RFC-compliant Java library for parsing, generating, and manipul
 ## ✨ Features
 
 - **Strong RFC 5545 Compliance**: 95%+ support for iCalendar core specification
-- **Modern Extensions**: RFC 7986 (95%), RFC 9073 (95%), RFC 9074 (95%), RFC 5546 iTIP (85%)
+- **Modern Extensions**: RFC 7986 (95%), RFC 9073 (95%), RFC 9074 (95%), RFC 5546 iTIP (85%), RFC 5545 (98%)
 - **Component Support**: VEVENT, VTODO, VJOURNAL, VFREEBUSY, VTIMEZONE, VALARM, VLOCATION, VRESOURCE
 - **Property Support**: All standard iCalendar properties with validation
 - **Recurrence Rules**: Full RRULE support with complex patterns and exceptions

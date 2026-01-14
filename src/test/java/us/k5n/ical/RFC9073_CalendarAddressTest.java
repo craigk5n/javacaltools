@@ -15,8 +15,7 @@
  * Tests for the CALENDAR-ADDRESS property as defined in RFC 9073, Section 6.4.
  * CALENDAR-ADDRESS provides calendar user addresses for participants.
  *
- * @author Craig Knudsen, craig@k5n.us
- * @ai-generated Grok-4.1-Fast
+ * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
  */
  public class RFC9073_CalendarAddressTest {
 

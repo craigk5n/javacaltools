@@ -24,7 +24,7 @@ package us.k5n.ical;
  * iCalendar Contact class - This object represents a contact and corresponds to
  * CONTACT iCalendar property.
  * 
- * @author Craig Knudsen, craig@k5n.us
+ * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
  */
 public class Contact extends Property {
 	String contactValue = null;

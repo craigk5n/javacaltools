@@ -23,7 +23,7 @@ package us.k5n.ical;
 /**
  * iCalendar constants
  * 
- * @author Craig Knudsen, craig@k5n.us
+ * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
  */
 public interface Constants {
 	/**

@@ -28,7 +28,7 @@ import java.util.List;
  * A VFREEBUSY component represents a time period when the user is busy,
  * without revealing the reason for the busy time.
  * 
- * @author Craig Knudsen, craig@k5n.us
+ * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
  */
 public class Freebusy implements Constants {
 	/** Unique Id */

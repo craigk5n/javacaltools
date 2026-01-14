@@ -25,7 +25,7 @@ package us.k5n.ical;
  * the URL iCalendar property. <br/> From the RFC: <br/>
  * This property may be used to convey the location of a meeting.
  * 
- * @author Craig Knudsen, craig@k5n.us
+ * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
  */
 public class Location extends Property {
 	/**

@@ -27,7 +27,7 @@ import java.util.List;
  * iCalendar Timezone DAYLIGHT sub-component.
  * The DAYLIGHT sub-component defines daylight saving time observance within a VTIMEZONE component.
  * 
- * @author Craig Knudsen, craig@k5n.us
+ * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
  */
 public class TimezoneDaylight implements Constants {
 	/** Start date/time for this observance */

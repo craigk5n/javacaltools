@@ -15,8 +15,7 @@
  * Tests for the PROXIMITY property as defined in RFC 9074, Section 8.1.
  * PROXIMITY indicates that a location-based trigger is applied to an alarm.
  *
- * @author Craig Knudsen, craig@k5n.us
- * @ai-generated Grok-4.1-Fast
+ * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
  */
  public class RFC9074_ProximityTest {
 

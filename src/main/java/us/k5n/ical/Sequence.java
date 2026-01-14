@@ -24,7 +24,7 @@ package us.k5n.ical;
  * iCalendar Sequence class - This object represents a uid and corresponds to
  * the SEQUENCE iCalendar property.
  * 
- * @author Craig Knudsen, craig@k5n.us
+ * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
  */
 public class Sequence extends Property {
 	int num = 0;

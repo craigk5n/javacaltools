@@ -23,7 +23,7 @@ package us.k5n.ical;
 
 /**
   * iCalendar invalid data exception
-  * @author Craig Knudsen, craig@k5n.us
+  * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
   */
 public class BogusDataException extends Exception
 {

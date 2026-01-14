@@ -9,7 +9,7 @@ import java.util.List;
  * The CalendarParser is an abstract class that should be extended to implement
  * a specific parser (iCalendar, CSV, etc.)
  * 
- * @author Craig Knudsen, craig@k5n.us
+ * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
  */
 public abstract class CalendarParser implements Constants {
 	protected List<ParseErrorListener> errorListeners;

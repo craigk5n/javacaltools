@@ -28,7 +28,7 @@ import java.util.List;
  * A VTIMEZONE component defines a time zone and typically contains one or more
  * sub-components that describe daylight saving time observances within the time zone.
  * 
- * @author Craig Knudsen, craig@k5n.us
+ * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
  */
 public class Timezone implements Constants {
 	/** Timezone identifier (required) */

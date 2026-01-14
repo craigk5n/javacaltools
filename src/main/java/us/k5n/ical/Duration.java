@@ -55,7 +55,7 @@ package us.k5n.ical;
  * P7W
  * </blockquote>
  * 
- * @author Craig Knudsen, craig@k5n.us
+ * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
  */
 public class Duration extends Property {
 	/** duration in seconds */

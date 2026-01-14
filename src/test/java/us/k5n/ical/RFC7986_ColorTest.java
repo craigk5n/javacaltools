@@ -15,8 +15,7 @@
  * Tests for the COLOR property as defined in RFC 7986, Section 5.9.
  * COLOR specifies a color used for displaying calendar data.
  *
- * @author Craig Knudsen, craig@k5n.us
- * @ai-generated Grok-4.1-Fast
+ * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
  */
  public class RFC7986_ColorTest {
 

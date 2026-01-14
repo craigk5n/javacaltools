@@ -26,8 +26,7 @@ package us.k5n.ical;
  *
  * COLOR specifies a color used for displaying calendar data.
  *
- * @author Craig Knudsen, craig@k5n.us
- * @ai-generated Grok-4.1-Fast
+ * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
  */
 public class Color extends Property {
 

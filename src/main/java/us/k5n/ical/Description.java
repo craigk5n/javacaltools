@@ -24,7 +24,7 @@ package us.k5n.ical;
  * iCalendar Description class - This object represents a description and
  * corresponds to the DESCRIPTION property.
  * 
- * @author Craig Knudsen, craig@k5n.us
+ * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
  */
 public class Description extends Property {
 	/** Alternate representation URI */

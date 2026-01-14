@@ -29,7 +29,7 @@ import us.k5n.ical.Constants;
  * A simple implementation of the DataStore interface. This is the default
  * implementation used by IcalParser class.
  * 
- * @author Craig Knudsen, craig@k5n.us
+ * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
  * @see CalendarParser
  */
 public class DefaultDataStore implements DataStore {

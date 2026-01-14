@@ -11,7 +11,7 @@ import com.opencsv.exceptions.CsvValidationException;
  * parse CSV output from M$ Outlook, but could work with any CSV calendar data
  * if you set the header field names/locations properly.
  * 
- * @author Craig Knudsen, craig@k5n.us
+ * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
  */
 public class CSVParser extends CalendarParser {
 	private String titleName = "Subject";

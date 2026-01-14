@@ -32,7 +32,7 @@ import java.util.List;
 /**
  * Test class for VEVENT enhancements - new properties added in ICAL-05
  *
- * @author Craig Knudsen, craig@k5n.us
+ * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
  */
 public class EventEnhancementsTest {
 	private ICalendarParser parser;

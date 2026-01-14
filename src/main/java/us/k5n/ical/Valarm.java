@@ -27,7 +27,7 @@ import java.util.List;
  * iCalendar Valarm class that corresponds to a VALARM iCalendar object.
  * A VALARM component defines an alarm or reminder for a calendar component.
  * 
- * @author Craig Knudsen, craig@k5n.us
+ * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
  */
 public class Valarm implements Constants {
 	/** Alarm action (AUDIO, DISPLAY, EMAIL, PROCEDURE) */

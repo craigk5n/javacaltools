@@ -33,7 +33,7 @@ import java.util.List;
 /**
  * Test class for VAVAILABILITY component support
  *
- * @author Craig Knudsen, craig@k5n.us
+ * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
  */
 public class VAvailabilityTest {
 	private ICalendarParser parser;

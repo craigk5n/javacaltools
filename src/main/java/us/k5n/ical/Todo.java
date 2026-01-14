@@ -28,7 +28,7 @@ import java.util.List;
  * iCalendar Todo class that corresponds to a VTODO iCalendar object.
  * A VTODO component describes a to-do item, such as a work item or a project.
  * 
- * @author Craig Knudsen, craig@k5n.us
+ * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
  */
 public class Todo implements Constants {
 	/** Unique Id */

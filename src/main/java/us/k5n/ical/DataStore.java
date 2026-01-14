@@ -34,7 +34,7 @@ import java.util.List;
  * </ul>
  * See the IcalParser interface for how to change these settings.
  * 
- * @author Craig Knudsen, craig@k5n.us
+ * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
  * @see CalendarParser
  */
 public interface DataStore {

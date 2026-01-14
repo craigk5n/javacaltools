@@ -15,8 +15,7 @@
  * Tests for iTIP (iCalendar Transport-Independent Interoperability Protocol)
  * REQUEST→REPLY→UPDATE cycles and other scheduling workflows as defined in RFC 5546.
  *
- * @author Craig Knudsen, craig@k5n.us
- * @ai-generated Grok-4.1-Fast
+ * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
  */
  public class RFC5546_iTIP_FlowTest {
 

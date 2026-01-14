@@ -22,7 +22,7 @@ import org.junit.jupiter.params.provider.ValueSource;
  * correct
  * iCalendar output.
  * 
- * @author Craig Knudsen, craig@k5n.us
+ * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
  */
 public class DateTest implements Constants {
 

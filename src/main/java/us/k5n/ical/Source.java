@@ -26,8 +26,7 @@ package us.k5n.ical;
  *
  * SOURCE identifies a URI where calendar data can be refreshed from.
  *
- * @author Craig Knudsen, craig@k5n.us
- * @ai-generated Grok-4.1-Fast
+ * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
  */
 public class Source extends Property {
 

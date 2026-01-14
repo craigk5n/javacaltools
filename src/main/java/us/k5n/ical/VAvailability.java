@@ -32,7 +32,7 @@ import java.util.ArrayList;
  * for a calendar user. It can be used to specify periods of time when the user
  * is generally available or unavailable.
  *
- * @author Craig Knudsen, craig@k5n.us
+ * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
  */
 public class VAvailability implements Constants {
 	/** Unique Id */

@@ -48,8 +48,7 @@ import java.util.List;
  * 
  * </blockquote>
  * 
- * @author Craig Knudsen, craig@k5n.us
- * @ai-generated Grok-4.1-Fast
+ * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
  */
 public class ICalendarParser extends CalendarParser implements Constants {
 	Property icalVersion = null;
