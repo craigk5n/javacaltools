@@ -41,6 +41,7 @@ public class DefaultDataStore implements DataStore {
 	List<VLocation> vlocations;
 	List<VResource> vresources;
 	List<VAvailability> vavailabilities;
+	List<Participant> participants;
 	Property method;
 	String name;
 	String calendarAddress;
@@ -57,6 +58,7 @@ public class DefaultDataStore implements DataStore {
 		vlocations = new ArrayList<VLocation>();
 		vresources = new ArrayList<VResource>();
 		vavailabilities = new ArrayList<VAvailability>();
+		participants = new ArrayList<Participant>();
 	}
 
 	/**
@@ -116,6 +118,13 @@ public class DefaultDataStore implements DataStore {
 	}
 
 	/**
+	 * This method will be called when the parser finds a PARTICIPANT object.
+	 */
+	public void storeParticipant(Participant participant) {
+		participants.add(participant);
+	}
+
+	/**
 	 * This method will be called when the METHOD property is found in VCALENDAR.
 	 */
 	public void setMethod(Property method) {
@@ -156,6 +165,42 @@ public class DefaultDataStore implements DataStore {
 	 */
 	public List<Freebusy> getAllFreebusys() {
 		return freebusys;
+	}
+
+	/**
+	 * Get all VLocation objects.
+	 *
+	 * @return A List of VLocation objects
+	 */
+	public List<VLocation> getAllVLocations() {
+		return vlocations;
+	}
+
+	/**
+	 * Get all VResource objects.
+	 *
+	 * @return A List of VResource objects
+	 */
+	public List<VResource> getAllVResources() {
+		return vresources;
+	}
+
+	/**
+	 * Get all VAvailability objects.
+	 *
+	 * @return A List of VAvailability objects
+	 */
+	public List<VAvailability> getAllVAvailabilities() {
+		return vavailabilities;
+	}
+
+	/**
+	 * Get all Participant objects.
+	 *
+	 * @return A List of Participant objects
+	 */
+	public List<Participant> getAllParticipants() {
+		return participants;
 	}
 
 	/**

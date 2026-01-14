@@ -80,6 +80,11 @@ public interface DataStore {
 	public void storeVAvailability(VAvailability vavailability);
 
 	/**
+	 * This method will be called when the parser finds a PARTICIPANT object.
+	 */
+	public void storeParticipant(Participant participant);
+
+	/**
 	 * This method will be called when the METHOD property is found in VCALENDAR.
 	 */
 	public void setMethod(Property method);
@@ -93,9 +98,37 @@ public interface DataStore {
 
 	/**
 	 * Get all Journal objects.
-	 * 
+	 *
 	 * @return A List of Journal objects
 	 */
 	public List<Journal> getAllJournals();
+
+	/**
+	 * Get all VLocation objects.
+	 *
+	 * @return A List of VLocation objects
+	 */
+	public List<VLocation> getAllVLocations();
+
+	/**
+	 * Get all VResource objects.
+	 *
+	 * @return A List of VResource objects
+	 */
+	public List<VResource> getAllVResources();
+
+	/**
+	 * Get all VAvailability objects.
+	 *
+	 * @return A List of VAvailability objects
+	 */
+	public List<VAvailability> getAllVAvailabilities();
+
+	/**
+	 * Get all Participant objects.
+	 *
+	 * @return A List of Participant objects
+	 */
+	public List<Participant> getAllParticipants();
 
 }
