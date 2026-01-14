@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Test cases for Comment.
  *
- * @author Assistant
+ * @author Craig Knudsen, craig@k5n.us
  */
 public class CommentTest implements Constants {
 

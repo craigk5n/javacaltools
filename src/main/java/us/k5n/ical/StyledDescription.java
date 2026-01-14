@@ -31,7 +31,7 @@ import java.util.List;
  * STYLED-DESCRIPTION provides rich-text descriptions (HTML, Markdown, etc.)
  * for events, tasks, and journals.
  *
- * @author Assistant
+ * @author Craig Knudsen, craig@k5n.us
  */
 public class StyledDescription extends Property {
     /** Format type (e.g., "text/html", "text/markdown") */

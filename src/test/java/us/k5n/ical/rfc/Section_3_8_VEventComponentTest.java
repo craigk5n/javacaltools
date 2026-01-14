@@ -1,13 +1,15 @@
 package us.k5n.ical.rfc;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
-
-import us.k5n.ical.ICalendarParser;
-import us.k5n.ical.DefaultDataStore;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.StringReader;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+import us.k5n.ical.ICalendarParser;
 
 /**
  * RFC 5545 Section 3.8: VEVENT Component

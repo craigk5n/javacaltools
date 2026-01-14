@@ -1,14 +1,16 @@
 package us.k5n.ical.rfc;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
-
-import us.k5n.ical.ICalendarParser;
-import us.k5n.ical.DefaultDataStore;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.StringReader;
-import java.nio.charset.StandardCharsets;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+import us.k5n.ical.DefaultDataStore;
+import us.k5n.ical.ICalendarParser;
 
 /**
  * Internationalization and UTF-8 Support Tests

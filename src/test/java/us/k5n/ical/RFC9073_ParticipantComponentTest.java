@@ -1,14 +1,12 @@
 package us.k5n.ical;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
-
-import us.k5n.ical.ICalendarParser;
-import us.k5n.ical.DefaultDataStore;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.StringReader;
-import java.util.List;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 /**
  * RFC 9073: PARTICIPANT Component Tests

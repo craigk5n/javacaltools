@@ -1,17 +1,21 @@
 package us.k5n.ical.rfc;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
-import us.k5n.ical.ICalendarParser;
-import us.k5n.ical.Property;
-import us.k5n.ical.DefaultDataStore;
-
-import java.io.IOException;
 import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+import us.k5n.ical.DefaultDataStore;
+import us.k5n.ical.ICalendarParser;
+import us.k5n.ical.Property;
 
 /**
  * RFC 5545 Section 3.1: Content Lines
