@@ -103,4 +103,24 @@ public interface Constants {
 	static public final String METHOD_REFRESH = "REFRESH";
 	static public final String METHOD_COUNTER = "COUNTER";
 	static public final String METHOD_DECLINECOUNTER = "DECLINECOUNTER";
+
+	/* RFC 9073 Property Names */
+	static public final String LOCATION_TYPE = "LOCATION-TYPE";
+	static public final String RESOURCE_TYPE = "RESOURCE-TYPE";
+	static public final String PARTICIPANT_TYPE = "PARTICIPANT-TYPE";
+	static public final String CALENDAR_ADDRESS = "CALENDAR-ADDRESS";
+	static public final String STYLED_DESCRIPTION = "STYLED-DESCRIPTION";
+
+	/* RFC 9074 Property Names */
+	static public final String PROXIMITY = "PROXIMITY";
+
+	/* RFC 7986 Property Names */
+	static public final String NAME = "NAME";
+	static public final String DESCRIPTION = "DESCRIPTION";
+	static public final String UID = "UID";
+	static public final String URL = "URL";
+	static public final String LAST_MODIFIED = "LAST-MODIFIED";
+	static public final String REFRESH_INTERVAL = "REFRESH-INTERVAL";
+	static public final String SOURCE = "SOURCE";
+	static public final String COLOR = "COLOR";
 }

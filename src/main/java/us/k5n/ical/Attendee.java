@@ -60,6 +60,8 @@ public class Attendee extends Property {
 	public boolean rsvp = false;
 	/** specify the participation role for the calendar user */
 	public int role = ROLE_REQ_PARTICIPANT; // default
+	/** Participant ID reference (RFC 9073) */
+	public String participantId = null;
 
 	// TODO "DELEGATED-TO" support
 	// TODO "DELEGATED-FROM" support
@@ -166,6 +168,8 @@ public class Attendee extends Property {
 						    icalStr );
 					}
 				}
+			} else if ( a.name.equals ( "PARTICIPANT-ID" ) ) {
+				participantId = a.value;
 			} else if ( a.name.equals ( "DELEGATED-FROM" ) ) {
 				// TODO
 			} else if ( a.name.equals ( "SENT-BY" ) ) {

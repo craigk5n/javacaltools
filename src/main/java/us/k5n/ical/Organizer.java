@@ -28,6 +28,7 @@ package us.k5n.ical;
  */
 public class Organizer extends Property {
 	String organizerValue = null;
+	String participantId = null;
 
 	public Organizer(String icalStr) throws ParseException {
 		this(icalStr, PARSE_LOOSE);
@@ -37,6 +38,14 @@ public class Organizer extends Property {
 		super(icalStr, parseMode);
 		organizerValue = value;
 
+		// Parse attributes
+		for (int i = 0; i < attributeList.size(); i++) {
+			Attribute a = attributeAt(i);
+			if (a.name.equals("PARTICIPANT-ID")) {
+				participantId = a.value;
+			}
+		}
+
 		// Validate CAL-ADDRESS format
 		if (parseMode == PARSE_STRICT && !Utils.isValidCalAddress(this.getValue())) {
 			throw new ParseException("Invalid CAL-ADDRESS format: " + this.getValue(), icalStr);
@@ -45,5 +54,9 @@ public class Organizer extends Property {
 
 	public String getOrganizer() {
 		return organizerValue;
+	}
+
+	public String getParticipantId() {
+		return participantId;
 	}
 }

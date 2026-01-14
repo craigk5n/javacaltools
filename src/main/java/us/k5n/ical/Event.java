@@ -466,6 +466,16 @@ public class Event implements Constants {
 		} else if (up.startsWith("STRUCTURED-DATA")) {
 			Property p = new Property(icalStr);
 			structuredData = p.value;
+		} else if (up.startsWith("LOCATION-ID")) {
+			Property p = new Property(icalStr);
+			locationId = p.value;
+		} else if (up.startsWith("RESOURCE-ID")) {
+			Property p = new Property(icalStr);
+			if (resourceIds == null) resourceIds = new ArrayList<>();
+			String[] uids = p.value.split(",");
+			for (String uid : uids) {
+				resourceIds.add(uid.trim());
+			}
 		} else {
 			System.out.println("Ignoring VEVENT line: " + icalStr);
 		}
@@ -1001,6 +1011,19 @@ public class Event implements Constants {
 		}
 		if (structuredData != null) {
 			ret.append("STRUCTURED-DATA:").append(structuredData).append(CRLF);
+		}
+
+		if (locationId != null) {
+			ret.append("LOCATION-ID:").append(locationId).append(CRLF);
+		}
+
+		if (resourceIds != null && !resourceIds.isEmpty()) {
+			ret.append("RESOURCE-ID:");
+			for (int i = 0; i < resourceIds.size(); i++) {
+				if (i > 0) ret.append(",");
+				ret.append(resourceIds.get(i));
+			}
+			ret.append(CRLF);
 		}
 
 		ret.append("END:VEVENT");

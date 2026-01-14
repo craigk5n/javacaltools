@@ -59,6 +59,8 @@ public class VAvailability implements Constants {
 	protected Date createdDate = null;
 	/** Last modified date */
 	protected Date lastModified = null;
+	/** Calendar address (RFC 9073) */
+	protected CalendarAddress calendarAddress = null;
 	/** Private user object for caller to set/get */
 	private Object userData = null;
 
@@ -136,6 +138,12 @@ public class VAvailability implements Constants {
 			lastModified = new Date(icalStr);
 		} else if (up.startsWith("PARTICIPANT-TYPE:")) {
 			participantType = icalStr.substring(icalStr.indexOf(':') + 1);
+		} else if (up.startsWith("CALENDAR-ADDRESS:")) {
+			try {
+				calendarAddress = new CalendarAddress(icalStr);
+			} catch (ParseException pe) {
+				throw new ParseException("Invalid CALENDAR-ADDRESS: " + pe.getMessage(), icalStr);
+			}
 		} else {
 			System.err.println("Ignoring VAVAILABILITY line: " + icalStr);
 		}
@@ -209,6 +217,11 @@ public class VAvailability implements Constants {
 
 		if (participantType != null) {
 			ret.append("PARTICIPANT-TYPE:").append(participantType).append(CRLF);
+		}
+
+		if (calendarAddress != null) {
+			ret.append(calendarAddress.toICalendar());
+			ret.append(CRLF);
 		}
 
 		ret.append("END:VAVAILABILITY");
@@ -304,6 +317,14 @@ public class VAvailability implements Constants {
 
 	public void setLastModified(Date lastModified) {
 		this.lastModified = lastModified;
+	}
+
+	public CalendarAddress getCalendarAddress() {
+		return calendarAddress;
+	}
+
+	public void setCalendarAddress(CalendarAddress calendarAddress) {
+		this.calendarAddress = calendarAddress;
 	}
 
 	public Object getUserData() {
