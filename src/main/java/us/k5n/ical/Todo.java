@@ -81,6 +81,8 @@ public class Todo implements Constants {
 	protected String imageUri = null;
 	/** Conference URI */
 	protected String conferenceUri = null;
+	/** Structured data */
+	protected String structuredData = null;
 	/** Geographic position */
 	protected String geo = null;
 	/** Participants for todo (List of Attendee) */
@@ -349,6 +351,9 @@ public class Todo implements Constants {
 		} else if (up.startsWith("CONFERENCE")) {
 			Property p = new Property(icalStr);
 			conferenceUri = p.value;
+		} else if (up.startsWith("STRUCTURED-DATA")) {
+			Property p = new Property(icalStr);
+			structuredData = p.value;
 		} else {
 			System.out.println("Ignoring VTODO line: " + icalStr);
 		}
@@ -1059,6 +1064,9 @@ public class Todo implements Constants {
 		}
 		if (conferenceUri != null) {
 			ret.append("CONFERENCE:").append(conferenceUri).append(CRLF);
+		}
+		if (structuredData != null) {
+			ret.append("STRUCTURED-DATA:").append(structuredData).append(CRLF);
 		}
 
 		ret.append("END:VTODO");

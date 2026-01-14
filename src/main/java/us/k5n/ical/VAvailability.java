@@ -47,6 +47,8 @@ public class VAvailability implements Constants {
 	protected Duration duration = null;
 	/** Busy type */
 	protected String busyType = null;
+	/** Participant type */
+	protected String participantType = null;
 	/** Summary */
 	protected Summary summary = null;
 	/** Description */
@@ -132,6 +134,8 @@ public class VAvailability implements Constants {
 			createdDate = new Date(icalStr);
 		} else if (up.startsWith("LAST-MODIFIED:")) {
 			lastModified = new Date(icalStr);
+		} else if (up.startsWith("PARTICIPANT-TYPE:")) {
+			participantType = icalStr.substring(icalStr.indexOf(':') + 1);
 		} else {
 			System.err.println("Ignoring VAVAILABILITY line: " + icalStr);
 		}
@@ -201,6 +205,10 @@ public class VAvailability implements Constants {
 		if (lastModified != null) {
 			ret.append(lastModified.toICalendar());
 			ret.append(CRLF);
+		}
+
+		if (participantType != null) {
+			ret.append("PARTICIPANT-TYPE:").append(participantType).append(CRLF);
 		}
 
 		ret.append("END:VAVAILABILITY");

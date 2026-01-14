@@ -279,6 +279,28 @@ public class VAvailabilityTest {
 		assertTrue(unfolded.contains("NAME:My Calendar"));
 	}
 
+	@Test
+	public void testVAvailabilityParticipantType() throws Exception {
+		String icalStr = "BEGIN:VAVAILABILITY\n" +
+			"UID:avail-pt@example.com\n" +
+			"DTSTAMP:20230101T120000Z\n" +
+			"PARTICIPANT-TYPE:INDIVIDUAL\n" +
+			"SUMMARY:Available Time\n" +
+			"END:VAVAILABILITY";
+
+		VAvailability va = createVAvailabilityFromICalendar(icalStr);
+
+		// Test serialization (since participantType is protected)
+		String serialized = va.toICalendar();
+		String unfolded = serialized.replace("\r\n ", "").replace("\r\n", "\n");
+		assertTrue(unfolded.contains("PARTICIPANT-TYPE:INDIVIDUAL"));
+	}
+
+	private VAvailability createVAvailabilityFromICalendar(String icalStr) throws Exception {
+		List<String> lines = new ArrayList<>(Arrays.asList(icalStr.split("\\r?\\n")));
+		return new VAvailability(parser, 1, lines);
+	}
+
 	private Event createEventFromICalendar(String icalStr) throws Exception {
 		List<String> lines = new ArrayList<>(Arrays.asList(icalStr.split("\\r?\\n")));
 		return new Event(parser, 1, lines);
