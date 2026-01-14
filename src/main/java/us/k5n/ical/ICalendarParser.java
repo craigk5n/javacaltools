@@ -347,7 +347,12 @@ public class ICalendarParser extends CalendarParser implements Constants {
 							startLineNo = ln; // mark starting line number
 							textLines.clear();
 							textLines.add(line);
-							currentVResource = new VResource(this, startLineNo, textLines);
+							try {
+								currentVResource = new VResource(this, startLineNo, textLines);
+							} catch (ParseException | BogusDataException e) {
+								reportParseError(new ParseError(startLineNo,
+									"Parse error in VRESOURCE: " + e.toString(), line));
+							}
 						} else if (lineUp.startsWith("BEGIN:PARTICIPANT")) {
 							state = STATE_PARTICIPANT;
 							startLineNo = ln; // mark starting line number

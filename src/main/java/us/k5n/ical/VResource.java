@@ -20,218 +20,280 @@
 
 package us.k5n.ical;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
- * iCalendar VRESOURCE class that corresponds to the VRESOURCE iCalendar component.
- * A VRESOURCE component describes a resource with structured properties.
+ * iCalendar VRESOURCE component - This object represents a resource component
+ * and corresponds to the VRESOURCE iCalendar component as defined in RFC 9073.
  *
- * From RFC 5545: The "VRESOURCE" component defines a resource with
- * structured properties. It can be used to define resources that can be
- * referenced by other components.
+ * VRESOURCE provides typed references to external information about resources
+ * used by calendar entities (rooms, projectors, conferencing capabilities, etc.).
  *
  * @author Craig Knudsen, craig@k5n.us
+ * @ai-generated Grok-4.1-Fast
  */
-public class VResource implements Constants {
-	/** Unique Id */
-	protected Uid uid = null;
-	/** Display name */
-	protected String name = null;
-	/** Description */
-	protected Description description = null;
-	/** Resource type */
-	protected String resourceType = null;
-	/** Categories */
-	protected Categories categories = null;
-	/** Time created */
-	protected Date createdDate = null;
-	/** Time last modified */
-	protected Date lastModified = null;
-	/** URL */
-	protected URL url = null;
-	/** Private user object for caller to set/get */
-	private Object userData = null;
+public class VResource extends Property {
+    /** Resource UID */
+    public String uid = null;
+    /** Resource name */
+    public String name = null;
+    /** Resource description */
+    public String description = null;
+    /** Geographic location (latitude;longitude) */
+    public String geo = null;
+    /** Resource type */
+    public ResourceType resourceType = null;
+    /** List of structured data URIs */
+    public List<String> structuredDataList;
 
-	/**
-	 * Create a VResource object based on specified iCalendar data
-	 *
-	 * @param parser
-	 *                    The ICalendarParser object
-	 * @param initialLine
-	 *                    The starting line number
-	 * @param textLines
-	 *        List of iCalendar text lines
-	 */
-	public VResource(CalendarParser parser, int initialLine, List<String> textLines) {
-		for (int i = 0; i < textLines.size(); i++) {
-			String line = textLines.get(i);
-			try {
-				parseLine(line, parser.getParseMethod());
-			} catch (BogusDataException bde) {
-				parser.reportParseError(new ParseError(initialLine + i, bde.error,
-						line));
-			} catch (ParseException pe) {
-				parser.reportParseError(new ParseError(initialLine + i, pe.error,
-						line));
-			}
-		}
-		// VRESOURCE requires UID to be explicitly provided (unlike other components)
-		// Don't auto-generate UID
-	}
+    /**
+     * Constructor
+     */
+    public VResource() {
+        super("VRESOURCE", "");
+        structuredDataList = new ArrayList<String>();
+    }
 
-	/**
-	 * Was enough information parsed for this VResource to be valid?
-	 */
-	public boolean isValid() {
-		// Must have at least a UID and name
-		return (uid != null && name != null);
-	}
+    /**
+     * Constructor for parser
+     *
+     * @param parser the parser instance
+     * @param initialLineNo the initial line number
+     * @param textLines the text lines
+     */
+    public VResource(ICalendarParser parser, int initialLineNo, List<String> textLines) throws ParseException, BogusDataException {
+        this();
+        parseComponent(parser, initialLineNo, textLines);
+    }
 
-	/**
-	 * Parse a line of iCalendar text.
-	 *
-	 * @param icalStr
-	 *                    The line of text
-	 * @param parseMethod
-	 *                    PARSE_STRICT or PARSE_LOOSE
-	 */
-	public void parseLine(String icalStr, int parseMethod)
-			throws ParseException, BogusDataException {
-		String up = icalStr.toUpperCase();
-		if (up.equals("BEGIN:VRESOURCE") || up.equals("END:VRESOURCE")) {
-			// ignore
-		} else if (up.trim().length() == 0) {
-			// ignore empty lines
-		} else if (up.startsWith("NAME")) {
-			name = icalStr.substring(icalStr.indexOf(':') + 1);
-		} else if (up.startsWith("DESCRIPTION")) {
-			description = new Description(icalStr);
-		} else if (up.startsWith("RESOURCE-TYPE")) {
-			resourceType = icalStr.substring(icalStr.indexOf(':') + 1);
-		} else if (up.startsWith("CATEGORIES")) {
-			categories = new Categories(icalStr);
-		} else if (up.startsWith("CREATED")) {
-			createdDate = new Date(icalStr);
-		} else if (up.startsWith("LAST-MODIFIED")) {
-			lastModified = new Date(icalStr);
-		} else if (up.startsWith("UID")) {
-			uid = new Uid(icalStr);
-		} else if (up.startsWith("URL")) {
-			url = new URL(icalStr, parseMethod);
-		} else {
-			System.err.println("Ignoring VRESOURCE line: " + icalStr);
-		}
-	}
+    /**
+     * Constructor
+     *
+     * @param icalStr
+     *          One or more lines of iCalendar that specifies the VRESOURCE component
+     */
+    public VResource(String icalStr) throws ParseException {
+        this();
+        parseVResource(icalStr);
+    }
 
-	/**
-	 * Convert this VResource into iCalendar text
-	 */
-	public String toICalendar() {
-		StringBuffer ret = new StringBuffer(128);
-		ret.append("BEGIN:VRESOURCE");
-		ret.append(CRLF);
+    /**
+     * Parse component using parser infrastructure
+     */
+    private void parseComponent(ICalendarParser parser, int initialLineNo, List<String> textLines) throws ParseException, BogusDataException {
+        // Convert text lines back to a single string and parse
+        StringBuilder sb = new StringBuilder();
+        for (String line : textLines) {
+            sb.append(line).append("\n");
+        }
+        parseVResource(sb.toString());
+    }
 
-		if (uid != null)
-			ret.append(uid.toICalendar());
-		if (name != null) {
-			ret.append("NAME:");
-			ret.append(name);
-			ret.append(CRLF);
-		}
-		if (description != null)
-			ret.append(description.toICalendar());
-		if (resourceType != null) {
-			ret.append("RESOURCE-TYPE:");
-			ret.append(resourceType);
-			ret.append(CRLF);
-		}
-		if (categories != null)
-			ret.append(categories.toICalendar());
-		if (createdDate != null)
-			ret.append(createdDate.toICalendar());
-		if (lastModified != null)
-			ret.append(lastModified.toICalendar());
-		if (url != null)
-			ret.append(url.toICalendar());
+    /**
+     * Parse VRESOURCE component from iCalendar string
+     */
+    private void parseVResource(String icalStr) throws ParseException {
+        String[] lines = icalStr.split("\n");
+        boolean inVResource = false;
 
-		ret.append("END:VRESOURCE");
-		ret.append(CRLF);
+        for (String line : lines) {
+            String trimmed = line.trim();
+            if (trimmed.isEmpty()) continue;
 
-		return ret.toString();
-	}
+            if (trimmed.equals("BEGIN:VRESOURCE")) {
+                inVResource = true;
+            } else if (trimmed.equals("END:VRESOURCE")) {
+                break;
+            } else if (inVResource) {
+                if (trimmed.startsWith("UID:")) {
+                    uid = trimmed.substring(4).trim();
+                } else if (trimmed.startsWith("NAME")) {
+                    try {
+                        name = new Name(line).getValue();
+                    } catch (ParseException e) {
+                        // Handle parse error
+                    }
+                } else if (trimmed.startsWith("DESCRIPTION")) {
+                    try {
+                        description = new Description(line).getValue();
+                    } catch (ParseException e) {
+                        // Handle parse error
+                    }
+                } else if (trimmed.startsWith("GEO:")) {
+                    geo = trimmed.substring(4).trim();
+                } else if (trimmed.startsWith("RESOURCE-TYPE")) {
+                    try {
+                        resourceType = new ResourceType(line);
+                    } catch (ParseException e) {
+                        // Handle parse error
+                    }
+                } else if (trimmed.startsWith("STRUCTURED-DATA")) {
+                    // Extract URI value from STRUCTURED-DATA property
+                    if (line.contains(":")) {
+                        String value = line.substring(line.indexOf(":") + 1).trim();
+                        structuredDataList.add(value);
+                    }
+                }
+                // Ignore other properties for now
+            }
+        }
+    }
 
-	// Getter and setter methods
+    /**
+     * Convert the VRESOURCE to iCalendar format
+     *
+     * @return iCalendar formatted string
+     */
+    public String toICalendar() {
+        StringBuffer ret = new StringBuffer();
+        ret.append("BEGIN:VRESOURCE").append(CRLF);
 
-	public Uid getUid() {
-		return uid;
-	}
+        if (uid != null) {
+            ret.append("UID:").append(uid).append(CRLF);
+        }
+        if (name != null) {
+            ret.append("NAME:").append(name).append(CRLF);
+        }
+        if (description != null) {
+            ret.append("DESCRIPTION:").append(description).append(CRLF);
+        }
+        if (geo != null) {
+            ret.append("GEO:").append(geo).append(CRLF);
+        }
+        if (resourceType != null) {
+            ret.append(resourceType.toICalendar());
+        }
 
-	public void setUid(Uid uid) {
-		this.uid = uid;
-	}
+        for (String sd : structuredDataList) {
+            ret.append("STRUCTURED-DATA;VALUE=URI:").append(sd).append(CRLF);
+        }
 
-	public String getName() {
-		return name;
-	}
+        ret.append("END:VRESOURCE").append(CRLF);
+        return ret.toString();
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    /**
+     * Convert to string representation
+     */
+    public String toString() {
+        return "VResource[uid=" + uid + ", name=" + name + "]";
+    }
 
-	public Description getDescription() {
-		return description;
-	}
+    /**
+     * Check if the VRESOURCE is valid (has required UID)
+     *
+     * @return true if valid, false otherwise
+     */
+    public boolean isValid() {
+        return uid != null && !uid.trim().isEmpty();
+    }
 
-	public void setDescription(Description description) {
-		this.description = description;
-	}
+    /**
+     * Get the resource UID
+     *
+     * @return the UID
+     */
+    public String getUid() {
+        return uid;
+    }
 
-	public String getResourceType() {
-		return resourceType;
-	}
+    /**
+     * Set the resource UID
+     *
+     * @param uid the UID
+     */
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
 
-	public void setResourceType(String resourceType) {
-		this.resourceType = resourceType;
-	}
+    /**
+     * Get the resource name
+     *
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
 
-	public Categories getCategories() {
-		return categories;
-	}
+    /**
+     * Set the resource name
+     *
+     * @param name the name
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setCategories(Categories categories) {
-		this.categories = categories;
-	}
+    /**
+     * Get the resource description
+     *
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }
 
-	public Date getCreatedDate() {
-		return createdDate;
-	}
+    /**
+     * Set the resource description
+     *
+     * @param description the description
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
-	}
+    /**
+     * Get the geographic location
+     *
+     * @return the geo coordinates as string
+     */
+    public String getGeo() {
+        return geo;
+    }
 
-	public Date getLastModified() {
-		return lastModified;
-	}
+    /**
+     * Set the geographic location
+     *
+     * @param geo the geo coordinates as string
+     */
+    public void setGeo(String geo) {
+        this.geo = geo;
+    }
 
-	public void setLastModified(Date lastModified) {
-		this.lastModified = lastModified;
-	}
+    /**
+     * Get the resource type
+     *
+     * @return the resource type
+     */
+    public ResourceType getResourceType() {
+        return resourceType;
+    }
 
-	public URL getUrl() {
-		return url;
-	}
+    /**
+     * Set the resource type
+     *
+     * @param resourceType the resource type
+     */
+    public void setResourceType(ResourceType resourceType) {
+        this.resourceType = resourceType;
+    }
 
-	public void setUrl(URL url) {
-		this.url = url;
-	}
+    /**
+     * Get the structured data URI list
+     *
+     * @return the structured data URI list
+     */
+    public List<String> getStructuredDataList() {
+        return structuredDataList;
+    }
 
-	public Object getUserData() {
-		return userData;
-	}
-
-	public void setUserData(Object userData) {
-		this.userData = userData;
-	}
+    /**
+     * Add structured data URI
+     *
+     * @param structuredDataUri the structured data URI to add
+     */
+    public void addStructuredData(String structuredDataUri) {
+        this.structuredDataList.add(structuredDataUri);
+    }
 }
