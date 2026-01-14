@@ -87,6 +87,9 @@ public class RefreshInterval extends Property {
         String value = getValue();
         if (value == null || value.trim().isEmpty()) return false;
 
+        // Check for negative durations (not allowed for refresh intervals)
+        if (value.startsWith("-")) return false;
+
         // Check if we can create a valid Duration object
         try {
             new Duration("DURATION:" + value);
