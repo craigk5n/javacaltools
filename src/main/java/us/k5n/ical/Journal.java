@@ -43,6 +43,8 @@ public class Journal implements Constants {
 	protected Summary summary = null;
 	/** Full description */
 	protected Description description = null;
+	/** Styled description (RFC 9073) */
+	protected StyledDescription styledDescription = null;
 	/** Classification (PUBLIC, CONFIDENTIAL, PRIVATE) */
 	protected Classification classification = null;
 	/** List of categories (comma-separated) */
@@ -246,6 +248,8 @@ public class Journal implements Constants {
 			// ignore empty lines
 		} else if (up.startsWith("DESCRIPTION")) {
 			description = new Description(icalStr);
+		} else if (up.startsWith("STYLED-DESCRIPTION")) {
+			styledDescription = new StyledDescription(icalStr);
 		} else if (up.startsWith("SUMMARY")) {
 			summary = new Summary(icalStr);
 		} else if (up.startsWith("CREATED")) {
@@ -385,6 +389,8 @@ public class Journal implements Constants {
 			ret.append(summary.toICalendar());
 		if (description != null)
 			ret.append(description.toICalendar());
+		if (styledDescription != null)
+			ret.append(styledDescription.toICalendar());
 		if (createdDate != null)
 			ret.append(createdDate.toICalendar());
 		if (startDate != null)
@@ -512,6 +518,14 @@ public class Journal implements Constants {
 
 	public void setDescription(Description description) {
 		this.description = description;
+	}
+
+	public StyledDescription getStyledDescription() {
+		return styledDescription;
+	}
+
+	public void setStyledDescription(StyledDescription styledDescription) {
+		this.styledDescription = styledDescription;
 	}
 
 	public Date getDtstamp() {

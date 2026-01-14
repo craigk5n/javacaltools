@@ -42,6 +42,8 @@ public class Event implements Constants {
 	protected Summary summary = null;
 	/** Full description */
 	protected Description description = null;
+	/** Styled description (RFC 9073) */
+	protected StyledDescription styledDescription = null;
 	/** Comment */
 	protected Comment comment = null;
 	/** Classification (PUBLIC, CONFIDENTIAL, PRIVATE) */
@@ -314,6 +316,8 @@ public class Event implements Constants {
 			summary = new Summary(icalStr);
 		} else if (up.startsWith("COMMENT")) {
 			comment = new Comment(icalStr);
+		} else if (up.startsWith("STYLED-DESCRIPTION")) {
+			styledDescription = new StyledDescription(icalStr);
 		} else if (up.startsWith("CREATED")) {
 			createdDate = new Date(icalStr);
 		} else if (up.startsWith("DTSTART")) {
@@ -516,6 +520,14 @@ public class Event implements Constants {
 
 	public void setDescription(Description description) {
 		this.description = description;
+	}
+
+	public StyledDescription getStyledDescription() {
+		return styledDescription;
+	}
+
+	public void setStyledDescription(StyledDescription styledDescription) {
+		this.styledDescription = styledDescription;
 	}
 
 	public Comment getComment() {
@@ -868,6 +880,8 @@ public class Event implements Constants {
 			ret.append(summary.toICalendar());
 		if (description != null)
 			ret.append(description.toICalendar());
+		if (styledDescription != null)
+			ret.append(styledDescription.toICalendar());
 		if (createdDate != null)
 			ret.append(createdDate.toICalendar());
 		if (startDate != null)

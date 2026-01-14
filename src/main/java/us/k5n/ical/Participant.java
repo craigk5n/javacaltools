@@ -38,7 +38,7 @@ public class Participant extends Property {
     /** Participant type */
     public String participantType = null;
     /** Calendar address */
-    public String calendarAddress = null;
+    public CalendarAddress calendarAddress = null;
     /** Structured data */
     public String structuredData = null;
     /** Display name */
@@ -116,8 +116,12 @@ public class Participant extends Property {
                 uid = trimmed.substring(4).trim();
             } else if (trimmed.startsWith("PARTICIPANT-TYPE:")) {
                 participantType = trimmed.substring(17).trim();
-            } else if (trimmed.startsWith("CALENDAR-ADDRESS:")) {
-                calendarAddress = trimmed.substring(17).trim();
+            } else if (trimmed.startsWith("CALENDAR-ADDRESS")) {
+                try {
+                    calendarAddress = new CalendarAddress(line);
+                } catch (ParseException e) {
+                    // Handle parse error - could log or ignore
+                }
             } else if (trimmed.startsWith("STRUCTURED-DATA:")) {
                 structuredData = trimmed.substring(16).trim();
             } else if (trimmed.startsWith("NAME:")) {
@@ -140,8 +144,12 @@ public class Participant extends Property {
             uid = trimmed.substring(4).trim();
         } else if (trimmed.startsWith("PARTICIPANT-TYPE:")) {
             participantType = trimmed.substring(17).trim();
-        } else if (trimmed.startsWith("CALENDAR-ADDRESS:")) {
-            calendarAddress = trimmed.substring(17).trim();
+        } else if (trimmed.startsWith("CALENDAR-ADDRESS")) {
+            try {
+                calendarAddress = new CalendarAddress(line);
+            } catch (ParseException e) {
+                // Handle parse error - could log or ignore
+            }
         } else if (trimmed.startsWith("STRUCTURED-DATA:")) {
             structuredData = trimmed.substring(16).trim();
         } else if (trimmed.startsWith("NAME:")) {
@@ -203,7 +211,7 @@ public class Participant extends Property {
      *
      * @return the calendar address
      */
-    public String getCalendarAddress() {
+    public CalendarAddress getCalendarAddress() {
         return calendarAddress;
     }
 
@@ -212,7 +220,7 @@ public class Participant extends Property {
      *
      * @param calendarAddress the calendar address
      */
-    public void setCalendarAddress(String calendarAddress) {
+    public void setCalendarAddress(CalendarAddress calendarAddress) {
         this.calendarAddress = calendarAddress;
     }
 
@@ -286,7 +294,7 @@ public class Participant extends Property {
             ret.append("PARTICIPANT-TYPE:").append(participantType).append(CRLF);
         }
         if (calendarAddress != null) {
-            ret.append("CALENDAR-ADDRESS:").append(calendarAddress).append(CRLF);
+            ret.append(calendarAddress.toICalendar());
         }
         if (structuredData != null) {
             ret.append("STRUCTURED-DATA:").append(structuredData).append(CRLF);

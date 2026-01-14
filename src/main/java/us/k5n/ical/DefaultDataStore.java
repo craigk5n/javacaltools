@@ -150,6 +150,15 @@ public class DefaultDataStore implements DataStore {
 	}
 
 	/**
+	 * Get all Todo objects.
+	 *
+	 * @return A List of Todo objects
+	 */
+	public List<Todo> getAllTodos() {
+		return todos;
+	}
+
+	/**
 	 * Get all Timezone objects.
 	 * 
 	 * @return A List of Timezone objects

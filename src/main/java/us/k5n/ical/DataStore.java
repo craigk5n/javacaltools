@@ -104,25 +104,11 @@ public interface DataStore {
 	public List<Journal> getAllJournals();
 
 	/**
-	 * Get all VLocation objects.
+	 * Get all Todo objects.
 	 *
-	 * @return A List of VLocation objects
+	 * @return A List of Todo objects
 	 */
-	public List<VLocation> getAllVLocations();
-
-	/**
-	 * Get all VResource objects.
-	 *
-	 * @return A List of VResource objects
-	 */
-	public List<VResource> getAllVResources();
-
-	/**
-	 * Get all VAvailability objects.
-	 *
-	 * @return A List of VAvailability objects
-	 */
-	public List<VAvailability> getAllVAvailabilities();
+	public List<Todo> getAllTodos();
 
 	/**
 	 * Get all Participant objects.

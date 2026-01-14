@@ -39,6 +39,8 @@ public class Todo implements Constants {
 	protected Summary summary = null;
 	/** Full description */
 	protected Description description = null;
+	/** Styled description (RFC 9073) */
+	protected StyledDescription styledDescription = null;
 	/** Comment */
 	protected Comment comment = null;
 	/** Classification (PUBLIC, CONFIDENTIAL, PRIVATE) */
@@ -237,6 +239,8 @@ public class Todo implements Constants {
 			summary = new Summary(icalStr);
 		} else if (up.startsWith("COMMENT")) {
 			comment = new Comment(icalStr);
+		} else if (up.startsWith("STYLED-DESCRIPTION")) {
+			styledDescription = new StyledDescription(icalStr);
 		} else if (up.startsWith("CREATED")) {
 			createdDate = new Date(icalStr);
 		} else if (up.startsWith("DTSTART")) {
@@ -651,6 +655,14 @@ public class Todo implements Constants {
 		return description;
 	}
 
+	public StyledDescription getStyledDescription() {
+		return styledDescription;
+	}
+
+	public void setStyledDescription(StyledDescription styledDescription) {
+		this.styledDescription = styledDescription;
+	}
+
 	/**
 	 * Get comment
 	 * 
@@ -891,6 +903,11 @@ public class Todo implements Constants {
 
 		if (description != null) {
 			ret.append(description.toICalendar());
+			ret.append(CRLF);
+		}
+
+		if (styledDescription != null) {
+			ret.append(styledDescription.toICalendar());
 			ret.append(CRLF);
 		}
 
