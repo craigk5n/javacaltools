@@ -26,7 +26,8 @@ package us.k5n.ical;
  *
  * REFRESH-INTERVAL specifies a suggested minimum interval for polling for changes.
  *
- * @author Assistant
+ * @author Craig Knudsen, craig@k5n.us
+ * @ai-generated Grok-4.1-Fast
  */
 public class RefreshInterval extends Property {
 

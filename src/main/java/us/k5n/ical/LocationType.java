@@ -26,7 +26,8 @@ package us.k5n.ical;
  *
  * LOCATION-TYPE provides a way to differentiate multiple locations in VLOCATION components.
  *
- * @author Assistant
+ * @author Craig Knudsen, craig@k5n.us
+ * @ai-generated Grok-4.1-Fast
  */
 public class LocationType extends Property {
 

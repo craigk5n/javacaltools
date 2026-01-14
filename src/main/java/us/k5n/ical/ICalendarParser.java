@@ -49,6 +49,7 @@ import java.util.List;
  * </blockquote>
  * 
  * @author Craig Knudsen, craig@k5n.us
+ * @ai-generated Grok-4.1-Fast
  */
 public class ICalendarParser extends CalendarParser implements Constants {
 	Property icalVersion = null;
@@ -335,7 +336,12 @@ public class ICalendarParser extends CalendarParser implements Constants {
 							startLineNo = ln; // mark starting line number
 							textLines.clear();
 							textLines.add(line);
-							currentVLocation = new VLocation(this, startLineNo, textLines);
+							try {
+								currentVLocation = new VLocation(this, startLineNo, textLines);
+							} catch (ParseException | BogusDataException e) {
+								reportParseError(new ParseError(startLineNo,
+									"Parse error in VLOCATION: " + e.toString(), line));
+							}
 						} else if (lineUp.startsWith("BEGIN:VRESOURCE")) {
 							state = STATE_VRESOURCE;
 							startLineNo = ln; // mark starting line number

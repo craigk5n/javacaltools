@@ -24,9 +24,10 @@ package us.k5n.ical;
  * iCalendar PARTICIPANT-TYPE property - This object represents a participant type
  * and corresponds to the PARTICIPANT-TYPE iCalendar property as defined in RFC 9073.
  *
- * PARTICIPANT-TYPE defines the type of participation in events or tasks.
+ * PARTICIPANT-TYPE defines the type of participation in events/tasks.
  *
- * @author Assistant
+ * @author Craig Knudsen, craig@k5n.us
+ * @ai-generated Grok-4.1-Fast
  */
 public class ParticipantType extends Property {
 

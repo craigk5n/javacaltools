@@ -9,12 +9,15 @@
 
  import java.io.StringReader;
 
- /**
-  * RFC 7986: COLOR Property Tests
-  *
-  * Tests for the COLOR property as defined in RFC 7986, Section 5.9.
-  * COLOR specifies a color used for displaying calendar data.
-  */
+/**
+ * RFC 7986: COLOR Property Tests
+ *
+ * Tests for the COLOR property as defined in RFC 7986, Section 5.9.
+ * COLOR specifies a color used for displaying calendar data.
+ *
+ * @author Craig Knudsen, craig@k5n.us
+ * @ai-generated Grok-4.1-Fast
+ */
  public class RFC7986_ColorTest {
 
      @Test

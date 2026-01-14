@@ -26,7 +26,8 @@ package us.k5n.ical;
  *
  * RESOURCE-TYPE provides a way to differentiate multiple resources in VRESOURCE components.
  *
- * @author Assistant
+ * @author Craig Knudsen, craig@k5n.us
+ * @ai-generated Grok-4.1-Fast
  */
 public class ResourceType extends Property {
 

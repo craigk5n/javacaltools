@@ -26,7 +26,8 @@ package us.k5n.ical;
  *
  * NAME specifies the name of the calendar for presentation to users.
  *
- * @author Assistant
+ * @author Craig Knudsen, craig@k5n.us
+ * @ai-generated Grok-4.1-Fast
  */
 public class Name extends Property {
 
