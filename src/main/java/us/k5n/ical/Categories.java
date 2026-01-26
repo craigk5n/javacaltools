@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2006 Craig Knudsen and other authors
+ * Copyright (C) 2005-2024 Craig Knudsen and other authors
  * (see AUTHORS for a complete list)
  *
  * JavaCalTools is free software; you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
  * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
  * License for more details.
- * 
+ *
  * A copy of the GNU Lesser General Public License is included in the Wine
  * distribution in the file COPYING.LIB. If you did not receive this copy,
  * write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
@@ -20,66 +20,94 @@
 
 package us.k5n.ical;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * iCalendar Categories class - This object represents a category list and
  * corresponds to the CATEGORIES iCalendar property.
- * 
- * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
+ *
+ * @author Craig Knudsen, craig@k5n.us
  */
-public class Categories extends Property {
-	/** Language specification */
-	public String language = null;
+public class Categories extends TextProperty {
 
-	// TODO provide an API to parse through the comma-separated list
-	// of category name
+    /**
+     * Default constructor
+     */
+    public Categories() {
+        super("CATEGORIES");
+    }
 
-	/**
-	 * Constructor
-	 */
-	public Categories() {
-		super ( "CATEGORIES", "" );
-	}
+    /**
+     * Constructor from iCalendar string
+     *
+     * @param icalStr One or more lines of iCalendar that specifies an event/todo description
+     */
+    public Categories(String icalStr) throws ParseException {
+        super("CATEGORIES", icalStr, PARSE_LOOSE);
+    }
 
-	/**
-	 * Constructor
-	 * 
-	 * @param icalStr
-	 *          One or more lines of iCalendar that specifies an event/todo
-	 *          description
-	 */
-	public Categories(String icalStr) throws ParseException {
-		this ( icalStr, PARSE_LOOSE );
-	}
+    /**
+     * Constructor from iCalendar string with parse mode
+     *
+     * @param icalStr   One or more lines of iCalendar that specifies a category list (comma separated)
+     * @param parseMode PARSE_STRICT or PARSE_LOOSE
+     */
+    public Categories(String icalStr, int parseMode) throws ParseException {
+        super("CATEGORIES", icalStr, parseMode);
+    }
 
-	/**
-	 * Constructor
-	 * 
-	 * @param icalStr
-	 *          One or more lines of iCalendar that specifies a category list
-	 *          (comma separated)
-	 * @param parseMode
-	 *          PARSE_STRICT or PARSE_LOOSE
-	 */
-	public Categories(String icalStr, int parseMode) throws ParseException {
-		super ( icalStr, parseMode );
+    /**
+     * Get categories as a list
+     *
+     * @return list of category names
+     */
+    public List<String> getCategoryList() {
+        String val = getValue();
+        if (val == null || val.isEmpty()) {
+            return List.of();
+        }
+        return Arrays.stream(val.split(","))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .collect(Collectors.toList());
+    }
 
-		for ( int i = 0; i < attributeList.size (); i++ ) {
-			Attribute a = attributeAt ( i );
-			String aname = a.name.toUpperCase ();
-			if ( aname.equals ( "LANGUAGE" ) ) {
-				// Can only have one of these
-				if ( language != null && parseMode == PARSE_STRICT ) {
-					throw new ParseException ( "More than one LANGUAGE found", icalStr );
-				}
-				language = a.value;
-			} else {
-				// Only generate exception if strict parsing
-				if ( parseMode == PARSE_STRICT ) {
-					throw new ParseException ( "Invalid CATEGORIES attribute '" + a.name
-					    + "'", icalStr );
-				}
-			}
-		}
-	}
+    /**
+     * Set categories from a list
+     *
+     * @param categories list of category names
+     */
+    public void setCategoryList(List<String> categories) {
+        setValue(String.join(",", categories));
+    }
 
+    /**
+     * Get categories as comma-separated string
+     *
+     * @return comma-separated category names
+     */
+    public String getCategories() {
+        return getValue();
+    }
+
+    /**
+     * Set categories from comma-separated string
+     *
+     * @param categories comma-separated category names
+     */
+    public void setCategories(String categories) {
+        setValue(categories);
+    }
+
+    /**
+     * Convert categories to string representation
+     *
+     * @return comma-separated category list
+     */
+    @Override
+    public String toString() {
+        return getValue() != null ? getValue() : "";
+    }
 }

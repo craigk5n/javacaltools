@@ -26,7 +26,7 @@ package us.k5n.ical;
  *
  * PARTICIPANT-TYPE defines the type of participation in events/tasks.
  *
- * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
+ * @author Craig Knudsen, craig@k5n.us
  */
 public class ParticipantType extends Property {
 

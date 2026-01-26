@@ -32,7 +32,7 @@ import java.util.List;
 /**
  * Test class for enhanced validation and error handling
  *
- * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
+ * @author Craig Knudsen, craig@k5n.us
  */
 public class ValidationTest {
 	private ICalendarParser parser;

@@ -23,7 +23,7 @@ package us.k5n.ical;
 /**
  * Defines an interface for receive parse errors.
  * 
- * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
+ * @author Craig Knudsen, craig@k5n.us
  */
 public interface ParseErrorListener {
 

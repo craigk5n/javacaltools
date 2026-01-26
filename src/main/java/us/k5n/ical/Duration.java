@@ -21,41 +21,31 @@
 package us.k5n.ical;
 
 /**
- * Base class for use with a variety of duration-related iCalendar fields.
- * <br/>
- * From RFC 2445:<blockquote> Formal Definition: The value type is defined
- * by the following notation:
+ * iCalendar Duration class that corresponds to duration-related iCalendar properties.
+ *
+ * <p>A DURATION property specifies a positive duration of time. Duration values
+ * are used in properties like DURATION, TRIGGER, and REFRESH-INTERVAL.</p>
+ *
+ * <p><b>RFC 5545 Compliance:</b></p>
  * <ul>
- * 
- * <li>dur-value = (["+"] / "-") "P" (dur-date / dur-time / dur-week)</li>
- * <li>dur-date = dur-day [dur-time]</li>
- * <li>dur-time = "T" (dur-hour / dur-minute / dur-second)</li>
- * <li>dur-week = 1*DIGIT "W"</li>
- * <li>dur-hour = 1*DIGIT "H" [dur-minute]</li>
- * <li>dur-minute = 1*DIGIT "M" [dur-second]</li>
- * <li>dur-second = 1*DIGIT "S"</li>
- * <li>dur-day = 1*DIGIT "D"</li>
+ *   <li>Section 3.3.6 - DURATION value type</li>
+ *   <li>Section 3.2.8 - DURATION property</li>
+ *   <li>Section 3.2.38 - TRIGGER property (in VALARM)</li>
  * </ul>
- * 
- * Description: If the property permits, multiple "duration" values are
- * specified by a COMMA character (US-ASCII decimal 44) separated list of
- * values. The format is expressed as the [ISO 8601] basic format for the
- * duration of time. The format can represent durations in terms of weeks, days,
- * hours, minutes, and seconds. <br/>
- * <br/>
- * No additional content value encoding
- * (i.e., BACKSLASH character encoding) are defined for this value type. <br/>
- * <br/>
- * Example: A duration of 15 days, 5 hours and 20 seconds would be: <br/>
- * <br/>
- * P15DT5H0M20S <br/>
- * <br/>
- * A duration of 7 weeks would be: <br/>
- * <br/>
- * P7W
- * </blockquote>
- * 
- * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
+ *
+ * <p><b>ISO 8601 Duration Format:</b></p>
+ * <ul>
+ *   <li>P1W - 1 week</li>
+ *   <li>P1D - 1 day</li>
+ *   <li>PT1H - 1 hour</li>
+ *   <li>PT1M - 1 minute</li>
+ *   <li>PT1S - 1 second</li>
+ *   <li>P15DT5H0M20S - 15 days, 5 hours, 20 seconds</li>
+ *   <li>-PT30M - negative 30 minutes (for alarm triggers)</li>
+ * </ul>
+ *
+ * @author Craig Knudsen, craig@k5n.us
+ * @see <a href="https://datatracker.ietf.org/doc/html/rfc5545#section-3.3.6">RFC 5545, Section 3.3.6</a>
  */
 public class Duration extends Property {
 	/** duration in seconds */

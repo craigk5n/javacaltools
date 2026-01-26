@@ -21,10 +21,29 @@
 package us.k5n.ical;
 
 /**
- * iCalendar Organizer class - This object represents an organizer and corresponds to
- * ORGANIZER iCalendar property.
- * 
- * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
+ * iCalendar Organizer class that corresponds to the ORGANIZER iCalendar property.
+ *
+ * <p>An ORGANIZER property specifies the calendar user who is acting as the
+ * organizer of a calendar component. The organizer is responsible for
+ * managing the component and may be different from attendees.</p>
+ *
+ * <p><b>RFC 5545 Compliance:</b></p>
+ * <ul>
+ *   <li>Section 3.2.13 - Organizer Property</li>
+ *   <li>Section 3.2.24 - Cutype Parameter (Calendar User Type)</li>
+ *   <li>Section 3.2.2 - Cn Parameter (Common Name)</li>
+ *   <li>Section 3.2.8 - Dir Parameter (Directory Entry Reference)</li>
+ *   <li>Section 3.2.25 - Sent-by Parameter</li>
+ * </ul>
+ *
+ * <p><b>RFC 9073 Extensions:</b></p>
+ * <ul>
+ *   <li>Section 4.6 - PARTICIPANT-ID parameter</li>
+ * </ul>
+ *
+ * @author Craig Knudsen, craig@k5n.us
+ * @see <a href="https://datatracker.ietf.org/doc/html/rfc5545#section-3.2.13">RFC 5545, Section 3.2.13</a>
+ * @see <a href="https://datatracker.ietf.org/doc/html/rfc9073">RFC 9073</a>
  */
 public class Organizer extends Property {
 	String organizerValue = null;

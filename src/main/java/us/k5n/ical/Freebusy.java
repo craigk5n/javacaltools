@@ -24,38 +24,49 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * iCalendar Freebusy class that corresponds to a VFREEBUSY iCalendar object.
- * A VFREEBUSY component represents a time period when the user is busy,
- * without revealing the reason for the busy time.
- * 
- * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
+ * iCalendar Freebusy class that corresponds to the VFREEBUSY iCalendar component.
+ *
+ * <p>A VFREEBUSY component represents a time period when the user is busy,
+ * without revealing the reason for the busy time. This component is used
+ * to advertise when a calendar user is busy and can be used to prevent
+ * scheduling conflicts.</p>
+ *
+ * <p><b>RFC 5545 Compliance:</b></p>
+ * <ul>
+ *   <li>Section 3.6.4 - Free/Busy Component</li>
+ *   <li>Section 3.2.10 - FREEBUSY property (period values)</li>
+ *   <li>Section 3.2 - Supporting properties (UID, DTSTAMP, DTSTART, DTEND, etc.)</li>
+ * </ul>
+ *
+ * @author Craig Knudsen, craig@k5n.us
+ * @see <a href="https://datatracker.ietf.org/doc/html/rfc5545#section-3.6.4">RFC 5545, Section 3.6.4</a>
  */
 public class Freebusy implements Constants {
-	/** Unique Id */
+	/** Unique Id (RFC 5545 Section 3.2.20) */
 	protected Uid uid = null;
-	/** Sequence number (0 is first version) */
+	/** Sequence number (RFC 5545 Section 3.2.22) - 0 is first version */
 	protected Sequence sequence = null;
-	/** Brief summary */
+	/** Brief summary (RFC 5545 Section 3.2.35) */
 	protected Summary summary = null;
-	/** Contact */
+	/** Contact (RFC 5545 Section 3.2.15) */
 	protected Contact contact = null;
-	/** Time created */
+	/** Time created (RFC 5545 Section 3.2.5) */
 	protected Date dtstamp = null;
-	/** Time last modified */
+	/** Time last modified (RFC 5545 Section 3.2.9) */
 	protected Date lastModified = null;
-	/** Primary start date */
+	/** Primary start date (RFC 5545 Section 3.2.6) */
 	protected Date startDate = null;
-	/** End date */
+	/** End date (RFC 5545 Section 3.2.7) */
 	protected Date endDate = null;
-	/** Duration */
+	/** Duration (RFC 5545 Section 3.2.8) */
 	protected Duration duration = null;
-	/** URL */
+	/** URL (RFC 5545 Section 3.2.39) */
 	protected URL url = null;
-	/** Comment */
+	/** Comment (RFC 5545 Section 3.2.16) */
 	protected Comment comment = null;
-	/** Organizer (Attendee) */
+	/** Organizer (RFC 5545 Section 3.2.13) */
 	protected Attendee organizer = null;
-	/** Busy periods - List of FreebusyPeriod objects */
+	/** Busy periods (RFC 5545 Section 3.2.10) - List of FreebusyPeriod objects */
 	protected List<FreebusyPeriod> busyPeriods = null;
 	/** Private user object for caller to set/get */
 	private Object userData = null;

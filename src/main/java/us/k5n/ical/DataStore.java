@@ -34,7 +34,7 @@ import java.util.List;
  * </ul>
  * See the IcalParser interface for how to change these settings.
  * 
- * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
+ * @author Craig Knudsen, craig@k5n.us
  * @see CalendarParser
  */
 public interface DataStore {
@@ -116,5 +116,12 @@ public interface DataStore {
 	 * @return A List of Participant objects
 	 */
 	public List<Participant> getAllParticipants();
+
+	/**
+	 * Get all Timezone objects.
+	 *
+	 * @return A List of Timezone objects
+	 */
+	public List<Timezone> getAllTimezones();
 
 }

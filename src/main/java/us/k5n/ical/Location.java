@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2006 Craig Knudsen and other authors
+ * Copyright (C) 2005-2024 Craig Knudsen and other authors
  * (see AUTHORS for a complete list)
  *
  * JavaCalTools is free software; you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
  * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
  * License for more details.
- * 
+ *
  * A copy of the GNU Lesser General Public License is included in the Wine
  * distribution in the file COPYING.LIB. If you did not receive this copy,
  * write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
@@ -22,39 +22,36 @@ package us.k5n.ical;
 
 /**
  * iCalendar Location class - This object represents a URL and corresponds to
- * the URL iCalendar property. <br/> From the RFC: <br/>
- * This property may be used to convey the location of a meeting.
- * 
- * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
+ * the URL iCalendar property. This property may be used to convey the location
+ * of a meeting.
+ *
+ * @author Craig Knudsen, craig@k5n.us
  */
-public class Location extends Property {
-	/**
-	 * Constructor
-	 */
-	public Location() {
-		super ( "LOCATION", "" );
-	}
+public class Location extends SimpleProperty {
 
-	/**
-	 * Constructor
-	 * 
-	 * @param icalStr
-	 *          One or more lines of iCalendar that specifies an event/todo URL
-	 */
-	public Location(String icalStr) throws ParseException {
-		this ( icalStr, PARSE_LOOSE );
-	}
+    /**
+     * Default constructor
+     */
+    public Location() {
+        super("LOCATION");
+    }
 
-	/**
-	 * Constructor
-	 * 
-	 * @param icalStr
-	 *          One or more lines of iCalendar that specifies the unique
-	 *          identifier.
-	 * @param parseMode
-	 *          PARSE_STRICT or PARSE_LOOSE
-	 */
-	public Location(String icalStr, int parseMode) throws ParseException {
-		super ( icalStr, parseMode );
-	}
+    /**
+     * Constructor from iCalendar string
+     *
+     * @param icalStr One or more lines of iCalendar that specifies an event/todo URL
+     */
+    public Location(String icalStr) throws ParseException {
+        super("LOCATION", icalStr);
+    }
+
+    /**
+     * Constructor from iCalendar string with parse mode
+     *
+     * @param icalStr   One or more lines of iCalendar that specifies the location
+     * @param parseMode PARSE_STRICT or PARSE_LOOSE
+     */
+    public Location(String icalStr, int parseMode) throws ParseException {
+        super("LOCATION", icalStr, parseMode);
+    }
 }

@@ -1,89 +1,28 @@
-# JavaCalTools - iCalendar Library for Java
+# JavaCalTools
 
-[![Java Version](https://img.shields.io/badge/Java-17+-blue.svg)](https://openjdk.java.net/)
-[![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://www.apache.org/licenses/LICENSE-2.0.txt)
+A Java library for parsing, generating, and manipulating iCalendar (RFC 5545) data.
+
+[![Java](https://img.shields.io/badge/Java-17%2B-blue)](https://openjdk.java.net/)
+[![License](https://img.shields.io/badge/License-LGPL%202.1-green.svg)](LICENSE)
 [![Maven Central](https://img.shields.io/maven-central/v/us.k5n/javacaltools)](https://search.maven.org/artifact/us.k5n/javacaltools)
-[![Build Status](https://img.shields.io/github/actions/workflow/status/k5n/javacaltools/unit-tests.yml)](https://github.com/k5n/javacaltools/actions)
-[![codecov](https://codecov.io/gh/k5n/javacaltools/branch/master/graph/badge.svg)](https://codecov.io/gh/k5n/javacaltools)
-[![Test Coverage](https://img.shields.io/badge/tests-568%20passing-brightgreen)](#testing)
-[![RFC Compliance](https://img.shields.io/badge/RFC%20Compliance-5545%2C%207986%2C%209073%2C%209074%2C%205546-blue)](#compliance)
+[![Build](https://img.shields.io/github/actions/workflow/status/craigk5n/javacaltools/maven.yml?branch=master)](https://github.com/craigk5n/javacaltools/actions)
+[![Tests](https://img.shields.io/badge/tests-716%20passing-brightgreen)](#testing)
 
-A comprehensive, RFC-compliant Java library for parsing, generating, and manipulating iCalendar (RFC 5545) data. Perfect for calendar applications, scheduling systems, and any Java project that needs to work with calendar data.
+## Features
 
-## 📋 Table of Contents
-
-- [Features](#-features)
-- [Quick Start](#-quick-start)
-- [Installation](#-installation)
-- [Usage](#-usage)
-- [API Documentation](#-api-documentation)
-- [RFC Compliance](#-rfc-compliance)
-- [Testing](#-testing)
-- [Contributing](#-contributing)
-- [Building](#-building)
-- [License](#-license)
-- [Credits](#-credits)
-
-## ✨ Features
-
-- **Strong RFC 5545 Compliance**: 98%+ support for iCalendar core specification
-- **Modern Extensions**: RFC 7986 (98%), RFC 9073 (98%), RFC 9074 (98%), RFC 5546 iTIP (95%), RFC 5545 (98%)
+- **RFC 5545 Compliant**: Core iCalendar specification support (~95%)
+- **Modern RFC Extensions**: RFC 7986, RFC 9073, RFC 9074, RFC 5546 support
 - **Component Support**: VEVENT, VTODO, VJOURNAL, VFREEBUSY, VTIMEZONE, VALARM, VLOCATION, VRESOURCE, PARTICIPANT, VAVAILABILITY
-- **Property Support**: All standard iCalendar properties with validation
-- **Recurrence Rules**: Full RRULE support with complex patterns and exceptions
-- **Timezone Handling**: VTIMEZONE component support with daylight saving
-- **UTF-8 & Unicode**: Complete internationalization support
-- **Streaming Parser**: Memory-efficient parsing of large calendar files
-- **Validation**: Comprehensive validation with detailed error reporting
-- **Java 17+**: Modern Java with minimal, secure dependencies
-- **Thread-Safe**: Designed for concurrent applications
+- **Recurrence Rules**: Full RRULE support with EXDATE and RDATE exceptions
+- **Timezone Handling**: VTIMEZONE component with daylight saving support
+- **UTF-8 Support**: Full internationalization and Unicode handling
+- **Streaming Parser**: Memory-efficient parsing for large calendar files
+- **Java 17+**: Modern Java with minimal dependencies
 
-### ✅ Recent Enhancements
-
-The following features have been implemented to achieve 98%+ compliance across all RFCs:
-
-- **PARTICIPANT Component** (RFC 9073) - Rich participant metadata beyond ATTENDEE
-- **STYLED-DESCRIPTION Property** (RFC 9073) - HTML and rich-text descriptions
-- **CALENDAR-ADDRESS Property** (RFC 9073) - Calendar user addresses
-- **Calendar-Level Properties** (RFC 7986) - VCALENDAR metadata extensions (NAME, DESCRIPTION, UID, URL, LAST-MODIFIED, etc.)
-- **VALARM Extensions** (RFC 9074) - PROXIMITY and STRUCTURED-DATA properties
-- **Enhanced iTIP Support** (RFC 5546) - Complete METHOD support and flow testing
-
-## 🚀 Quick Start
-
-```java
-import us.k5n.ical.ICalendarParser;
-import us.k5n.ical.DefaultDataStore;
-import us.k5n.ical.Event;
-
-// Parse iCalendar data
-String icalData = """
-    BEGIN:VCALENDAR
-    VERSION:2.0
-    PRODID:-//Example Corp.//Calendar 1.0//EN
-    BEGIN:VEVENT
-    UID:1234567890@example.com
-    DTSTAMP:20230101T100000Z
-    DTSTART:20230101T100000Z
-    DTEND:20230101T110000Z
-    SUMMARY:Team Meeting
-    DESCRIPTION:Discuss project progress
-    END:VEVENT
-    END:VCALENDAR
-    """;
-
-ICalendarParser parser = new ICalendarParser();
-parser.parse(icalData);
-
-DefaultDataStore dataStore = (DefaultDataStore) parser.getDataStoreAt(0);
-Event event = dataStore.getAllEvents().get(0);
-
-System.out.println("Event: " + event.getSummary().getValue());
-```
-
-## 📦 Installation
+## Installation
 
 ### Maven
+
 ```xml
 <dependency>
     <groupId>us.k5n</groupId>
@@ -93,49 +32,56 @@ System.out.println("Event: " + event.getSummary().getValue());
 ```
 
 ### Gradle
-```gradle
+
+```groovy
 implementation 'us.k5n:javacaltools:2.0.0'
 ```
 
-### Manual Download
-Download the latest JAR from [Maven Central](https://search.maven.org/artifact/us.k5n/javacaltools) or [GitHub Releases](https://github.com/k5n/javacaltools/releases).
-
-## 💡 Usage
+## Quick Start
 
 ### Parsing iCalendar Data
 
 ```java
 import us.k5n.ical.ICalendarParser;
 import us.k5n.ical.DefaultDataStore;
+import us.k5n.ical.Event;
+
+String icalData = """
+    BEGIN:VCALENDAR
+    VERSION:2.0
+    PRODID:-//Example//Calendar//EN
+    BEGIN:VEVENT
+    UID:12345@example.com
+    DTSTAMP:20240101T100000Z
+    DTSTART:20240115T100000Z
+    DTEND:20240115T110000Z
+    SUMMARY:Team Meeting
+    END:VEVENT
+    END:VCALENDAR
+    """;
 
 ICalendarParser parser = new ICalendarParser();
-parser.parse(icalString); // or parser.parse(reader)
+parser.parse(icalData);
 
 DefaultDataStore dataStore = (DefaultDataStore) parser.getDataStoreAt(0);
-
-// Access parsed components
-List<Event> events = dataStore.getAllEvents();
-List<Todo> todos = dataStore.getAllTodos();
-List<Timezone> timezones = dataStore.getAllTimezones();
+Event event = dataStore.getAllEvents().get(0);
+System.out.println("Event: " + event.getSummary().getValue());
 ```
 
-### Creating Calendar Components
+### Creating Events
 
 ```java
 import us.k5n.ical.Event;
 import us.k5n.ical.Date;
 import us.k5n.ical.Summary;
-import us.k5n.ical.Description;
 
 Event event = new Event();
 event.setUid("unique-id@example.com");
-event.setDtstamp(new Date("20230101T100000Z"));
-event.setStartDate(new Date("20230101T100000Z"));
-event.setEndDate(new Date("20230101T110000Z"));
-event.setSummary(new Summary("Team Meeting"));
-event.setDescription(new Description("Discuss project progress"));
+event.setDtstamp(new Date("DTSTAMP", "20240101T100000Z"));
+event.setStartDate(new Date("DTSTART", "20240115T100000Z"));
+event.setEndDate(new Date("DTEND", "20240115T110000Z"));
+event.setSummary(new Summary("SUMMARY:Team Meeting"));
 
-// Generate iCalendar format
 String icalOutput = event.toICalendar();
 ```
 
@@ -144,30 +90,55 @@ String icalOutput = event.toICalendar();
 ```java
 import us.k5n.ical.Rrule;
 
-// Parse RRULE
-Rrule rrule = new Rrule("FREQ=WEEKLY;COUNT=10;BYDAY=MO,WE,FR");
-
-// Generate occurrence dates
+Rrule rrule = new Rrule("RRULE:FREQ=WEEKLY;COUNT=10;BYDAY=MO,WE,FR");
 List<Date> occurrences = rrule.generateRecurrances(startDate, endDate);
 ```
 
-### Timezone Support
+## RFC Compliance
 
-```java
-import us.k5n.ical.Timezone;
-import us.k5n.ical.Event;
+| RFC | Description | Status | Coverage |
+|-----|-------------|--------|----------|
+| [RFC 5545](https://datatracker.ietf.org/doc/html/rfc5545) | iCalendar Core Specification | Implemented | ~95% |
+| [RFC 7986](https://datatracker.ietf.org/doc/html/rfc7986) | New Properties for iCalendar | Implemented | ~85% |
+| [RFC 9073](https://datatracker.ietf.org/doc/html/rfc9073) | Event Publishing Extensions | Implemented | ~80% |
+| [RFC 9074](https://datatracker.ietf.org/doc/html/rfc9074) | VALARM Extensions | Implemented | ~90% |
+| [RFC 5546](https://datatracker.ietf.org/doc/html/rfc5546) | iTIP Protocol | Partial | ~70% |
+| [RFC 2445](https://datatracker.ietf.org/doc/html/rfc2445) | Original iCalendar (Legacy) | Supported | Backward Compatible |
 
-// Create timezone-aware event
-Event event = new Event();
-event.setStartDate(new Date("20230101T100000", "America/New_York"));
-event.setEndDate(new Date("20230101T110000", "America/New_York"));
-```
+### RFC 5545 - Core iCalendar
 
-## 📚 API Documentation
+**Components**: VEVENT, VTODO, VJOURNAL, VFREEBUSY, VTIMEZONE, VALARM
 
-- **Javadoc**: [Online API Documentation](https://javadoc.io/doc/us.k5n/javacaltools/latest/index.html)
-- **Examples**: See the `src/test/java` directory for comprehensive usage examples
-- **RFC References**: All classes and methods include RFC section references
+**Key Properties**:
+- Date/Time: DTSTART, DTEND, DURATION, DTSTAMP
+- Recurrence: RRULE, EXDATE, RDATE
+- Descriptive: SUMMARY, DESCRIPTION, LOCATION, CATEGORIES
+- Relationship: ATTENDEE, ORGANIZER, RELATED-TO
+- Status: STATUS, PRIORITY, SEQUENCE, TRANSP
+
+### RFC 7986 - Calendar Extensions
+
+**VCALENDAR Properties**: NAME, DESCRIPTION, UID, URL, LAST-MODIFIED
+
+**Component Properties**: COLOR, IMAGE, CONFERENCE
+
+### RFC 9073 - Event Publishing
+
+**Components**: PARTICIPANT, VLOCATION, VRESOURCE
+
+**Properties**: STYLED-DESCRIPTION, CALENDAR-ADDRESS, LOCATION-TYPE, RESOURCE-TYPE, PARTICIPANT-TYPE
+
+### RFC 9074 - VALARM Extensions
+
+**Properties**: PROXIMITY (location-based triggers), ACKNOWLEDGED, STRUCTURED-DATA
+
+### Known Limitations
+
+- REQUEST-STATUS property not implemented for iTIP
+- COUNTER/DECLINECOUNTER workflows are basic
+- Some RFC 7986 properties (REFRESH-INTERVAL, SOURCE) defined but not fully integrated
+
+## API Documentation
 
 ### Core Classes
 
@@ -175,207 +146,106 @@ event.setEndDate(new Date("20230101T110000", "America/New_York"));
 |-------|-------------|
 | `ICalendarParser` | Main parser for iCalendar data |
 | `DefaultDataStore` | Storage for parsed calendar components |
-| `Event` | VEVENT component representation |
-| `Todo` | VTODO component representation |
-| `Journal` | VJOURNAL component representation |
-| `Freebusy` | VFREEBUSY component representation |
-| `Timezone` | VTIMEZONE component representation |
-| `Valarm` | VALARM component representation |
+| `Event` | VEVENT component |
+| `Todo` | VTODO component |
+| `Journal` | VJOURNAL component |
+| `Freebusy` | VFREEBUSY component |
+| `Timezone` | VTIMEZONE component |
+| `Valarm` | VALARM component |
+| `Rrule` | Recurrence rule handling |
 | `Participant` | PARTICIPANT component (RFC 9073) |
 | `VLocation` | VLOCATION component (RFC 9073) |
 | `VResource` | VRESOURCE component (RFC 9073) |
-| `VAvailability` | VAVAILABILITY component representation |
-| `Rrule` | Recurrence rule handling |
-| `Property` | iCalendar property representation |
-| `StyledDescription` | STYLED-DESCRIPTION property (RFC 9073) |
-| `CalendarAddress` | CALENDAR-ADDRESS property (RFC 9073) |
 
-## 📋 RFC Compliance
-
-JavaCalTools provides comprehensive support for iCalendar standards with current compliance levels:
-
-- ✅ **RFC 5545** - Internet Calendaring and Scheduling Core Object Specification (iCalendar) - **98%+ Complete**
-  - Full support for VEVENT, VTODO, VJOURNAL, VFREEBUSY, VTIMEZONE, VALARM, VLOCATION, VRESOURCE, PARTICIPANT, VAVAILABILITY components
-  - Complete property and parameter support with validation
-  - Comprehensive recurrence rule handling (RRULE, EXDATE, RDATE)
-  - Advanced parameter validation and edge cases
-
-- ✅ **RFC 7986** - New Properties for iCalendar - **98%+ Complete**
-  - ✅ COLOR, IMAGE, CONFERENCE, STRUCTURED-DATA properties implemented
-  - ✅ Calendar-level NAME, DESCRIPTION, UID, URL, LAST-MODIFIED, REFRESH-INTERVAL, SOURCE properties
-  - Full VCALENDAR metadata extensions support
-
-- ✅ **RFC 9073** - Event Publishing Extensions to iCalendar - **98%+ Complete**
-  - ✅ PARTICIPANT component with rich participant metadata
-  - ✅ STYLED-DESCRIPTION property with HTML and rich-text support
-  - ✅ CALENDAR-ADDRESS property for calendar user addresses
-  - ✅ LOCATION-TYPE, RESOURCE-TYPE, PARTICIPANT-TYPE properties
-  - ✅ VLOCATION, VRESOURCE component support with structured data
-
-- ✅ **RFC 9074** - VALARM Extensions for iCalendar - **98%+ Complete**
-  - ✅ PROXIMITY property for location-based triggers
-  - ✅ STRUCTURED-DATA property in VALARM components
-  - Full location-based alarm support with multiple trigger types
-
-- ✅ **RFC 5546** - iCalendar Transport-Independent Interoperability Protocol (iTIP) - **95%+ Complete**
-  - ✅ All iTIP METHOD values supported with validation (PUBLISH, REQUEST, REPLY, ADD, CANCEL, REFRESH, COUNTER, DECLINECOUNTER)
-  - ✅ Complete iTIP flow testing and REQUEST→REPLY→UPDATE cycles
-  - Comprehensive scheduling state management
-  - ⚠️ Full iTIP protocol state machine and advanced scheduling logic (remaining 5%)
-
-### Compliance Validation
-
-The library includes 62 test classes with 568 comprehensive tests covering:
-- All RFC 5545 sections (3.1-4.0) with advanced parameter validation
-- Component validation and property handling
-- Data type parsing and formatting
-- Internationalization and Unicode support
-- Edge cases and error conditions
-- RFC extension properties and components
-- Cross-component references and serialization round-trips
-- Comprehensive RFC 9073, 7986, 9074, and 5546 coverage
-
-### Known Limitations
-
-While achieving 98%+ compliance, the following areas have minor gaps:
-
-- **Advanced iTIP Protocol Logic**: Full state machine for complex scheduling scenarios (remaining ~5% of RFC 5546)
-- **Some Rare Parameter Combinations**: Edge cases in parameter validation (covered by comprehensive testing)
-- **Experimental Features**: Very latest iCalendar extensions not yet standardized
-
-All core functionality for production iCalendar applications is fully supported.
-
-## 🧪 Testing
-
-Run the comprehensive test suite:
+## Testing
 
 ```bash
 mvn test
 ```
 
-### Test Coverage
+**Test Coverage**: 716 tests across 80+ test classes covering:
+- Component parsing and serialization
+- Property validation
+- Recurrence rule expansion
+- RFC compliance validation
+- Round-trip data preservation
+- Internationalization (UTF-8)
+- Error handling
 
-- **568 total tests** with 100% pass rate
-- **RFC compliance validation** across all supported specifications
-- **Internationalization testing** with UTF-8 and Unicode support
-- **Performance testing** for large calendar files
-- **Edge case testing** for malformed data handling
-- **Comprehensive extension testing** for RFC 9073, 7986, 9074 features
-
-## 🤝 Contributing
-
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
-
-### Development Setup
-
-1. **Prerequisites**: Java 17+, Maven 3.6+
-2. **Clone the repository**:
-   ```bash
-   git clone https://github.com/craigk5n/javacaltools.git
-   cd javacaltools
-   ```
-3. **Build the project**:
-   ```bash
-   mvn clean compile
-   ```
-4. **Run tests**:
-   ```bash
-   mvn test
-   ```
-
-### Code Style
-
-- Follow [Google Java Style Guide](https://google.github.io/styleguide/javaguide.html)
-- Use meaningful variable and method names
-- Include comprehensive JavaDoc comments
-- Add unit tests for all new functionality
-
-### Pull Request Process
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 🔨 Building
+## Building
 
 ### Requirements
 
 - Java 17 or higher
-- Maven 3.8+ (for building)
+- Maven 3.8+
 
-### Build Commands
+### Commands
 
 ```bash
-# Clean and build
+# Build
 mvn clean package
 
 # Run tests
 mvn test
 
-# Generate documentation
+# Generate Javadoc
 mvn javadoc:javadoc
 
-# Create source JAR
-mvn source:jar
-```
+# Code coverage report
+mvn test jacoco:report
 
-### Build Artifacts
-
-- `target/javacaltools-2.0.0.jar` - Main JAR file
-- `target/javacaltools-2.0.0-sources.jar` - Source JAR
-- `target/javacaltools-2.0.0-javadoc.jar` - Javadoc JAR
-- `target/javacaltools-2.0.0-tests.jar` - Test JAR with comprehensive test suite
-
-### Security Scanning
-
-```bash
-# Run OWASP dependency vulnerability check
+# Security scan
 mvn org.owasp:dependency-check-maven:check
 ```
 
-### Code Coverage
+### Artifacts
 
-```bash
-# Generate JaCoCo coverage report
-mvn test jacoco:report
-```
+- `target/javacaltools-2.0.0.jar` - Main library
+- `target/javacaltools-2.0.0-sources.jar` - Sources
+- `target/javacaltools-2.0.0-javadoc.jar` - Documentation
 
-### Publishing to Maven Central
+## Contributing
 
-This project is published to Maven Central. To deploy a new version:
+Contributions are welcome. Please:
 
-1. Create a release on GitHub
-2. The CI/CD pipeline will automatically deploy to OSSRH/Maven Central
-3. Requires GPG signing and OSSRH credentials in repository secrets
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/name`)
+3. Write tests for new functionality
+4. Ensure all tests pass (`mvn test`)
+5. Submit a pull request
 
-## 📄 License
+### Development Guidelines
 
-This project is licensed under the **GNU Lesser General Public License v2.1** - see the [LICENSE](LICENSE) file for details.
+- Follow existing code style
+- Add Javadoc for public methods
+- Include RFC references where applicable
+- Maintain backward compatibility
 
-The project bundles Google RFC 2445 Rrule code (now retired) - see [LICENSE-google-rfc-2445](LICENSE-google-rfc-2445) for details.
+## License
 
-## 🙏 Credits
+[GNU Lesser General Public License v2.1](LICENSE)
 
-- **Craig Knudsen** - Original author and maintainer
-- **Google RFC 2445 Project** - RRULE implementation (bundled)
-- **Open Source Community** - Bug reports, feature requests, and contributions
+This library includes bundled code from the Google RFC 2445 project. See [LICENSE-google-rfc-2445](LICENSE-google-rfc-2445) for details.
 
-## 📞 Support
+## Credits
+
+- **Craig Knudsen** - Author and maintainer
+- **Google RFC 2445 Project** - RRULE implementation
+
+## Support
 
 - **Issues**: [GitHub Issues](https://github.com/craigk5n/javacaltools/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/craigk5n/javacaltools/discussions)
 - **Email**: craig@k5n.us
 
-### Recent Updates
+## Changelog
 
-- **v2.0.0**: Complete RFC 9073 implementation with PARTICIPANT component, STYLED-DESCRIPTION, CALENDAR-ADDRESS, VLOCATION, VRESOURCE
-- **Full RFC 7986 Support**: Calendar-level properties (NAME, DESCRIPTION, UID, URL, LAST-MODIFIED, REFRESH-INTERVAL, SOURCE, COLOR)
-- **Enhanced VALARM Support**: RFC 9074 PROXIMITY and STRUCTURED-DATA properties for location-based alarms
-- **Advanced iTIP Coverage**: Complete METHOD support and REQUEST→REPLY→UPDATE flow testing
-- **98%+ RFC Compliance**: Across all supported specifications with 568 comprehensive tests
-- **New Components**: PARTICIPANT, VLOCATION, VRESOURCE with rich metadata support
-- **Performance Improvements**: Streaming parser for large files
-- **Unicode Support**: Full UTF-8 and internationalization
+### Version 2.0.0
 
+- Java 17+ requirement
+- RFC 9073 support (PARTICIPANT, VLOCATION, VRESOURCE, STYLED-DESCRIPTION)
+- RFC 9074 support (PROXIMITY, ACKNOWLEDGED in VALARM)
+- RFC 7986 VCALENDAR properties (NAME, DESCRIPTION, UID, URL, LAST-MODIFIED)
+- RFC 5546 iTIP support with METHOD validation
+- Improved text escaping per RFC 5545
+- 716 tests with comprehensive coverage
+- Performance improvements for large files

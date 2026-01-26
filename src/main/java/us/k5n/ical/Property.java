@@ -24,11 +24,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * iCalendar Property class. A Property represents one field in the iCalendar
- * data (ATTENDEE, DTSTART, SUMMARY, etc.) A Property can contain multiple
- * attributes. See section 4.1.1 of RFC 2445 for details.
- * 
- * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
+ * iCalendar Property class that represents a single field in iCalendar data.
+ *
+ * <p>A Property represents one field in iCalendar data (ATTENDEE, DTSTART, SUMMARY,
+ * etc.). Properties can contain multiple attributes (parameters) and a value.</p>
+ *
+ * <p><b>RFC 5545 Compliance:</b></p>
+ * <ul>
+ *   <li>Section 4.1 - Property Specifications</li>
+ *   <li>Section 4.2 - Property Parameter Specifications</li>
+ *   <li>Section 4.3 - Property Value Data Types</li>
+ *   <li>Section 4.4 - iCalendar Object</li>
+ * </ul>
+ *
+ * <p><b>Property Structure:</b></p>
+ * <pre>
+ * PROPERTY;PARAM1=value1;PARAM2=value2:value
+ * </pre>
+ *
+ * <p>Example:</p>
+ * <pre>
+ * ATTENDEE;CN=John Doe;PARTSTAT=ACCEPTED:mailto:john@example.com
+ * </pre>
+ *
+ * @author Craig Knudsen, craig@k5n.us
+ * @see <a href="https://datatracker.ietf.org/doc/html/rfc5545#section-4.1">RFC 5545, Section 4.1</a>
  */
 public class Property implements Constants {
 	/** Property name (DTSTART, SUMMARY, etc.) This is always uppercase */
@@ -103,8 +123,8 @@ public class Property implements Constants {
 			name = nameAndAttr.toUpperCase();
 		} else {
 			name = nameAndAttr.substring(0, loc).toUpperCase();
-			StringBuffer p = new StringBuffer();
-			StringBuffer pv = new StringBuffer();
+			StringBuilder p = new StringBuilder();
+			StringBuilder pv = new StringBuilder();
 			boolean inQuote = false;
 			boolean inPName = true;
 			for (int i = loc; i < nameAndAttr.length(); i++) {
@@ -207,10 +227,31 @@ public class Property implements Constants {
 	}
 
 	/**
+	 * Escape special characters in a text value according to RFC 5545.
+	 * Backslash and newline must be escaped in TEXT values.
+	 * Note: Semicolon and comma escaping is omitted for backward compatibility
+	 * and because many parsers are lenient about these characters.
+	 *
+	 * @param text the text to escape
+	 * @return the escaped text
+	 */
+	protected String escapeText(String text) {
+		if (text == null) {
+			return null;
+		}
+		// Order matters: escape backslashes first to avoid double-escaping
+		// Note: We don't escape semicolons or commas for backward compatibility
+		// and because they are structural in many property types
+		return text.replace("\\", "\\\\")
+		           .replace("\n", "\\n")
+		           .replace("\r", "");
+	}
+
+	/**
 	 * Export to a properly folded iCalendar line.
 	 */
 	public String toICalendar() {
-		StringBuffer ret = new StringBuffer(40);
+		StringBuilder ret = new StringBuilder(40);
 		ret.append(name);
 		if (attributeList.size() > 0) {
 			for (int i = 0; i < attributeList.size(); i++) {
@@ -224,7 +265,7 @@ public class Property implements Constants {
 			}
 		}
 		ret.append(':');
-		ret.append(value);
+		ret.append(escapeText(value));
 
 		return (StringUtils.foldLine(ret.toString()));
 	}

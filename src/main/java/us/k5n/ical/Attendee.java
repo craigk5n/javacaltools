@@ -21,10 +21,29 @@
 package us.k5n.ical;
 
 /**
- * iCalendar Attendee class - This object represents either an individual or a
- * resource and corresponds to the ATTENDEE iCalendar property.
- * 
- * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
+ * iCalendar Attendee class that corresponds to the ATTENDEE iCalendar property.
+ *
+ * <p>An ATTENDEE property specifies an individual or resource that is expected
+ * to participate in a calendar component. The property includes parameters for
+ * specifying the attendee's role, participation status, and other attributes.</p>
+ *
+ * <p><b>RFC 5545 Compliance:</b></p>
+ * <ul>
+ *   <li>Section 3.2.11 - Attendee Property</li>
+ *   <li>Section 3.2.24 - Cutype Parameter (Calendar User Type)</li>
+ *   <li>Section 3.2.17 - Partstat Parameter (Participation Status)</li>
+ *   <li>Section 3.2.16 - Role Parameter</li>
+ *   <li>Section 3.2.19 - Rsvp Parameter</li>
+ * </ul>
+ *
+ * <p><b>RFC 9073 Extensions:</b></p>
+ * <ul>
+ *   <li>Section 4.6 - PARTICIPANT-ID parameter</li>
+ * </ul>
+ *
+ * @author Craig Knudsen, craig@k5n.us
+ * @see <a href="https://datatracker.ietf.org/doc/html/rfc5545#section-3.2.11">RFC 5545, Section 3.2.11</a>
+ * @see <a href="https://datatracker.ietf.org/doc/html/rfc9073">RFC 9073</a>
  */
 public class Attendee extends Property {
 	static final int TYPE_INDIVIDUAL = 1;

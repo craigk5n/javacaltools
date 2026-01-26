@@ -21,106 +21,114 @@
 package us.k5n.ical;
 
 /**
- * iCalendar constants
- * 
- * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
+ * iCalendar constants interface defining all RFC-compliant constants.
+ *
+ * <p>Note: In Java interfaces, all fields are implicitly {@code public static final}.
+ * While implicit declaration works, explicit declaration is preferred for clarity
+ * and to follow Java best practices.</p>
+ *
+ * @author Craig Knudsen, craig@k5n.us
  */
 public interface Constants {
 	/**
 	 * Parse iCalendar data strictly. ParseException errors will be generated for
 	 * all errors. This would typically be used to validate an iCalendar data file
-	 * rather than by an application intersted in loading iCalendar data.
+	 * rather than by an application interested in loading iCalendar data.
 	 */
-	static public final int PARSE_STRICT = 1;
+	public static final int PARSE_STRICT = 1;
 	/**
 	 * Don't parse iCalendar data strictly. (This is the default in most cases.)
 	 * Attempt to parse and derive as much from the iCalendar data as possible.
 	 */
-	static public final int PARSE_LOOSE = 2;
+	public static final int PARSE_LOOSE = 2;
+
+	/**
+	 * Parse iCalendar data in RFC 2445 compatibility mode.
+	 * Supports deprecated properties and syntax from the original iCalendar specification.
+	 */
+	public static final int PARSE_RFC2445 = 3;
 
 	/** Line termination string. */
-	static public final String CRLF = "\r\n";
+	public static final String CRLF = "\r\n";
 
 	/** Carriage return character */
-	static public final int CR = 13;
+	public static final int CR = 13;
 	/** Line feed character */
-	static public final int LF = 10;
+	public static final int LF = 10;
 	/** Tab character */
-	static public final int TAB = 9;
+	public static final int TAB = 9;
 	/** Space character */
-	static public final int SPACE = 32;
+	public static final int SPACE = 32;
 
 	/** Maximum line length acceptable in iCalendar (excluding CRLF) */
-	static public final int MAX_LINE_LENGTH = 75;
+	public static final int MAX_LINE_LENGTH = 75;
 
 	/** iCalendar major version */
-	static public final int ICAL_VERSION_MAJOR = 2;
+	public static final int ICAL_VERSION_MAJOR = 2;
 	/** iCalendar minor version */
-	static public final int ICAL_VERSION_MINOR = 0;
+	public static final int ICAL_VERSION_MINOR = 0;
 
 	/** iCalendar PUBLIC class (default) */
-	static public final int PUBLIC = 0;
+	public static final int PUBLIC = 0;
 	/** iCalendar PRIVATE class */
-	static public final int PRIVATE = 1;
+	public static final int PRIVATE = 1;
 	/** iCalendar CONFIDENTIAL class */
-	static public final int CONFIDENTIAL = 2;
+	public static final int CONFIDENTIAL = 2;
 
 	/** iCalendar Status not defined */
-	static public final int STATUS_UNDEFINED = -1;
+	public static final int STATUS_UNDEFINED = -1;
 	/** iCalendar Status tentative (VEVENT only) */
-	static public final int STATUS_TENTATIVE = 1;
+	public static final int STATUS_TENTATIVE = 1;
 	/** iCalendar Status confirmed (VEVENT only) */
-	static public final int STATUS_CONFIRMED = 2;
-	/** iCalendar Status confirmed (VEVENT only) */
-	static public final int STATUS_CANCELLED = 3;
+	public static final int STATUS_CONFIRMED = 2;
+	/** iCalendar Status cancelled (VEVENT only) */
+	public static final int STATUS_CANCELLED = 3;
 	/** iCalendar Status needs action (VTODO only) */
-	static public final int STATUS_NEEDS_ACTION = 4;
-	/** iCalendar Status needs action (VTODO only) */
-	static public final int STATUS_COMPLETED = 5;
+	public static final int STATUS_NEEDS_ACTION = 4;
+	/** iCalendar Status completed (VTODO only) */
+	public static final int STATUS_COMPLETED = 5;
 	/** iCalendar Status in process (VTODO only) */
-	static public final int STATUS_IN_PROCESS = 6;
-	/** iCalendar Status needs action (VJOURNAL only) */
-	static public final int STATUS_DRAFT = 7;
-	/** iCalendar Status needs action (VJOURNAL only) */
-	static public final int STATUS_FINAL = 8;
+	public static final int STATUS_IN_PROCESS = 6;
+	/** iCalendar Status draft (VJOURNAL only) */
+	public static final int STATUS_DRAFT = 7;
+	/** iCalendar Status final (VJOURNAL only) */
+	public static final int STATUS_FINAL = 8;
 
 	/** iCalendar transparent (event does not show up in freebusy searches) */
-	static public final int TRANSP_TRANSPARENT = 1;
+	public static final int TRANSP_TRANSPARENT = 1;
 	/** iCalendar opaque (event does show up in freebusy searches) */
-	static public final int TRANSP_OPAQUE = 1; // default value in RFC2445 is
-																							// OPAQUE
+	public static final int TRANSP_OPAQUE = 1;
 
-	/* iCalendar version (in N.N String format) */
-	static public final String ICAL_VERSION = ICAL_VERSION_MAJOR + "."
-	    + ICAL_VERSION_MINOR;
+	/** iCalendar version string (in N.N format) */
+	public static final String ICAL_VERSION = ICAL_VERSION_MAJOR + "." + ICAL_VERSION_MINOR;
 
-	/* iTIP METHOD types */
-	static public final String METHOD_PUBLISH = "PUBLISH";
-	static public final String METHOD_REQUEST = "REQUEST";
-	static public final String METHOD_REPLY = "REPLY";
-	static public final String METHOD_ADD = "ADD";
-	static public final String METHOD_CANCEL = "CANCEL";
-	static public final String METHOD_REFRESH = "REFRESH";
-	static public final String METHOD_COUNTER = "COUNTER";
-	static public final String METHOD_DECLINECOUNTER = "DECLINECOUNTER";
+	/* iTIP METHOD types (RFC 5546) */
+	public static final String METHOD_PUBLISH = "PUBLISH";
+	public static final String METHOD_REQUEST = "REQUEST";
+	public static final String METHOD_REPLY = "REPLY";
+	public static final String METHOD_ADD = "ADD";
+	public static final String METHOD_CANCEL = "CANCEL";
+	public static final String METHOD_REFRESH = "REFRESH";
+	public static final String METHOD_COUNTER = "COUNTER";
+	public static final String METHOD_DECLINECOUNTER = "DECLINECOUNTER";
 
 	/* RFC 9073 Property Names */
-	static public final String LOCATION_TYPE = "LOCATION-TYPE";
-	static public final String RESOURCE_TYPE = "RESOURCE-TYPE";
-	static public final String PARTICIPANT_TYPE = "PARTICIPANT-TYPE";
-	static public final String CALENDAR_ADDRESS = "CALENDAR-ADDRESS";
-	static public final String STYLED_DESCRIPTION = "STYLED-DESCRIPTION";
+	public static final String LOCATION_TYPE = "LOCATION-TYPE";
+	public static final String RESOURCE_TYPE = "RESOURCE-TYPE";
+	public static final String PARTICIPANT_TYPE = "PARTICIPANT-TYPE";
+	public static final String CALENDAR_ADDRESS = "CALENDAR-ADDRESS";
+	public static final String STYLED_DESCRIPTION = "STYLED-DESCRIPTION";
 
 	/* RFC 9074 Property Names */
-	static public final String PROXIMITY = "PROXIMITY";
+	public static final String PROXIMITY = "PROXIMITY";
 
 	/* RFC 7986 Property Names */
-	static public final String NAME = "NAME";
-	static public final String DESCRIPTION = "DESCRIPTION";
-	static public final String UID = "UID";
-	static public final String URL = "URL";
-	static public final String LAST_MODIFIED = "LAST-MODIFIED";
-	static public final String REFRESH_INTERVAL = "REFRESH-INTERVAL";
-	static public final String SOURCE = "SOURCE";
-	static public final String COLOR = "COLOR";
+	public static final String NAME = "NAME";
+	public static final String DESCRIPTION = "DESCRIPTION";
+	public static final String UID = "UID";
+	public static final String URL = "URL";
+	public static final String LAST_MODIFIED = "LAST-MODIFIED";
+	public static final String REFRESH_INTERVAL = "REFRESH-INTERVAL";
+	public static final String SOURCE = "SOURCE";
+	public static final String COLOR = "COLOR";
 }

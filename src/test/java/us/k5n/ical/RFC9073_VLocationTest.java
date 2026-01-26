@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
  * Tests for the VLOCATION component as defined in RFC 9073, Section 7.2.
  * VLOCATION provides rich information about event locations using structured data.
  *
- * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
+ * @author Craig Knudsen, craig@k5n.us
  */
  public class RFC9073_VLocationTest {
 

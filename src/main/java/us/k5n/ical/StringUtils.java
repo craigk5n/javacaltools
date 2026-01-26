@@ -23,7 +23,7 @@ package us.k5n.ical;
 /**
  * iCalendar StringFormatter utility class
  * 
- * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
+ * @author Craig Knudsen, craig@k5n.us
  */
 public class StringUtils implements Constants {
 
@@ -109,13 +109,13 @@ public class StringUtils implements Constants {
 			char ch = line.charAt ( i );
 			char ch2 = ( i + 1 < line.length () ? line.charAt ( i + 1 ) : 0 );
 			char ch3 = ( i + 2 < line.length () ? line.charAt ( i + 2 ) : 0 );
-			if ( ch == '\\' && ch2 == 'n' && ch == '=' && parseMode == PARSE_LOOSE ) {
-				// Convert "\\\n=" into CRLF
+			if ( ch == '\\' && ch2 == 'n' && ch3 == '=' && parseMode == PARSE_LOOSE ) {
+				// Convert "\n=" sequence into CRLF (skip the '=')
 				// This is another Mozilla Sunbird hack
 				ret.append ( CRLF );
-				i++;
+				i += 2; // skip 'n' and '='
 				len = 0;
-			}
+			} else
 			if ( ch == '\\' && ch2 == 'n' ) {
 				// Convert "\\\n" into CRLF
 				ret.append ( CRLF );

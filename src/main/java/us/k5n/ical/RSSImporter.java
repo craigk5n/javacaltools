@@ -22,7 +22,7 @@ import org.xml.sax.SAXException;
  * A simple RSS 2.0 parser that will import as much relavant data as possible
  * from the RSS format.
  * 
- * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
+ * @author Craig Knudsen, craig@k5n.us
  */
 public class RSSImporter extends CalendarParser {
 

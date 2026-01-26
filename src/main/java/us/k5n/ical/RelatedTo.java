@@ -28,7 +28,7 @@ package us.k5n.ical;
  * there is a relationship of some kind (for example, "child" or "sibling")
  * between the different calendar components specified by each UID parameter value.
  *
- * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
+ * @author Craig Knudsen, craig@k5n.us
  */
 public class RelatedTo extends Property {
 	/**

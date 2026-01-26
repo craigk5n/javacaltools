@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2006 Craig Knudsen and other authors
+ * Copyright (C) 2005-2024 Craig Knudsen and other authors
  * (see AUTHORS for a complete list)
  *
  * JavaCalTools is free software; you can redistribute it and/or modify
@@ -26,66 +26,33 @@ package us.k5n.ical;
  *
  * NAME specifies the name of the calendar for presentation to users.
  *
- * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
+ * @author Craig Knudsen, craig@k5n.us
  */
-public class Name extends Property {
+public class Name extends SimpleProperty {
 
     /**
-     * Constructor
+     * Default constructor
      */
     public Name() {
-        super("NAME", "");
+        super("NAME");
     }
 
     /**
-     * Constructor
+     * Constructor from iCalendar string
      *
-     * @param icalStr
-     *          One or more lines of iCalendar that specifies a calendar name
+     * @param icalStr One or more lines of iCalendar that specifies a calendar name
      */
     public Name(String icalStr) throws ParseException {
-        this(icalStr, PARSE_LOOSE);
+        super("NAME", icalStr);
     }
 
     /**
-     * Constructor
+     * Constructor from iCalendar string with parse mode
      *
-     * @param icalStr
-     *          One or more lines of iCalendar that specifies a calendar name
-     * @param parseMode
-     *          PARSE_STRICT or PARSE_LOOSE
+     * @param icalStr   One or more lines of iCalendar that specifies a calendar name
+     * @param parseMode PARSE_STRICT or PARSE_LOOSE
      */
     public Name(String icalStr, int parseMode) throws ParseException {
-        super(icalStr, parseMode);
-    }
-
-    /**
-     * Convert the calendar name to iCalendar format
-     *
-     * @return iCalendar formatted string
-     */
-    public String toICalendar() {
-        StringBuffer ret = new StringBuffer();
-        ret.append("NAME");
-
-        // Add parameters if any
-        if (!attributeList.isEmpty()) {
-            for (Attribute attr : attributeList) {
-                ret.append(";").append(attr.name);
-                if (attr.value != null && !attr.value.isEmpty()) {
-                    ret.append("=").append(attr.value);
-                }
-            }
-        }
-
-        ret.append(":").append(getValue()).append(CRLF);
-        return ret.toString();
-    }
-
-    /**
-     * Convert to string representation
-     */
-    public String toString() {
-        return "Name[value=" + getValue() + "]";
+        super("NAME", icalStr, parseMode);
     }
 }

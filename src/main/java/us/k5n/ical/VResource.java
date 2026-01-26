@@ -30,7 +30,7 @@ import java.util.List;
  * VRESOURCE provides typed references to external information about resources
  * used by calendar entities (rooms, projectors, conferencing capabilities, etc.).
  *
- * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
+ * @author Craig Knudsen, craig@k5n.us
  */
 public class VResource extends Property {
     /** Resource UID */

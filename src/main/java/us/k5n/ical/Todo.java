@@ -25,61 +25,88 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * iCalendar Todo class that corresponds to a VTODO iCalendar object.
- * A VTODO component describes a to-do item, such as a work item or a project.
- * 
- * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
+ * iCalendar Todo class that corresponds to the VTODO iCalendar component.
+ *
+ * <p>A VTODO component describes a to-do item, such as a work item or a project.
+ * Todos are similar to events but include additional properties for tracking
+ * progress, completion status, and due dates.</p>
+ *
+ * <p><b>RFC 5545 Compliance:</b></p>
+ * <ul>
+ *   <li>Section 3.6.2 - To-Do Component</li>
+ *   <li>Section 3.2 - Property Specifications (DTSTART, DUE, SUMMARY, etc.)</li>
+ *   <li>Section 3.2.19 - PERCENT-COMPLETE property</li>
+ *   <li>Section 3.2.4 - COMPLETED property</li>
+ *   <li>Section 3.2.32 - STATUS property with VTODO-specific values</li>
+ * </ul>
+ *
+ * <p><b>RFC 9073 Extensions:</b></p>
+ * <ul>
+ *   <li>Section 4.1 - STYLED-DESCRIPTION property</li>
+ * </ul>
+ *
+ * <p><b>RFC 7986 Extensions:</b></p>
+ * <ul>
+ *   <li>Section 6.1 - IMAGE property</li>
+ *   <li>Section 6.2 - CONFERENCE property</li>
+ *   <li>Section 6.3 - STRUCTURED-DATA property</li>
+ * </ul>
+ *
+ * @author Craig Knudsen, craig@k5n.us
+ * @see <a href="https://datatracker.ietf.org/doc/html/rfc5545#section-3.6.2">RFC 5545, Section 3.6.2</a>
+ * @see <a href="https://datatracker.ietf.org/doc/html/rfc9073">RFC 9073</a>
+ * @see <a href="https://datatracker.ietf.org/doc/html/rfc7986">RFC 7986</a>
  */
 public class Todo implements Constants {
-	/** Unique Id */
+	/** Unique Id (RFC 5545 Section 3.2.20) */
 	protected Uid uid = null;
-	/** Sequence number (0 is first version) */
+	/** Sequence number (RFC 5545 Section 3.2.22) - 0 is first version */
 	protected Sequence sequence = null;
-	/** Brief summary */
+	/** Brief summary (RFC 5545 Section 3.2.35) */
 	protected Summary summary = null;
-	/** Full description */
+	/** Full description (RFC 5545 Section 3.2.4) */
 	protected Description description = null;
-	/** Styled description (RFC 9073) */
+	/** Styled description (RFC 9073 Section 4.1) */
 	protected StyledDescription styledDescription = null;
-	/** Comment */
+	/** Comment (RFC 5545 Section 3.2.16) */
 	protected Comment comment = null;
-	/** Classification (PUBLIC, CONFIDENTIAL, PRIVATE) */
+	/** Classification (RFC 5545 Section 3.2.2) - PUBLIC, CONFIDENTIAL, PRIVATE */
 	protected Classification classification = null;
-	/** List of categories (comma-separated) */
+	/** List of categories (RFC 5545 Section 3.2.1) - comma-separated */
 	protected Categories categories = null;
-	/** Date created */
+	/** Date created (RFC 5545 Section 3.2.3) */
 	protected Date createdDate = null;
-	/** Primary start date */
+	/** Primary start date (RFC 5545 Section 3.2.6) */
 	protected Date startDate = null;
-	/** End date */
+	/** End date (RFC 5545 Section 3.2.7) */
 	protected Date endDate = null;
-	/** Due date */
+	/** Due date (RFC 5545 Section 3.2.13) */
 	protected Date dueDate = null;
-	/** Time created */
+	/** Time created (RFC 5545 Section 3.2.5) */
 	protected Date dtstamp = null;
-	/** Time last modified */
+	/** Time last modified (RFC 5545 Section 3.2.9) */
 	protected Date lastModified = null;
-	/** Priority (1-9, 0 is undefined) */
+	/** Priority (RFC 5545 Section 3.2.17) - 1-9, 0 is undefined */
 	protected Integer priority = null;
-	/** Percentage complete (0-100) */
+	/** Percentage complete (RFC 5545 Section 3.2.19) - 0-100 */
 	protected Integer percentComplete = null;
-	/** Date completed */
+	/** Date completed (RFC 5545 Section 3.2.4) */
 	protected Date completed = null;
-	/** Event status */
+	/** Status (RFC 5545 Section 3.2.32) - NEEDS-ACTION, COMPLETED, IN-PROCESS, CANCELLED */
 	protected int status = STATUS_UNDEFINED;
-	/** URL */
+	/** URL (RFC 5545 Section 3.2.39) */
 	protected URL url = null;
-	/** Location */
+	/** Location (RFC 5545 Section 3.2.10) */
 	protected Location location = null;
-	/** Location reference (UID of VLOCATION) */
+	/** Location reference (UID of VLOCATION - RFC 9073 Section 7.2) */
 	protected String locationId = null;
-	/** Resource references (List of VRESOURCE UIDs) */
+	/** Resource references (List of VRESOURCE UIDs - RFC 9073 Section 7.3) */
 	protected List<String> resourceIds = null;
-	/** Availability references (List of VAVAILABILITY UIDs) */
+	/** Availability references (List of VAVAILABILITY UIDs - RFC 9073 Section 7.4) */
 	protected List<String> availabilityIds = null;
-	/** Color */
+	/** Color (RFC 7986 Section 5.7) */
 	protected String color = null;
-	/** Image URI */
+	/** Image URI (RFC 7986 Section 6.1) */
 	protected String imageUri = null;
 	/** Conference URI */
 	protected String conferenceUri = null;
@@ -1088,7 +1115,7 @@ public class Todo implements Constants {
 
 		ret.append("END:VTODO");
 		ret.append(CRLF);
-		return Utils.foldLines(ret.toString());
+		return ret.toString();
 	}
 
 	/**

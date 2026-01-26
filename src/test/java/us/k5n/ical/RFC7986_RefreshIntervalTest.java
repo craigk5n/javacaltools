@@ -18,7 +18,7 @@ import org.junit.jupiter.api.Test;
  * Tests for the REFRESH-INTERVAL property as defined in RFC 7986, Section 5.7.
  * REFRESH-INTERVAL specifies a suggested minimum interval for polling for changes.
  *
- * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
+ * @author Craig Knudsen, craig@k5n.us
  */
  public class RFC7986_RefreshIntervalTest {
 

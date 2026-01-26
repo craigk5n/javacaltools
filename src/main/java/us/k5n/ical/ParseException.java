@@ -23,7 +23,7 @@ package us.k5n.ical;
 /**
  * iCalendar Parsing Exception.
  * 
- * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
+ * @author Craig Knudsen, craig@k5n.us
  */
 public class ParseException extends Exception {
   private static final long serialVersionUID = 1L;

@@ -29,7 +29,7 @@ import us.k5n.ical.Constants;
  * A simple implementation of the DataStore interface. This is the default
  * implementation used by IcalParser class.
  * 
- * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
+ * @author Craig Knudsen, craig@k5n.us
  * @see CalendarParser
  */
 public class DefaultDataStore implements DataStore {
@@ -45,6 +45,14 @@ public class DefaultDataStore implements DataStore {
 	Property method;
 	String name;
 	String calendarAddress;
+	/** VCALENDAR-level DESCRIPTION (RFC 7986) */
+	String description;
+	/** VCALENDAR-level UID (RFC 7986) */
+	String uid;
+	/** VCALENDAR-level URL (RFC 7986) */
+	String url;
+	/** VCALENDAR-level LAST-MODIFIED (RFC 7986) */
+	Date lastModified;
 
 	/**
 	 * Constructor
@@ -267,6 +275,78 @@ public class DefaultDataStore implements DataStore {
 	}
 
 	/**
+	 * Set the DESCRIPTION property for VCALENDAR (RFC 7986).
+	 *
+	 * @param description the calendar description
+	 */
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	/**
+	 * Get the DESCRIPTION property for VCALENDAR (RFC 7986).
+	 *
+	 * @return the calendar description
+	 */
+	public String getDescription() {
+		return description;
+	}
+
+	/**
+	 * Set the UID property for VCALENDAR (RFC 7986).
+	 *
+	 * @param uid the calendar UID
+	 */
+	public void setUid(String uid) {
+		this.uid = uid;
+	}
+
+	/**
+	 * Get the UID property for VCALENDAR (RFC 7986).
+	 *
+	 * @return the calendar UID
+	 */
+	public String getUid() {
+		return uid;
+	}
+
+	/**
+	 * Set the URL property for VCALENDAR (RFC 7986).
+	 *
+	 * @param url the calendar URL
+	 */
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+	/**
+	 * Get the URL property for VCALENDAR (RFC 7986).
+	 *
+	 * @return the calendar URL
+	 */
+	public String getUrl() {
+		return url;
+	}
+
+	/**
+	 * Set the LAST-MODIFIED property for VCALENDAR (RFC 7986).
+	 *
+	 * @param lastModified the last modified date
+	 */
+	public void setLastModified(Date lastModified) {
+		this.lastModified = lastModified;
+	}
+
+	/**
+	 * Get the LAST-MODIFIED property for VCALENDAR (RFC 7986).
+	 *
+	 * @return the last modified date
+	 */
+	public Date getLastModified() {
+		return lastModified;
+	}
+
+	/**
 	 * Generate iCalendar format string for the entire calendar.
 	 *
 	 * @return The iCalendar string
@@ -285,6 +365,19 @@ public class DefaultDataStore implements DataStore {
 		}
 		if (calendarAddress != null) {
 			sb.append("CALENDAR-ADDRESS:").append(calendarAddress).append(Constants.CRLF);
+		}
+		// RFC 7986 VCALENDAR-level properties
+		if (description != null) {
+			sb.append("DESCRIPTION:").append(description).append(Constants.CRLF);
+		}
+		if (uid != null) {
+			sb.append("UID:").append(uid).append(Constants.CRLF);
+		}
+		if (url != null) {
+			sb.append("URL:").append(url).append(Constants.CRLF);
+		}
+		if (lastModified != null) {
+			sb.append(lastModified.toICalendar());
 		}
 
 		// Add components
@@ -315,6 +408,6 @@ public class DefaultDataStore implements DataStore {
 
 		sb.append("END:VCALENDAR").append(Constants.CRLF);
 
-		return Utils.foldLines(sb.toString());
+		return sb.toString();
 	}
 }

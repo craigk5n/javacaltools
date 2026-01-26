@@ -28,7 +28,7 @@ import java.util.List;
  * A VTIMEZONE component defines a time zone and typically contains one or more
  * sub-components that describe daylight saving time observances within the time zone.
  * 
- * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
+ * @author Craig Knudsen, craig@k5n.us
  */
 public class Timezone implements Constants {
 	/** Timezone identifier (required) */
@@ -55,7 +55,7 @@ public class Timezone implements Constants {
 	public Timezone(CalendarParser parser, int initialLine, List<String> textLines) {
 		standards = new ArrayList<TimezoneStandard>();
 		daylight = new ArrayList<TimezoneDaylight>();
-		
+
 		for (int i = 0; i < textLines.size(); i++) {
 			String line = textLines.get(i);
 			try {
@@ -96,11 +96,13 @@ public class Timezone implements Constants {
 		} else if (up.startsWith("LAST-MODIFIED:")) {
 			lastModified = new Date(icalStr);
 		} else if (up.startsWith("BEGIN:STANDARD")) {
-			// This shouldn't happen here - standard components should be parsed separately
-			throw new ParseException("STANDARD component found outside VTIMEZONE context", icalStr);
+			// Ignore - STANDARD components are parsed separately
+		} else if (up.startsWith("END:STANDARD")) {
+			// Ignore - STANDARD components are parsed separately
 		} else if (up.startsWith("BEGIN:DAYLIGHT")) {
-			// This shouldn't happen here - daylight components should be parsed separately
-			throw new ParseException("DAYLIGHT component found outside VTIMEZONE context", icalStr);
+			// Ignore - DAYLIGHT components are parsed separately
+		} else if (up.startsWith("END:DAYLIGHT")) {
+			// Ignore - DAYLIGHT components are parsed separately
 		} else if (up.startsWith("TZURL:")) {
 			url = new URL(icalStr);
 		} else if (isParseStrict(parseMethod)) {

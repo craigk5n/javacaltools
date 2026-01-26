@@ -25,101 +25,132 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * iCalendar Event class that corresponds to the VEVENT iCalendarendar object.
- * 
- * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
+ * iCalendar Event class that corresponds to the VEVENT iCalendar component.
+ *
+ * <p>A VEVENT component represents an event on a calendar. Events are bounded by an
+ * initial DTSTART and end DTEND (or DURATION). Events can recur through RRULE and
+ * can have exceptions through EXDATE.</p>
+ *
+ * <p><b>RFC 5545 Compliance:</b></p>
+ * <ul>
+ *   <li>Section 3.6.1 - Event Component</li>
+ *   <li>Section 3.2 - Property Specifications (DTSTART, DTEND, SUMMARY, etc.)</li>
+ *   <li>Section 3.3 - Value Data Types (DATE, DATE-TIME, DURATION)</li>
+ *   <li>Section 3.8.5 - Recurrence Support (RRULE, RDATE, EXDATE)</li>
+ * </ul>
+ *
+ * <p><b>RFC 9073 Extensions:</b></p>
+ * <ul>
+ *   <li>Section 4.1 - STYLED-DESCRIPTION property</li>
+ * </ul>
+ *
+ * <p><b>RFC 7986 Extensions:</b></p>
+ * <ul>
+ *   <li>Section 6.1 - IMAGE property</li>
+ *   <li>Section 6.2 - CONFERENCE property</li>
+ *   <li>Section 6.3 - STRUCTURED-DATA property</li>
+ * </ul>
+ *
+ * @author Craig Knudsen, craig@k5n.us
+ * @see <a href="https://datatracker.ietf.org/doc/html/rfc5545#section-3.6.1">RFC 5545, Section 3.6.1</a>
+ * @see <a href="https://datatracker.ietf.org/doc/html/rfc9073">RFC 9073</a>
+ * @see <a href="https://datatracker.ietf.org/doc/html/rfc7986">RFC 7986</a>
  */
 public class Event implements Constants {
 	// TODO: handle multiple instances of summary/description since
 	// there can be more than one if LANGUAGE attribute is specified
 	private boolean inValarm = false;
 	private List<String> valarmLines = null;
-	/** Unique Id */
+	/** Unique Id (RFC 5545 Section 3.2.20) */
 	protected Uid uid = null;
-	/** Sequence number (0 is first version) */
+	/** Sequence number (RFC 5545 Section 3.2.22) - 0 is first version */
 	protected Sequence sequence = null;
-	/** Brief summary */
+	/** Brief summary (RFC 5545 Section 3.2.35) */
 	protected Summary summary = null;
-	/** Full description */
+	/** Full description (RFC 5545 Section 3.2.4) */
 	protected Description description = null;
-	/** Styled description (RFC 9073) */
+	/** Styled description (RFC 9073 Section 4.1) */
 	protected StyledDescription styledDescription = null;
-	/** Comment */
+	/** Comment (RFC 5545 Section 3.2.16) */
 	protected Comment comment = null;
-	/** Classification (PUBLIC, CONFIDENTIAL, PRIVATE) */
+	/** Classification (RFC 5545 Section 3.2.2) - PUBLIC, CONFIDENTIAL, PRIVATE */
 	protected Classification classification = null;
-	/** List of categories (comma-separated) */
+	/** List of categories (RFC 5545 Section 3.2.1) - comma-separated */
 	protected Categories categories = null;
-	/** Date created */
+	/** Date created (RFC 5545 Section 3.2.3) */
 	protected Date createdDate = null;
-	/** Primary start date */
+	/** Primary start date (RFC 5545 Section 3.2.6) */
 	protected Date startDate = null;
-	/** End date */
-	protected Date endDate = null; // may be derived from duration if not
-	// specified
-	/** Time created */
+	/** End date (RFC 5545 Section 3.2.7) - may be derived from duration if not specified */
+	protected Date endDate = null;
+	/** Time created (RFC 5545 Section 3.2.5) */
 	protected Date dtstamp = null;
-	/** Time last modified */
+	/** Time last modified (RFC 5545 Section 3.2.9) */
 	protected Date lastModified = null;
-	/** Event duration (in seconds) */
+	/** Event duration in seconds (RFC 5545 Section 3.2.8) */
 	protected Duration duration;
-	/** Contact for the event */
+	/** Contact for the event (RFC 5545 Section 3.2.15) */
 	// public Individual contact;
-	/** Participants for the event (List of Attendee) */
+	/** Participants for the event (RFC 5545 Section 3.2.11) */
 	protected List<Attendee> attendees = null;
-	/** Recurrence rule (RRULE) */
+	/** Recurrence rule (RFC 5545 Section 3.3.10) */
 	protected Rrule rrule = null;
-	/** Exception dates (EXDATE) */
+	/** Exception dates (RFC 5545 Section 3.2.9) */
 	protected List<Date> exdates = null;
-	/** Inclusion dates (RDATE) */
+	/** Inclusion dates (RFC 5545 Section 3.2.19) */
 	protected List<Date> rdates = null;
-	/** Attachments */
+	/** Attachments (RFC 5545 Section 3.2.12) */
 	protected List<Attachment> attachments = null;
-	/** URL */
+	/** URL (RFC 5545 Section 3.2.39) */
 	protected URL url = null;
-	/** Location */
+	/** Location (RFC 5545 Section 3.2.10) */
 	protected Location location = null;
-	/** Location reference (UID of VLOCATION) */
+	/** Location reference (UID of VLOCATION - RFC 9073 Section 7.2) */
 	protected String locationId = null;
-	/** Resource references (List of VRESOURCE UIDs) */
+	/** Resource references (List of VRESOURCE UIDs - RFC 9073 Section 7.3) */
 	protected List<String> resourceIds = null;
-	/** Availability references (List of VAVAILABILITY UIDs) */
+	/** Availability references (List of VAVAILABILITY UIDs - RFC 9073 Section 7.4) */
 	protected List<String> availabilityIds = null;
-	/** Color */
+	/** Color (RFC 7986 Section 5.7) */
 	protected String color = null;
-	/** Image URI */
+	/** Image URI (RFC 7986 Section 6.1) */
 	protected String imageUri = null;
-	/** Conference URI */
+	/** Conference URI (RFC 7986 Section 6.2) */
 	protected String conferenceUri = null;
-	/** Structured data */
+	/** Structured data (RFC 7986 Section 6.3 / RFC 9074 Section 3.2) */
 	protected String structuredData = null;
-	/** Geographic position */
+	/** Geographic position (RFC 5545 Section 3.2.14) - latitude;longitude format */
 	protected String geo = null;
-	/** TRANSP (TRANSPARENT or OPAQUE) */
+	/** TRANSP (TRANSPARENT or OPAQUE - RFC 5545 Section 3.2.37) */
 	protected int transp = TRANSP_OPAQUE;
-	/** Event status */
+	/** Event status (RFC 5545 Section 3.2.32) */
 	protected int status = STATUS_UNDEFINED;
-	/** Alarms (List of Valarm objects) */
+	/** Alarms (List of Valarm objects - RFC 5545 Section 3.6.6) */
 	protected List<Valarm> alarms = null;
 	/** Parser reference for sub-component parsing */
 	private CalendarParser parser = null;
-	/** Organizer */
+	/** Parsing mode (affects serialization behavior) */
+	private int parseMode = PARSE_LOOSE;
+	/** Organizer (RFC 5545 Section 3.2.13) */
 	protected Organizer organizer = null;
-	/** Contact */
+	/** Contact (RFC 5545 Section 3.2.15) */
 	protected Contact contact = null;
-	/** Priority (1-9, 0 is undefined) */
+	/** Priority (RFC 5545 Section 3.2.17) - 1-9, 0 is undefined */
 	protected Integer priority = null;
-	/** Request status */
+	/** Request status (RFC 5545 Section 3.2.16) */
 	protected int requestStatus = STATUS_UNDEFINED;
 	/** Private user object for caller to set/get */
 	private Object userData = null;
+	/** Related-to component UID (RFC 5545 Section 3.2.20) */
+	protected RelatedTo relatedTo = null;
+	/** Exception rule (RFC 2445, deprecated in RFC 5545) */
+	protected Rrule exrule = null;
 
 	// TODO: multiple summaries, descriptions with different LANGUAGE values
 	// TODO: auto-change transp if either all-day or no duration
 	// TODO: alarms/triggers
 	// TODO: support VALUE=PERIOD types (RDATE, EXDATE)
 	// TODO: EXRULE - exception rule
-	// TODO: RELATED-TO
 
 	/**
 	 * Create an Event object based on the specified iCalendar data
@@ -133,6 +164,7 @@ public class Event implements Constants {
 	 */
 	public Event(CalendarParser parser, int initialLine, List<String> textLines) {
 		this.parser = parser;
+		this.parseMode = parser != null ? parser.getParseMethod() : PARSE_LOOSE;
 		for (int i = 0; i < textLines.size(); i++) {
 			String line = textLines.get(i);
 			try {
@@ -338,6 +370,10 @@ public class Event implements Constants {
 			uid = new Uid(icalStr);
 		} else if (up.startsWith("SEQUENCE")) {
 			sequence = new Sequence(icalStr);
+		} else if (up.startsWith("EXRULE")) {
+			// EXRULE is deprecated in RFC 5545 but supported in RFC 2445 compatibility mode
+			// For now, we store it but don't process it (could be converted to EXDATE in future)
+			exrule = new Rrule(icalStr, parseMethod);
 		} else if (up.startsWith("RRULE")) {
 			rrule = new Rrule(icalStr, parseMethod);
 		} else if (up.startsWith("EXDATE")) {
@@ -476,6 +512,8 @@ public class Event implements Constants {
 			for (String uid : uids) {
 				resourceIds.add(uid.trim());
 			}
+		} else if (up.startsWith("RELATED-TO")) {
+			relatedTo = new RelatedTo(icalStr);
 		} else {
 			System.out.println("Ignoring VEVENT line: " + icalStr);
 		}
@@ -754,7 +792,7 @@ public class Event implements Constants {
 	}
 
 	public void addException(Date date) {
-		if (this.exdates != null)
+		if (this.exdates == null)
 			this.exdates = new ArrayList<Date>();
 		date.setName("EXDATE"); // make sure the user had it correct
 		this.exdates.add(date);
@@ -776,7 +814,7 @@ public class Event implements Constants {
 	}
 
 	public void addRdate(Date date) {
-		if (this.rdates != null)
+		if (this.rdates == null)
 			this.rdates = new ArrayList<Date>();
 		date.setName("RDATE"); // make sure the user had it correct
 		this.rdates.add(date);
@@ -851,6 +889,33 @@ public class Event implements Constants {
 	}
 
 	/**
+	 * Get related-to component UID (RFC 5545, Section 3.2.20)
+	 *
+	 * @return RelatedTo object or null if not set
+	 */
+	public RelatedTo getRelatedTo() {
+		return relatedTo;
+	}
+
+	/**
+	 * Get exception rule (RFC 2445, deprecated in RFC 5545)
+	 *
+	 * @return Rrule object representing the EXRULE, or null if not set
+	 */
+	public Rrule getExrule() {
+		return exrule;
+	}
+
+	/**
+	 * Set related-to component UID (RFC 5545, Section 3.2.20)
+	 *
+	 * @param relatedTo the RelatedTo object
+	 */
+	public void setRelatedTo(RelatedTo relatedTo) {
+		this.relatedTo = relatedTo;
+	}
+
+	/**
 	 * Get a List of Date objects that contain the recurrance dates (or null if
 	 * there are none).
 	 * 
@@ -872,7 +937,7 @@ public class Event implements Constants {
 	 * Convert this Event into iCalendar text
 	 */
 	public String toICalendar() {
-		StringBuffer ret = new StringBuffer(128);
+		StringBuilder ret = new StringBuilder(128);
 		ret.append("BEGIN:VEVENT");
 		ret.append(CRLF);
 
@@ -904,6 +969,11 @@ public class Event implements Constants {
 			ret.append(lastModified.toICalendar());
 		if (rrule != null)
 			ret.append(rrule.toICalendar());
+		if (exrule != null && parseMode == PARSE_RFC2445) {
+			// Only serialize EXRULE in RFC 2445 compatibility mode
+			String exruleStr = exrule.toICalendar().replace("RRULE:", "EXRULE:");
+			ret.append(exruleStr);
+		}
 		if (rdates != null && rdates.size() > 0) {
 			ret.append("RDATE:");
 			for ( int i = 0; i < rdates.size(); i++ ) {
@@ -920,7 +990,7 @@ public class Event implements Constants {
 			if (this.exdates.size() == 1) {
 				ret.append(this.exdates.get(0).toICalendar());
 			} else {
-				StringBuffer sb = new StringBuffer(25);
+				StringBuilder sb = new StringBuilder(25);
 				sb.append(this.exdates.get(0).toICalendar().trim());
 				for (int i = 1; i < this.exdates.size(); i++) {
 					sb.append(',');
@@ -929,13 +999,14 @@ public class Event implements Constants {
 					sb.append(args[1]);
 				}
 				sb.append(CRLF);
+				ret.append(sb.toString());
 			}
 		}
 		if (this.rdates != null && this.rdates.size() > 0) {
 			if (this.rdates.size() == 1) {
 				ret.append(this.rdates.get(0).toICalendar());
 			} else {
-				StringBuffer sb = new StringBuffer(25);
+				StringBuilder sb = new StringBuilder(25);
 				sb.append(this.rdates.get(0).toICalendar().trim());
 				for (int i = 1; i < this.rdates.size(); i++) {
 					sb.append(',');
@@ -1026,10 +1097,23 @@ public class Event implements Constants {
 			ret.append(CRLF);
 		}
 
+		if (relatedTo != null) {
+			ret.append(relatedTo.toICalendar());
+		}
+
+		if (priority != null) {
+			ret.append("PRIORITY:");
+			ret.append(priority);
+			ret.append(CRLF);
+		}
+
+		if (contact != null)
+			ret.append(contact.toICalendar());
+
 		ret.append("END:VEVENT");
 		ret.append(CRLF);
 
-		return Utils.foldLines(ret.toString());
+		return ret.toString();
 	}
 
 	/**

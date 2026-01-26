@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2006 Craig Knudsen and other authors
+ * Copyright (C) 2005-2024 Craig Knudsen and other authors
  * (see AUTHORS for a complete list)
  *
  * JavaCalTools is free software; you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
  * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
  * License for more details.
- * 
+ *
  * A copy of the GNU Lesser General Public License is included in the Wine
  * distribution in the file COPYING.LIB. If you did not receive this copy,
  * write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
@@ -23,68 +23,34 @@ package us.k5n.ical;
 /**
  * iCalendar Comment class - This object represents a comment and corresponds to
  * the COMMENT iCalendar property.
- * 
- * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
+ *
+ * @author Craig Knudsen, craig@k5n.us
  */
-public class Comment extends Property {
-	/** Alternate representation URI */
-	public String altrep = null;
-	/** Language specification */
-	public String language = null;
+public class Comment extends TextProperty {
 
-	/**
-	 * Constructor
-	 */
-	public Comment() {
-		super ( "COMMENT", "" );
-	}
+    /**
+     * Default constructor
+     */
+    public Comment() {
+        super("COMMENT");
+    }
 
-	/**
-	 * Constructor
-	 * 
-	 * @param icalStr
-	 *          One or more lines of iCalendar that specifies an event/todo
-	 *          comment
-	 */
-	public Comment(String icalStr) throws ParseException {
-		this ( icalStr, PARSE_LOOSE );
-	}
+    /**
+     * Constructor from iCalendar string
+     *
+     * @param icalStr One or more lines of iCalendar that specifies an event/todo comment
+     */
+    public Comment(String icalStr) throws ParseException {
+        super("COMMENT", icalStr, PARSE_LOOSE);
+    }
 
-	/**
-	 * Constructor
-	 * 
-	 * @param icalStr
-	 *          One or more lines of iCalendar that specifies an event/todo
-	 *          comment
-	 * @param parseMode
-	 *          PARSE_STRICT or PARSE_LOOSE
-	 */
-	public Comment(String icalStr, int parseMode) throws ParseException {
-		super ( icalStr, parseMode );
-
-		for ( int i = 0; i < attributeList.size (); i++ ) {
-			Attribute a = attributeAt ( i );
-			String aname = a.name.toUpperCase ();
-			if ( aname.equals ( "ALTREP" ) ) {
-				// Can only have one of these
-				if ( altrep != null && parseMode == PARSE_STRICT ) {
-					throw new ParseException ( "More than one ALTREP found", icalStr );
-				}
-				altrep = a.value;
-			} else if ( aname.equals ( "LANGUAGE" ) ) {
-				// Can only have one of these
-				if ( language != null && parseMode == PARSE_STRICT ) {
-					throw new ParseException ( "More than one LANGUAGE found", icalStr );
-				}
-				language = a.value;
-			} else {
-				// Only generate exception if strict parsing
-				if ( parseMode == PARSE_STRICT ) {
-					throw new ParseException ( "Invalid COMMENT attribute '" + a.name
-					    + "'", icalStr );
-				}
-			}
-		}
-	}
-
+    /**
+     * Constructor from iCalendar string with parse mode
+     *
+     * @param icalStr   One or more lines of iCalendar that specifies an event/todo comment
+     * @param parseMode PARSE_STRICT or PARSE_LOOSE
+     */
+    public Comment(String icalStr, int parseMode) throws ParseException {
+        super("COMMENT", icalStr, parseMode);
+    }
 }

@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
  * Tests for advanced RRULE recurrence patterns as defined in RFC 5545, Section 3.8.5.3.
  * Covers complex RRULE combinations, edge cases, and error conditions.
  *
- * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
+ * @author Craig Knudsen, craig@k5n.us
  */
  public class RFC5545_AdvancedRecurrenceTest {
 

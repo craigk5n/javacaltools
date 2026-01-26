@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -8,74 +9,55 @@
     <version>2.0.0</version>
     <packaging>jar</packaging>
 
-    <name>javacaltools</name>
-    <description>Java library for iCalendar parsing and generation with full RFC 5545 compliance</description>
-    <url>https://github.com/k5n/javacaltools</url>
+    <name>JavaCalTools</name>
+    <description>Java library for iCalendar (RFC 5545) parsing and generation with support for RFC 7986, RFC 9073, RFC 9074, and RFC 5546</description>
+    <url>https://github.com/craigk5n/javacaltools</url>
+    <inceptionYear>2005</inceptionYear>
 
     <licenses>
         <license>
-            <name>Apache License, Version 2.0</name>
-            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <name>GNU Lesser General Public License v2.1</name>
+            <url>https://www.gnu.org/licenses/lgpl-2.1.html</url>
             <distribution>repo</distribution>
         </license>
     </licenses>
 
+    <organization>
+        <name>k5n.us</name>
+        <url>https://www.k5n.us</url>
+    </organization>
+
     <developers>
         <developer>
-            <id>k5n</id>
+            <id>craigk5n</id>
             <name>Craig Knudsen</name>
             <email>craig@k5n.us</email>
             <organization>k5n.us</organization>
             <organizationUrl>https://www.k5n.us</organizationUrl>
+            <roles>
+                <role>maintainer</role>
+                <role>developer</role>
+            </roles>
+            <timezone>America/New_York</timezone>
         </developer>
     </developers>
 
     <scm>
-        <connection>scm:git:git://github.com/k5n/javacaltools.git</connection>
-        <developerConnection>scm:git:ssh://github.com:k5n/javacaltools.git</developerConnection>
-        <url>https://github.com/k5n/javacaltools</url>
+        <connection>scm:git:git://github.com/craigk5n/javacaltools.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com:craigk5n/javacaltools.git</developerConnection>
+        <url>https://github.com/craigk5n/javacaltools</url>
+        <tag>HEAD</tag>
     </scm>
 
-    <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-        <maven.compiler.release>17</maven.compiler.release>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    </properties>
+    <issueManagement>
+        <system>GitHub Issues</system>
+        <url>https://github.com/craigk5n/javacaltools/issues</url>
+    </issueManagement>
 
-    <dependencies>
-        <dependency>
-            <groupId>com.opencsv</groupId>
-            <artifactId>opencsv</artifactId>
-            <version>5.9</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-codec</groupId>
-            <artifactId>commons-codec</artifactId>
-            <version>1.16.0</version>
-        </dependency>
-
-        <!-- JUnit 5 dependency -->
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <version>5.10.2</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <version>5.10.2</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-params</artifactId>
-            <version>5.10.2</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+    <ciManagement>
+        <system>GitHub Actions</system>
+        <url>https://github.com/craigk5n/javacaltools/actions</url>
+    </ciManagement>
 
     <distributionManagement>
         <snapshotRepository>
@@ -88,76 +70,197 @@
         </repository>
     </distributionManagement>
 
+    <properties>
+        <!-- Java version -->
+        <java.version>17</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <maven.compiler.release>${java.version}</maven.compiler.release>
+
+        <!-- Encoding -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <!-- Dependency versions -->
+        <opencsv.version>5.9</opencsv.version>
+        <commons-codec.version>1.17.1</commons-codec.version>
+        <junit.version>5.11.3</junit.version>
+
+        <!-- Plugin versions -->
+        <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
+        <maven-jar-plugin.version>3.4.2</maven-jar-plugin.version>
+        <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
+        <maven-javadoc-plugin.version>3.10.1</maven-javadoc-plugin.version>
+        <maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
+        <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
+        <maven-enforcer-plugin.version>3.5.0</maven-enforcer-plugin.version>
+        <maven-gpg-plugin.version>3.2.7</maven-gpg-plugin.version>
+        <maven-assembly-plugin.version>3.7.1</maven-assembly-plugin.version>
+        <nexus-staging-maven-plugin.version>1.7.0</nexus-staging-maven-plugin.version>
+        <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
+        <dependency-check-maven.version>10.0.4</dependency-check-maven.version>
+        <versions-maven-plugin.version>2.17.1</versions-maven-plugin.version>
+
+        <!-- Reproducible builds -->
+        <project.build.outputTimestamp>2024-01-01T00:00:00Z</project.build.outputTimestamp>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <!-- Runtime dependencies -->
+        <dependency>
+            <groupId>com.opencsv</groupId>
+            <artifactId>opencsv</artifactId>
+            <version>${opencsv.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>${commons-codec.version}</version>
+        </dependency>
+
+        <!-- Test dependencies -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>
         <testSourceDirectory>src/test/java</testSourceDirectory>
 
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven-compiler-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>${maven-jar-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>${maven-source-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>${maven-javadoc-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven-surefire-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>${maven-resources-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>${jacoco-maven-plugin.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
         <plugins>
-            <!-- Compiler plugin -->
+            <!-- Enforce minimum Maven and Java versions -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>${maven-enforcer-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>enforce-versions</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireMavenVersion>
+                                    <version>3.8.0</version>
+                                </requireMavenVersion>
+                                <requireJavaVersion>
+                                    <version>${java.version}</version>
+                                </requireJavaVersion>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Compiler -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.14.1</version>
                 <configuration>
-                    <source>${maven.compiler.source}</source>
-                    <target>${maven.compiler.target}</target>
-                    <release>${maven.compiler.release}</release>
+                    <release>${java.version}</release>
                     <encoding>${project.build.sourceEncoding}</encoding>
+                    <showWarnings>true</showWarnings>
+                    <showDeprecation>true</showDeprecation>
                 </configuration>
             </plugin>
 
-            <!-- Jar plugin -->
+            <!-- JAR -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.3.0</version>
                 <configuration>
                     <archive>
                         <manifest>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                             <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-                            <mainClass>us.k5n.journal.Main</mainClass> <!-- Your main class -->
                         </manifest>
+                        <manifestEntries>
+                            <Automatic-Module-Name>us.k5n.ical</Automatic-Module-Name>
+                        </manifestEntries>
                     </archive>
                 </configuration>
             </plugin>
 
-            <!-- Assembly plugin to include dependencies -->
+            <!-- Source JAR -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>3.7.1</version>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass>us.k5n.ui.calendar.CalendarPanelTest</mainClass>
-                        </manifest>
-                    </archive>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                </configuration>
+                <artifactId>maven-source-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>make-assembly</id>
-                        <phase>package</phase>
+                        <id>attach-sources</id>
                         <goals>
-                            <goal>single</goal>
+                            <goal>jar-no-fork</goal>
                         </goals>
                     </execution>
                 </executions>
             </plugin>
 
-            <!-- Javadoc plugin -->
+            <!-- Javadoc -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.6.3</version>
                 <configuration>
-                    <destDir>${project.build.directory}/docs</destDir>
-                    <source>${maven.compiler.source}</source>
+                    <source>${java.version}</source>
                     <encoding>${project.build.sourceEncoding}</encoding>
                     <docencoding>${project.reporting.outputEncoding}</docencoding>
+                    <doclint>none</doclint>
+                    <quiet>true</quiet>
                 </configuration>
                 <executions>
                     <execution>
@@ -169,35 +272,22 @@
                 </executions>
             </plugin>
 
-            <!-- Source plugin -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>3.3.1</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- Surefire plugin for running tests -->
+            <!-- Surefire (tests) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.3.0</version>
+                <configuration>
+                    <argLine>@{argLine} -Dfile.encoding=UTF-8</argLine>
+                </configuration>
             </plugin>
 
-            <!-- JaCoCo plugin for code coverage -->
+            <!-- JaCoCo (code coverage) -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.11</version>
                 <executions>
                     <execution>
+                        <id>prepare-agent</id>
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
@@ -212,49 +302,107 @@
                 </executions>
             </plugin>
 
-            <!-- OWASP Dependency Check for security scanning -->
+            <!-- Versions plugin for dependency updates -->
             <plugin>
-                <groupId>org.owasp</groupId>
-                <artifactId>dependency-check-maven</artifactId>
-                <version>12.1.9</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- GPG plugin for signing artifacts -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <version>3.2.4</version>
-                <executions>
-                    <execution>
-                        <id>sign-artifacts</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- Nexus Staging plugin for Maven Central deployment -->
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>1.7.0</version>
-                <extensions>true</extensions>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <version>${versions-maven-plugin.version}</version>
                 <configuration>
-                    <serverId>ossrh</serverId>
-                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                    <generateBackupPoms>false</generateBackupPoms>
                 </configuration>
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <!-- Release profile for Maven Central deployment -->
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <!-- GPG signing -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>${maven-gpg-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <!-- Nexus staging -->
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>${nexus-staging-maven-plugin.version}</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <serverId>ossrh</serverId>
+                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- Security scan profile -->
+        <profile>
+            <id>security-scan</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.owasp</groupId>
+                        <artifactId>dependency-check-maven</artifactId>
+                        <version>${dependency-check-maven.version}</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <failBuildOnCVSS>7</failBuildOnCVSS>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- Fat JAR profile -->
+        <profile>
+            <id>fat-jar</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <version>${maven-assembly-plugin.version}</version>
+                        <configuration>
+                            <descriptorRefs>
+                                <descriptorRef>jar-with-dependencies</descriptorRef>
+                            </descriptorRefs>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>make-assembly</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>

@@ -48,7 +48,7 @@ import org.apache.commons.codec.binary.Base64;
  * "VJOURNAL", or "VALARM" calendar components. This property can be
  * specified multiple times within an iCalendar object.
  * 
- * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
+ * @author Craig Knudsen, craig@k5n.us
  */
 public class Attachment extends Property {
 	protected byte[] bytes = null;

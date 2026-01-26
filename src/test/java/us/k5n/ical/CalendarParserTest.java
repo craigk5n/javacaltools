@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Test cases for CalendarParser base class methods.
  *
- * @author Assistant
+ * @author Craig Knudsen, craig@k5n.us
  */
 public class CalendarParserTest implements Constants {
 

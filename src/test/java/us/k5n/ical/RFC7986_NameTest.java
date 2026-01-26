@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test;
  * Tests for the NAME property as defined in RFC 7986, Section 5.1.
  * NAME specifies the name of the calendar for presentation to users.
  *
- * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
+ * @author Craig Knudsen, craig@k5n.us
  */
  public class RFC7986_NameTest {
 

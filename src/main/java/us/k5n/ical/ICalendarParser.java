@@ -48,7 +48,7 @@ import java.util.List;
  * 
  * </blockquote>
  * 
- * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
+ * @author Craig Knudsen, craig@k5n.us
  */
 public class ICalendarParser extends CalendarParser implements Constants {
 	Property icalVersion = null;
@@ -229,14 +229,17 @@ public class ICalendarParser extends CalendarParser implements Constants {
 
 		boolean noErrors = true;
 		String line, nextLine;
-		BufferedReader r = new BufferedReader(reader, 16384); // Use larger buffer for better performance
 		StringBuilder data = new StringBuilder(4096); // Use StringBuilder instead of StringBuffer
 		StringBuilder notYetParsed = null;
 		int state = STATE_NONE;
 		int ln = 0; // line number
 		int startLineNo = 0;
 		List<String> textLines;
+		List<String> standardTextLines = null;
+		List<String> daylightTextLines = null;
 		boolean done = false;
+
+		try (BufferedReader r = new BufferedReader(reader, 16384)) { // Use try-with-resources for proper resource management
 
 		// Because iCalendar allows lines to be "folded" (continued) onto
 		// multiple
@@ -444,15 +447,63 @@ public class ICalendarParser extends CalendarParser implements Constants {
 								reportParseError(new ParseError(ln,
 										"Parse error in CALENDAR-ADDRESS: " + e.toString(), line));
 							}
+						} else if (lineUp.startsWith("DESCRIPTION")) {
+							// RFC 7986: VCALENDAR-level DESCRIPTION
+							try {
+								Property descProp = new Property(line, getParseMethod());
+								for (int i = 0; i < dataStores.size(); i++) {
+									DefaultDataStore ds = (DefaultDataStore) dataStores.get(i);
+									ds.setDescription(descProp.value);
+								}
+							} catch (ParseException e) {
+								reportParseError(new ParseError(ln,
+										"Parse error in DESCRIPTION: " + e.toString(), line));
+							}
+						} else if (lineUp.startsWith("UID")) {
+							// RFC 7986: VCALENDAR-level UID
+							try {
+								Property uidProp = new Property(line, getParseMethod());
+								for (int i = 0; i < dataStores.size(); i++) {
+									DefaultDataStore ds = (DefaultDataStore) dataStores.get(i);
+									ds.setUid(uidProp.value);
+								}
+							} catch (ParseException e) {
+								reportParseError(new ParseError(ln,
+										"Parse error in UID: " + e.toString(), line));
+							}
+						} else if (lineUp.startsWith("URL")) {
+							// RFC 7986: VCALENDAR-level URL
+							try {
+								Property urlProp = new Property(line, getParseMethod());
+								for (int i = 0; i < dataStores.size(); i++) {
+									DefaultDataStore ds = (DefaultDataStore) dataStores.get(i);
+									ds.setUrl(urlProp.value);
+								}
+							} catch (ParseException e) {
+								reportParseError(new ParseError(ln,
+										"Parse error in URL: " + e.toString(), line));
+							}
+						} else if (lineUp.startsWith("LAST-MODIFIED")) {
+							// RFC 7986: VCALENDAR-level LAST-MODIFIED
+							try {
+								Date lastMod = new Date(line);
+								for (int i = 0; i < dataStores.size(); i++) {
+									DefaultDataStore ds = (DefaultDataStore) dataStores.get(i);
+									ds.setLastModified(lastMod);
+								}
+							} catch (ParseException | BogusDataException e) {
+								reportParseError(new ParseError(ln,
+										"Parse error in LAST-MODIFIED: " + e.toString(), line));
+							}
 						} else if (lineUp.startsWith("X-")) {
 							// These are extensions like: X-WR-CALNAME, X-WR-CALDESC, X-WR-TIMEZONE, X-WR-RELCALID,
 							// X-PUBLISHED-TTL, X-APPLE-CALENDAR-COLOR, X-MS-OLK-APPTSEQTIME, X-MS-OLK-CONFTYPE,
 							// X-MS-OLK-DTSTART, X-MS-OLK-DTEND, X-GOOGLE-CALENDAR-COLOR
 							try {
-								method = new Property(line, getParseMethod());
+								Property xprop = new Property(line, getParseMethod());
 							} catch (ParseException e) {
 								reportParseError(new ParseError(ln,
-										"Parse error in CALSCALE: " + e.toString(), line));
+										"Parse error in X- property: " + e.toString(), line));
 							}
 						} else {
 							// what else could this be???
@@ -469,7 +520,8 @@ public class ICalendarParser extends CalendarParser implements Constants {
 						textLines.add(line);
 						if (lineUp.startsWith("END:VTIMEZONE")) {
 							state = STATE_VCALENDAR;
-							if (currentTimezone != null) {
+							try {
+								currentTimezone = new Timezone(this, startLineNo, textLines);
 								if (currentTimezone.isValid()) {
 									for (int i = 0; i < dataStores.size(); i++) {
 										DataStore ds = (DataStore) dataStores.get(i);
@@ -479,19 +531,17 @@ public class ICalendarParser extends CalendarParser implements Constants {
 										componentsParsed++;
 									}
 								}
-								currentTimezone = null;
-								textLines.clear(); // truncate List
+							} catch (Exception e) {
+								reportParseError(new ParseError(startLineNo, "Error parsing VTIMEZONE: " + e.getMessage(), line));
 							}
+							currentTimezone = null;
+							textLines.clear(); // truncate List
 						} else if (lineUp.startsWith("BEGIN:STANDARD")) {
 							state = STATE_VTIMEZONE_STANDARD;
 							startLineNo = ln; // mark starting line number
-							textLines.clear();
-							textLines.add(line);
 						} else if (lineUp.startsWith("BEGIN:DAYLIGHT")) {
 							state = STATE_VTIMEZONE_DAYLIGHT;
 							startLineNo = ln; // mark starting line number
-							textLines.clear();
-							textLines.add(line);
 						} else if (lineUp.startsWith("BEGIN:VTIMEZONE")) {
 							currentTimezone = new Timezone(this, ln, textLines);
 						}
@@ -574,27 +624,35 @@ public class ICalendarParser extends CalendarParser implements Constants {
 
 
 
-					case STATE_VTIMEZONE_DAYLIGHT:
-						textLines.add(line);
-						if (lineUp.startsWith("END:DAYLIGHT")) {
-							state = STATE_VTIMEZONE;
-							TimezoneDaylight daylight = new TimezoneDaylight(this, startLineNo, textLines);
-							if (daylight.isValid() && currentTimezone != null) {
-								currentTimezone.addDaylight(daylight);
-							}
-							textLines.clear(); // truncate List
-						}
-						break;
-
 					case STATE_VTIMEZONE_STANDARD:
-						textLines.add(line);
+						// Collect STANDARD lines in a separate list
+						if (standardTextLines == null) {
+							standardTextLines = new ArrayList<>();
+						}
+						standardTextLines.add(line);
 						if (lineUp.startsWith("END:STANDARD")) {
 							state = STATE_VTIMEZONE;
-							TimezoneStandard standard = new TimezoneStandard(this, startLineNo, textLines);
+							TimezoneStandard standard = new TimezoneStandard(this, startLineNo, standardTextLines);
 							if (standard.isValid() && currentTimezone != null) {
 								currentTimezone.addStandard(standard);
 							}
-							textLines.clear(); // truncate List
+							standardTextLines = null;
+						}
+						break;
+
+					case STATE_VTIMEZONE_DAYLIGHT:
+						// Collect DAYLIGHT lines in a separate list
+						if (daylightTextLines == null) {
+							daylightTextLines = new ArrayList<>();
+						}
+						daylightTextLines.add(line);
+						if (lineUp.startsWith("END:DAYLIGHT")) {
+							state = STATE_VTIMEZONE;
+							TimezoneDaylight daylight = new TimezoneDaylight(this, startLineNo, daylightTextLines);
+							if (daylight.isValid() && currentTimezone != null) {
+								currentTimezone.addDaylight(daylight);
+							}
+							daylightTextLines = null;
 						}
 						break;
 
@@ -685,7 +743,7 @@ public class ICalendarParser extends CalendarParser implements Constants {
 					done = true;
 			}
 		}
-		r.close();
+		} // End of try-with-resources block - BufferedReader is automatically closed
 
 		// Make sure PRODID and VERSION were specified since they are
 		// required
@@ -715,15 +773,9 @@ public class ICalendarParser extends CalendarParser implements Constants {
 			return false;
 		}
 
-		String upperValue = methodValue.toUpperCase();
-		return Constants.METHOD_PUBLISH.equals(upperValue) ||
-			   Constants.METHOD_REQUEST.equals(upperValue) ||
-			   Constants.METHOD_REPLY.equals(upperValue) ||
-			   Constants.METHOD_ADD.equals(upperValue) ||
-			   Constants.METHOD_CANCEL.equals(upperValue) ||
-			   Constants.METHOD_REFRESH.equals(upperValue) ||
-			   Constants.METHOD_COUNTER.equals(upperValue) ||
-			   Constants.METHOD_DECLINECOUNTER.equals(upperValue);
+		// Use ITIPManager for validation
+		ITIPManager.ITIPMethod method = ITIPManager.ITIPMethod.fromString(methodValue);
+		return method != null;
 	}
 
 }

@@ -29,7 +29,7 @@ import java.util.List;
  *
  * VLOCATION provides rich information about event locations using structured data.
  *
- * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
+ * @author Craig Knudsen, craig@k5n.us
  */
 public class VLocation extends Property {
     /** Location UID */

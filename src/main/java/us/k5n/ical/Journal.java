@@ -24,40 +24,56 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * iCalendar Journal class: VJOURNAL components describe a journal entry. They
- * simply attach descriptive text notes with a particular calendar date, and
- * might be used to record a daily record of activities or accomplishments. A
- * "VJOURNAL" calendar component does not take up time on, so it has no affect
- * on free or busy time (just like TRANSPARENT entries).
- * 
- * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
+ * iCalendar Journal class that corresponds to the VJOURNAL iCalendar component.
+ *
+ * <p>A VJOURNAL component describes a journal entry. They attach descriptive text
+ * notes with a particular calendar date, and might be used to record a daily
+ * record of activities or accomplishments. A VJOURNAL component does not take
+ * up time on a calendar and has no affect on free or busy time (like TRANSPARENT
+ * events).</p>
+ *
+ * <p><b>RFC 5545 Compliance:</b></p>
+ * <ul>
+ *   <li>Section 3.6.3 - Journal Component</li>
+ *   <li>Section 3.2 - Property Specifications (DTSTART, SUMMARY, DESCRIPTION, etc.)</li>
+ *   <li>Section 3.2.32 - STATUS property with VJOURNAL-specific values (DRAFT, FINAL)</li>
+ * </ul>
+ *
+ * <p><b>RFC 9073 Extensions:</b></p>
+ * <ul>
+ *   <li>Section 4.1 - STYLED-DESCRIPTION property</li>
+ * </ul>
+ *
+ * @author Craig Knudsen, craig@k5n.us
+ * @see <a href="https://datatracker.ietf.org/doc/html/rfc5545#section-3.6.3">RFC 5545, Section 3.6.3</a>
+ * @see <a href="https://datatracker.ietf.org/doc/html/rfc9073">RFC 9073</a>
  */
 public class Journal implements Constants {
 	// TODO: handle multiple instances of summary/description since
 	// there can be more than one if LANGUAGE attribute is specified
-	/** Unique Id */
+	/** Unique Id (RFC 5545 Section 3.2.20) */
 	protected Uid uid = null;
-	/** Sequence number (0 is first version) */
+	/** Sequence number (RFC 5545 Section 3.2.22) - 0 is first version */
 	protected Sequence sequence = null;
-	/** Brief summary */
+	/** Brief summary (RFC 5545 Section 3.2.35) */
 	protected Summary summary = null;
-	/** Full description */
+	/** Full description (RFC 5545 Section 3.2.4) */
 	protected Description description = null;
-	/** Styled description (RFC 9073) */
+	/** Styled description (RFC 9073 Section 4.1) */
 	protected StyledDescription styledDescription = null;
-	/** Classification (PUBLIC, CONFIDENTIAL, PRIVATE) */
+	/** Classification (RFC 5545 Section 3.2.2) - PUBLIC, CONFIDENTIAL, PRIVATE */
 	protected Classification classification = null;
-	/** List of categories (comma-separated) */
+	/** List of categories (RFC 5545 Section 3.2.1) - comma-separated */
 	protected Categories categories = null;
-	/** Color */
+	/** Color (RFC 7986 Section 5.7) */
 	protected String color = null;
-	/** Image URI */
+	/** Image URI (RFC 7986 Section 6.1) */
 	protected String imageUri = null;
-	/** Date created */
+	/** Date created (RFC 5545 Section 3.2.3) */
 	protected Date createdDate = null;
-	/** Primary start date */
+	/** Primary start date (RFC 5545 Section 3.2.6) */
 	protected Date startDate = null;
-	/** Time created */
+	/** Time created (RFC 5545 Section 3.2.5) */
 	protected Date dtstamp = null;
 	/** Time last modified */
 	protected Date lastModified = null;

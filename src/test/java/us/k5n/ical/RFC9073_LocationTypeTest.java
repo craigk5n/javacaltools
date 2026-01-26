@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
  * Tests for the LOCATION-TYPE property as defined in RFC 9073, Section 6.1.
  * LOCATION-TYPE provides a way to differentiate multiple locations in VLOCATION components.
  *
- * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
+ * @author Craig Knudsen, craig@k5n.us
  */
  public class RFC9073_LocationTypeTest {
 

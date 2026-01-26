@@ -31,7 +31,7 @@ import java.util.Calendar;
 /**
  * iCalendar Utility class
  * 
- * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
+ * @author Craig Knudsen, craig@k5n.us
  */
 public class Utils implements Constants {
 
@@ -325,7 +325,8 @@ public class Utils implements Constants {
 					int hour = Integer.parseInt(inDate.substring(9, 11));
 					int minute = Integer.parseInt(inDate.substring(11, 13));
 					int second = Integer.parseInt(inDate.substring(13, 15));
-					ret.set(year, month, day, hour, minute, second);
+					// Calendar uses 0-indexed months (0=January), but iCal uses 1-indexed (1=January)
+					ret.set(year, month - 1, day, hour, minute, second);
 				} catch (NumberFormatException nef) {
 					throw new BogusDataException("Invalid time in date string '"
 							+ inDate + "' - " + nef, inDate);
@@ -337,7 +338,8 @@ public class Utils implements Constants {
 			}
 		} else {
 			// Just date, no time
-			ret.set(year, month, day);
+			// Calendar uses 0-indexed months (0=January), but iCal uses 1-indexed (1=January)
+			ret.set(year, month - 1, day);
 		}
 		return ret;
 	}

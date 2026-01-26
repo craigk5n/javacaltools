@@ -25,7 +25,7 @@ package us.k5n.ical;
  * Represents a single busy period within a VFREEBUSY component.
  * Format: FREEBUSY:19960403T140000Z/19960403T150000Z
  * 
- * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
+ * @author Craig Knudsen, craig@k5n.us
  */
 public class FreebusyPeriod {
 	/** Start date/time of busy period */

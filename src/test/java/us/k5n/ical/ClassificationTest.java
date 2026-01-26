@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * in handling different classification types: PUBLIC, PRIVATE, and
  * CONFIDENTIAL.
  * 
- * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
+ * @author Craig Knudsen, craig@k5n.us
  */
 public class ClassificationTest implements Constants {
 

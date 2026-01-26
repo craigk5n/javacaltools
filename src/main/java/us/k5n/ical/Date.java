@@ -26,18 +26,37 @@ import java.time.ZonedDateTime;
 import java.util.Calendar;
 
 /**
- * Base class for use with a variety of date-related iCalendar fields including
- * LAST-MODIFIED, DTSTAMP, DTSTART, etc. This can represent both a date and a
- * date-time.
- * 
- * According to RFC2445, date-time values can either "float" (so they are the
- * same time in every timezone), or they must have a timezone specified. This
- * class will assume the user's local timezone unless they specifically set the
- * object to be floating.
- * 
- * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
+ * iCalendar Date/Date-Time class that corresponds to date-related iCalendar properties.
+ *
+ * <p>This class is the base class for date-related iCalendar fields including
+ * DTSTAMP, DTSTART, DTEND, DUE, CREATED, LAST-MODIFIED, and RECURRENCE-ID.
+ * It can represent both a date-only value and a date-time value.</p>
+ *
+ * <p><b>RFC 5545 Compliance:</b></p>
+ * <ul>
+ *   <li>Section 3.3.5 - DATE (3.8.2.1) and DATE-TIME (3.8.2.2) value types</li>
+ *   <li>Section 3.2.5 - DTSTAMP Property</li>
+ *   <li>Section 3.2.6 - DTSTART Property</li>
+ *   <li>Section 3.2.7 - DTEND Property</li>
+ *   <li>Section 3.2.13 - DUE Property</li>
+ *   <li>Section 3.2.3 - CREATED Property</li>
+ *   <li>Section 3.2.9 - LAST-MODIFIED Property</li>
+ *   <li>Section 3.2.14 - RECURRENCE-ID Property</li>
+ * </ul>
+ *
+ * <p><b>ISO 8601 Format Support:</b></p>
+ * <ul>
+ *   <li>19991231 - date only, no time</li>
+ *   <li>19991231T115900 - date with local time</li>
+ *   <li>19991231T115900Z - date and time in UTC</li>
+ *   <li>19991231T115900;TZID=America/New_York - date and time with timezone</li>
+ * </ul>
+ *
+ * @author Craig Knudsen, craig@k5n.us
+ * @see <a href="https://datatracker.ietf.org/doc/html/rfc5545#section-3.3.5">RFC 5545, Section 3.3.5</a>
+ * @see <a href="https://datatracker.ietf.org/doc/html/rfc5545#section-3.2">RFC 5545, Section 3.2 (Date Properties)</a>
  */
-public class Date extends Property implements Comparable {
+public class Date extends Property implements Comparable<Date> {
 	int year, month, day;
 	int hour, minute, second;
 	boolean dateOnly = false; // is date only (rather than date-time)?
@@ -453,7 +472,7 @@ public class Date extends Property implements Comparable {
 	public String toICalendar() {
 		// We don't need to worry about timezone if it is date-only.
 		// If there is a time, convert to GMT.
-		StringBuffer sb = new StringBuffer(dateOnly ? 8 : 15);
+		StringBuilder sb = new StringBuilder(dateOnly ? 8 : 15);
 		if (dateOnly) {
 			sb.append(year);
 			if (month < 10)
@@ -466,13 +485,40 @@ public class Date extends Property implements Comparable {
 			return super.toICalendar();
 		}
 
+		// If we have a timezone ID, preserve it in the output
+		if (this.tzid != null && !floating) {
+			sb.append(year);
+			if (month < 10)
+				sb.append('0');
+			sb.append(month);
+			if (day < 10)
+				sb.append('0');
+			sb.append(day);
+
+			sb.append('T');
+			if (hour < 10)
+				sb.append('0');
+			sb.append(hour);
+			if (minute < 10)
+				sb.append('0');
+			sb.append(minute);
+			if (second < 10)
+				sb.append('0');
+			sb.append(second);
+			value = sb.toString();
+
+			// Add TZID parameter
+			addAttribute("TZID", this.tzid);
+			return super.toICalendar();
+		}
+
 		// Convert from timezone specified to GMT
 		String timezoneId = this.tzid;
 		if (timezoneId == null)
 			timezoneId = ZoneId.systemDefault().getId();
 		ZoneId tz = null;
 		try {
-			tz = ZoneId.of(this.tzid);
+			tz = ZoneId.of(timezoneId);
 		} catch (Exception e1) {
 			// Invalid timezone
 		}
@@ -696,9 +742,10 @@ public class Date extends Property implements Comparable {
         return sb.toString();
     }
 
+	@Override
 	public boolean equals(Object o) {
 		if (o instanceof Date) {
-			return (this.compareTo(o) == 0);
+			return (this.compareTo((Date) o) == 0);
 		} else {
 			return false;
 		}
@@ -746,8 +793,8 @@ public class Date extends Property implements Comparable {
 		return ret > 0;
 	}
 
-	public int compareTo(Object anotherDate) throws ClassCastException {
-		Date d2 = (Date) anotherDate;
+	@Override
+	public int compareTo(Date d2) {
 		if (this.year < d2.year)
 			return -1;
 		if (this.year > d2.year)

@@ -27,13 +27,13 @@ import java.util.List;
  * iCalendar Valarm class that corresponds to a VALARM iCalendar object.
  * A VALARM component defines an alarm or reminder for a calendar component.
  * 
- * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
+ * @author Craig Knudsen, craig@k5n.us
  */
 public class Valarm implements Constants {
 	/** Alarm action (AUDIO, DISPLAY, EMAIL, PROCEDURE) */
 	protected String action = null;
 	/** Trigger for the alarm */
-	protected String trigger = null;
+	protected Property trigger = null;
 	/** Alarm summary */
 	protected Summary summary = null;
 	/** Alarm description */
@@ -46,10 +46,12 @@ public class Valarm implements Constants {
 	protected List<Attendee> attendees = null;
 	/** Attachments for the alarm */
 	protected List<Attachment> attachments = null;
-	/** Proximity trigger */
+	/** Proximity trigger (RFC 9074) */
 	protected String proximity = null;
-	/** Structured data */
+	/** Structured data (RFC 9074) */
 	protected String structuredData = null;
+	/** Acknowledged date-time (RFC 9074 Section 3.3) */
+	protected Date acknowledged = null;
 
 	/**
 	 * Create a Valarm object based on specified iCalendar data
@@ -116,19 +118,18 @@ public class Valarm implements Constants {
 			// ignore begin/end markers
 		} else if (up.trim().length() == 0) {
 			// ignore empty lines
-		} else if (up.startsWith("ACTION:")) {
+		} else if (up.startsWith("ACTION")) {
 			Property p = new Property(icalStr);
 			action = p.value;
-		} else if (up.startsWith("TRIGGER:")) {
-			Property p = new Property(icalStr);
-			trigger = p.value;
-		} else if (up.startsWith("SUMMARY:")) {
+		} else if (up.startsWith("TRIGGER")) {
+			trigger = new Property(icalStr);
+		} else if (up.startsWith("SUMMARY")) {
 			summary = new Summary(icalStr);
-		} else if (up.startsWith("DESCRIPTION:")) {
+		} else if (up.startsWith("DESCRIPTION")) {
 			description = new Description(icalStr);
-		} else if (up.startsWith("DURATION:")) {
+		} else if (up.startsWith("DURATION")) {
 			duration = new Duration(icalStr);
-		} else if (up.startsWith("REPEAT:")) {
+		} else if (up.startsWith("REPEAT")) {
 			Property p = new Property(icalStr);
 			try {
 				repeat = Integer.parseInt(p.value);
@@ -137,7 +138,7 @@ public class Valarm implements Constants {
 					throw new ParseException("Invalid REPEAT value: " + p.value, icalStr);
 				}
 			}
-		} else if (up.startsWith("ATTENDEE:")) {
+		} else if (up.startsWith("ATTENDEE")) {
 			Attendee attendee = new Attendee(icalStr);
 			if (attendees == null)
 				attendees = new ArrayList<Attendee>();
@@ -153,6 +154,8 @@ public class Valarm implements Constants {
 		} else if (up.startsWith("STRUCTURED-DATA")) {
 			Property p = new Property(icalStr);
 			structuredData = p.value;
+		} else if (up.startsWith("ACKNOWLEDGED")) {
+			acknowledged = new Date(icalStr);
 		} else if (isParseStrict(parseMethod)) {
 			throw new ParseException("Unrecognized data in VALARM: " + icalStr, icalStr);
 		}
@@ -190,7 +193,7 @@ public class Valarm implements Constants {
 	 * @return the trigger
 	 */
 	public String getTrigger() {
-		return trigger;
+		return trigger != null ? trigger.getValue() : null;
 	}
 
 	/**
@@ -248,12 +251,51 @@ public class Valarm implements Constants {
 	}
 
 	/**
+	 * Get the proximity trigger value (RFC 9074).
+	 * Valid values are: ARRIVE, DEPART, CONNECT, DISCONNECT
+	 *
+	 * @return proximity value or null if not set
+	 */
+	public String getProximity() {
+		return proximity;
+	}
+
+	/**
+	 * Get the structured data (RFC 9074).
+	 *
+	 * @return structured data value or null if not set
+	 */
+	public String getStructuredData() {
+		return structuredData;
+	}
+
+	/**
+	 * Get the acknowledged date-time (RFC 9074 Section 3.3).
+	 * This property specifies the UTC date-time at which the alarm
+	 * was acknowledged by a calendar user.
+	 *
+	 * @return acknowledged date-time or null if not set
+	 */
+	public Date getAcknowledged() {
+		return acknowledged;
+	}
+
+	/**
+	 * Set the acknowledged date-time (RFC 9074 Section 3.3).
+	 *
+	 * @param acknowledged the acknowledged date-time
+	 */
+	public void setAcknowledged(Date acknowledged) {
+		this.acknowledged = acknowledged;
+	}
+
+	/**
 	 * Convert this Valarm object to iCalendar format
 	 * 
 	 * @return iCalendar string representation
 	 */
 	public String toICalendar() {
-		StringBuffer ret = new StringBuffer(512);
+		StringBuilder ret = new StringBuilder(512);
 		ret.append("BEGIN:VALARM");
 		ret.append(CRLF);
 		
@@ -263,8 +305,7 @@ public class Valarm implements Constants {
 		}
 		
 		if (trigger != null) {
-			ret.append("TRIGGER:" + trigger);
-			ret.append(CRLF);
+			ret.append(trigger.toICalendar());
 		}
 		
 		if (summary != null) {
@@ -307,6 +348,9 @@ public class Valarm implements Constants {
 		if (structuredData != null) {
 			ret.append("STRUCTURED-DATA:").append(structuredData).append(CRLF);
 		}
+		if (acknowledged != null) {
+			ret.append(acknowledged.toICalendar());
+		}
 
 		ret.append("END:VALARM");
 		ret.append(CRLF);
@@ -319,6 +363,6 @@ public class Valarm implements Constants {
 	 * @return string representation
 	 */
 	public String toString() {
-		return "Valarm [action=" + action + ", trigger=" + trigger + "]";
+		return "Valarm [action=" + action + ", trigger=" + (trigger != null ? trigger.getValue() : null) + "]";
 	}
 }

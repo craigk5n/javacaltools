@@ -111,10 +111,13 @@ class RruleByday {
 	}
 
 	public String toICalendar() {
-		StringBuffer ret = new StringBuffer();
+		StringBuilder ret = new StringBuilder();
 		if (!positive)
 			ret.append('-');
-		ret.append(number);
+		// Only output the number if it's not 0
+		if (number != 0) {
+			ret.append(number);
+		}
 		switch (weekday) {
 			case 0:
 				ret.append("SU");
@@ -152,7 +155,7 @@ class RruleByday {
  * href=
  * "http://code.google.com/p/google-rfc-2445/">http://code.google.com/p/google-rfc-2445/</a>
  * 
- * @author Craig Knudsen, craig@k5n.us (AI-assisted: Grok-4.1-Fast)
+ * @author Craig Knudsen, craig@k5n.us
  */
 public class Rrule extends Property {
 	/** Repeat frequency (required) */
@@ -427,7 +430,7 @@ public class Rrule extends Property {
 	 * Convert to a RRULE iCalendar line
 	 */
 	public String toICalendar() {
-		StringBuffer ret = new StringBuffer();
+		StringBuilder ret = new StringBuilder();
 		// regenerate value in case anything was updated and so we can validate
 		// parse was correct
 		switch (freq) {
