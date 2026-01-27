@@ -95,7 +95,7 @@
         <nexus-staging-maven-plugin.version>1.7.0</nexus-staging-maven-plugin.version>
         <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
         <dependency-check-maven.version>10.0.4</dependency-check-maven.version>
-        <versions-maven-plugin.version>2.17.1</versions-maven-plugin.version>
+        <versions-maven-plugin.version>2.21.0</versions-maven-plugin.version>
 
         <!-- Reproducible builds -->
         <project.build.outputTimestamp>2024-01-01T00:00:00Z</project.build.outputTimestamp>
