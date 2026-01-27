@@ -78,9 +78,9 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <!-- Dependency versions -->
-        <opencsv.version>5.9</opencsv.version>
-        <commons-codec.version>1.17.1</commons-codec.version>
-        <junit.version>5.11.3</junit.version>
+        <opencsv.version>5.12.0</opencsv.version>
+        <commons-codec.version>1.20.0</commons-codec.version>
+        <junit.version>5.14.1</junit.version>
 
         <!-- Plugin versions -->
         <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
