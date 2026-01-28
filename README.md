@@ -5,8 +5,7 @@ A Java library for parsing, generating, and manipulating iCalendar (RFC 5545) da
 [![Java](https://img.shields.io/badge/Java-17%2B-blue)](https://openjdk.java.net/)
 [![License](https://img.shields.io/badge/License-LGPL%202.1-green.svg)](LICENSE)
 [![Maven Central](https://img.shields.io/maven-central/v/us.k5n/javacaltools)](https://search.maven.org/artifact/us.k5n/javacaltools)
-[![Build](https://img.shields.io/github/actions/workflow/status/craigk5n/javacaltools/maven.yml?branch=master)](https://github.com/craigk5n/javacaltools/actions)
-[![Tests](https://img.shields.io/badge/tests-716%20passing-brightgreen)](#testing)
+[![Tests](https://img.shields.io/github/actions/workflow/status/craigk5n/javacaltools/test.yml?branch=master)](https://github.com/craigk5n/javacaltools/actions/workflows/test.yml)
 
 ## Features
 
