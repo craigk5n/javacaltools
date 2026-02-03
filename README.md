@@ -26,14 +26,14 @@ A Java library for parsing, generating, and manipulating iCalendar (RFC 5545) da
 <dependency>
     <groupId>us.k5n</groupId>
     <artifactId>javacaltools</artifactId>
-    <version>2.0.0</version>
+    <version>2.0.1</version>
 </dependency>
 ```
 
 ### Gradle
 
 ```groovy
-implementation 'us.k5n:javacaltools:2.0.0'
+implementation 'us.k5n:javacaltools:2.0.1'
 ```
 
 ## Quick Start
@@ -162,7 +162,7 @@ List<Date> occurrences = rrule.generateRecurrances(startDate, endDate);
 mvn test
 ```
 
-**Test Coverage**: 716 tests across 80+ test classes covering:
+**Test Coverage**: 694 tests across 67 test classes covering:
 - Component parsing and serialization
 - Property validation
 - Recurrence rule expansion
@@ -199,9 +199,9 @@ mvn org.owasp:dependency-check-maven:check
 
 ### Artifacts
 
-- `target/javacaltools-2.0.0.jar` - Main library
-- `target/javacaltools-2.0.0-sources.jar` - Sources
-- `target/javacaltools-2.0.0-javadoc.jar` - Documentation
+- `target/javacaltools-2.0.1.jar` - Main library
+- `target/javacaltools-2.0.1-sources.jar` - Sources
+- `target/javacaltools-2.0.1-javadoc.jar` - Documentation
 
 ## Contributing
 
@@ -238,13 +238,4 @@ This library includes bundled code from the Google RFC 2445 project. See [LICENS
 
 ## Changelog
 
-### Version 2.0.0
-
-- Java 17+ requirement
-- RFC 9073 support (PARTICIPANT, VLOCATION, VRESOURCE, STYLED-DESCRIPTION)
-- RFC 9074 support (PROXIMITY, ACKNOWLEDGED in VALARM)
-- RFC 7986 VCALENDAR properties (NAME, DESCRIPTION, UID, URL, LAST-MODIFIED)
-- RFC 5546 iTIP support with METHOD validation
-- Improved text escaping per RFC 5545
-- 716 tests with comprehensive coverage
-- Performance improvements for large files
+See [CHANGELOG.md](CHANGELOG.md) for a detailed history of changes.

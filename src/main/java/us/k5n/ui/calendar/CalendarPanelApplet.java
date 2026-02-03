@@ -36,7 +36,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import javax.swing.JApplet;
 
@@ -75,6 +74,7 @@ import us.k5n.ical.Utils;
  *
  * @author Craig Knudsen, craig@k5n.us
  */
+@SuppressWarnings({"deprecation", "removal"})
 public class CalendarPanelApplet extends JApplet {
 	public final Color[] defaultColors = { Color.BLUE, Color.RED, Color.GREEN, Color.GRAY, Color.CYAN, Color.MAGENTA,
 			Color.ORANGE, Color.PINK, Color.YELLOW };
@@ -245,7 +245,7 @@ public class CalendarPanelApplet extends JApplet {
 /**
  * Implement the EventInstance as required by the CalendarPanel class.
  */
-class SingleEvent implements EventInstance, Comparable {
+class SingleEvent implements EventInstance {
 	String title, description, location;
 	int Y, M, D, h, m, s;
 	boolean hasTime, allDay;
@@ -395,8 +395,7 @@ class SingleEvent implements EventInstance, Comparable {
 	}
 
 	/** Implement the Comparable interface so events can be sorted */
-	public int compareTo(Object o) {
-		EventInstance e2 = (EventInstance) o;
+	public int compareTo(EventInstance e2) {
 		if (this.getYear() < e2.getYear())
 			return -1;
 		else if (this.getYear() > e2.getYear())

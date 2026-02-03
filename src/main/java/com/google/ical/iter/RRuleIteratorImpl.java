@@ -35,11 +35,6 @@ final class RRuleIteratorImpl implements RecurrenceIterator {
    */
   private final Predicate<? super DateValue> condition_;
   /**
-   * a function that applies secondary rules to eliminate some dates.
-   * Takes a builder and yields isPartOfRecurrence:boolean.
-   */
-  private final Predicate<? super DateValue> filter_;
-  /**
    * a function that applies the various period generators to generate an entire
    * date.
    * This may involve generating a set of dates and discarding all but those
@@ -56,11 +51,6 @@ final class RRuleIteratorImpl implements RecurrenceIterator {
    * Returns false if no more months available in the builder's year.
    */
   private final Generator monthGenerator_;
-  /**
-   * a function that takes a builder and populates the day of month field.
-   * Returns false if no more days available in the builder's month.
-   */
-  private final Generator dayGenerator_;
   /**
    * a date that has been computed but not yet yielded to the user.
    */
@@ -97,11 +87,9 @@ final class RRuleIteratorImpl implements RecurrenceIterator {
     boolean canShortcutAdvance, TimeValue startTime) {
 
     this.condition_ = condition;
-    this.filter_ = filter;
     this.instanceGenerator_ = instanceGenerator;
     this.yearGenerator_ = yearGenerator;
     this.monthGenerator_ = monthGenerator;
-    this.dayGenerator_ = dayGenerator;
     this.dtStart_ = dtStart;
     this.tzid_ = tzid;
     this.canShortcutAdvance_ = canShortcutAdvance;

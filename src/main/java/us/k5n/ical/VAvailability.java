@@ -21,7 +21,6 @@
 package us.k5n.ical;
 
 import java.util.List;
-import java.util.ArrayList;
 
 /**
  * iCalendar VAVAILABILITY class that corresponds to the VAVAILABILITY iCalendar component.

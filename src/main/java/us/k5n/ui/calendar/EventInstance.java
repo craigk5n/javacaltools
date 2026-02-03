@@ -31,7 +31,7 @@ import java.awt.Color;
  * @see CalendarPanel
  * @author Craig Knudsen, craig@k5n.us
  */
-public interface EventInstance extends Comparable {
+public interface EventInstance extends Comparable<EventInstance> {
 
 	/** Get the event title (what appears in the CalendarPanel) */
 	public abstract String getTitle ();

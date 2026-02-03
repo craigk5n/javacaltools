@@ -50,7 +50,7 @@ import java.util.List;
  * 
  * @author Craig Knudsen, craig@k5n.us
  */
-public class ICalendarParser extends CalendarParser implements Constants {
+public class ICalendarParser extends CalendarParser {
 	Property icalVersion = null;
 	Property prodId = null;
 	Property method = null;
@@ -500,7 +500,7 @@ public class ICalendarParser extends CalendarParser implements Constants {
 							// X-PUBLISHED-TTL, X-APPLE-CALENDAR-COLOR, X-MS-OLK-APPTSEQTIME, X-MS-OLK-CONFTYPE,
 							// X-MS-OLK-DTSTART, X-MS-OLK-DTEND, X-GOOGLE-CALENDAR-COLOR
 							try {
-								Property xprop = new Property(line, getParseMethod());
+								new Property(line, getParseMethod());
 							} catch (ParseException e) {
 								reportParseError(new ParseError(ln,
 										"Parse error in X- property: " + e.toString(), line));

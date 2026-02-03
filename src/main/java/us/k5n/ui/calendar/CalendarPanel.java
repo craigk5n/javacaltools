@@ -157,7 +157,6 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 	// We use the MonthPanel to do our custom drawing to display the events on.
 	private class MonthPanel extends JPanel implements MouseListener, MouseMotionListener {
 		private static final long serialVersionUID = 1000L;
-		DisplayedEvent lastMouseEvent = null;
 
 		public MonthPanel() {
 			super();
@@ -182,17 +181,6 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 		public void paint(Graphics g) {
 			super.paint(g);
 			paintMonth(g);
-		}
-
-		private DisplayedEvent getEventForMouseEvent(MouseEvent e1) {
-			for (DisplayedEvent de : displayedEvents) {
-				if (e1.getX() >= de.rect.x && e1.getX() <= de.rect.x + de.rect.width && e1.getY() >= de.rect.y
-						&& e1.getY() <= de.rect.y + de.rect.height) {
-					// Found item
-					return de;
-				}
-			}
-			return null; // not found
 		}
 
 		public void mouseClicked(MouseEvent e1) {
@@ -252,14 +240,12 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 		}
 
 		public void mouseEntered(MouseEvent e1) {
-			this.lastMouseEvent = getEventForMouseEvent(e1);
 			currentMouseOverEvent = getMouseOverEvent(e1);
 			if (currentMouseOverEvent != null)
 				repaint();
 		}
 
 		public void mouseExited(MouseEvent e1) {
-			this.lastMouseEvent = null;
 			if (currentMouseOverEvent != null)
 				repaint();
 			currentMouseOverEvent = null; // Display event popup?
@@ -282,7 +268,6 @@ public class CalendarPanel extends JPanel implements MouseWheelListener {
 		}
 
 		public void mouseMoved(MouseEvent e1) {
-			this.lastMouseEvent = getEventForMouseEvent(e1);
 			// Display event popup?
 			DisplayedEvent oldEvent = currentMouseOverEvent;
 			currentMouseOverEvent = getMouseOverEvent(e1);

@@ -104,8 +104,7 @@ public class Classification extends Property {
 		super(icalStr, parseMode);
 
 		for (int i = 0; i < attributeList.size(); i++) {
-			Attribute a = attributeAt(i);
-			String aval = a.value.toUpperCase();
+			attributeAt(i);
 			// TODO: not sure if any attributes are allowed here...
 		}
 

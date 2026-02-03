@@ -358,7 +358,10 @@ public class RecurrenceIteratorFactory {
         filter = filters.get(0);
         break;
       default:
-        filter = Predicates.and(filters.toArray(new Predicate[0]));
+        @SuppressWarnings({"unchecked", "rawtypes"})
+        Predicate<? super DateValue> andResult =
+            Predicates.and(filters.toArray(new Predicate[0]));
+        filter = andResult;
         break;
     }
 

@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.StringBufferInputStream;
+import java.io.ByteArrayInputStream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -38,8 +38,6 @@ public class RSSImporter extends CalendarParser {
 	}
 
 	public boolean parse(Reader reader) throws IOException {
-		int nerrors = 0;
-
 		BufferedReader r = new BufferedReader(reader);
 		StringBuffer data = new StringBuffer();
 		boolean done = false;
@@ -54,8 +52,8 @@ public class RSSImporter extends CalendarParser {
 			}
 		}
 		reader.close();
-		StringBufferInputStream sbis = new StringBufferInputStream(data
-				.toString());
+		ByteArrayInputStream sbis = new ByteArrayInputStream(data
+				.toString().getBytes());
 
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -109,62 +107,6 @@ public class RSSImporter extends CalendarParser {
 		return true;
 	}
 
-	// TODO: support date formats other than "12/31/1999" or "12/31/99"
-	private Date parseDateTime(String dateType, String date, String time)
-			throws ParseException {
-		int Y, M, D, h, m, s;
-		String[] args = null;
-		Date ret = null;
-		args = date.split("[/-]");
-		if (args == null || args.length != 3) {
-			throw new ParseException("Invalid date", date);
-		}
-		try {
-			Y = Integer.parseInt(args[2]);
-			// hack: handle 2-digit years
-			if (Y < 100 && Y < 70)
-				Y += 1900;
-			else if (Y < 100)
-				Y += 2000;
-			M = Integer.parseInt(args[0]);
-			D = Integer.parseInt(args[1]);
-		} catch (NumberFormatException e1) {
-			throw new ParseException("Invalid date: " + e1.getMessage(), date);
-		}
-
-		try {
-			ret = new Date(dateType, Y, M, D);
-		} catch (BogusDataException e1) {
-			throw new ParseException("Invalid date: " + e1.getMessage(), date);
-		}
-
-		if (time != null && time.length() > 0) {
-			args = time.split("[ :]");
-			try {
-				h = Integer.parseInt(args[0]);
-				m = Integer.parseInt(args[1]);
-				s = Integer.parseInt(args[2]);
-				if (args.length > 3) {
-					// look for AM or PM
-					if (args[3].toUpperCase().equals("PM")) {
-						if (h < 12)
-							h += 12;
-					} else if (args[3].toUpperCase().equals("AM")) {
-						if (h == 12)
-							h = 0; // 12AM = 0
-					}
-				}
-			} catch (NumberFormatException e1) {
-				throw new ParseException("Invalid date time: " + e1.getMessage(),
-						date);
-			}
-			ret.setHour(h);
-			ret.setMinute(m);
-			ret.setSecond(s);
-			ret.setDateOnly(false);
-		}
-		return ret;
-	}
 }
 
 class RSSItem {

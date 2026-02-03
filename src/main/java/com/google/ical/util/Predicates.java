@@ -16,8 +16,8 @@ public class Predicates {
    * the right parameterized type on demand.
    */
 
-  private static final Predicate<?> ALWAYS_TRUE = new AlwaysTruePredicate();
-  private static final Predicate<?> ALWAYS_FALSE = new AlwaysFalsePredicate();
+  private static final Predicate<?> ALWAYS_TRUE = new AlwaysTruePredicate<>();
+  private static final Predicate<?> ALWAYS_FALSE = new AlwaysFalsePredicate<>();
 
   /**
    * Returns a Predicate that always evaluates to true.
@@ -51,6 +51,8 @@ public class Predicates {
    * defensively copy the array passed in, so future changes to it will alter
    * the behavior of this Predicate.
    */
+  @SafeVarargs
+  @SuppressWarnings("varargs")
   public static <T> Predicate<T> and(Predicate<? super T>... components) {
     assert null != components;
     return new AndPredicate<T>(components);
@@ -63,6 +65,8 @@ public class Predicates {
    * defensively copy the array passed in, so future changes to it will alter
    * the behavior of this Predicate.
    */
+  @SafeVarargs
+  @SuppressWarnings("varargs")
   public static <T> Predicate<T> or(Predicate<? super T>... components) {
     assert components != null;
     return new OrPredicate<T>(components);
@@ -104,6 +108,8 @@ public class Predicates {
     private static final long serialVersionUID = 1022358602593297546L;
     private final Predicate<? super T>[] components;
 
+    @SafeVarargs
+    @SuppressWarnings("varargs")
     private AndPredicate(Predicate<? super T>... components) {
       this.components = components;
     }
@@ -122,6 +128,8 @@ public class Predicates {
     private static final long serialVersionUID = -7942366790698074803L;
     private final Predicate<? super T>[] components;
 
+    @SafeVarargs
+    @SuppressWarnings("varargs")
     private OrPredicate(Predicate<? super T>... components) {
       this.components = components;
     }
