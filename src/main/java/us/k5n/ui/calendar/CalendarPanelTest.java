@@ -340,8 +340,7 @@ public class CalendarPanelTest extends JFrame implements CalendarDataRepository 
 		}
 
 		/** Implement the Comparable interface so events can be sorted */
-		public int compareTo(Object o) {
-			EventInstance e2 = (EventInstance) o;
+		public int compareTo(EventInstance e2) {
 			if (this.getYear() < e2.getYear())
 				return -1;
 			else if (this.getYear() > e2.getYear())

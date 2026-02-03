@@ -105,35 +105,6 @@ public class Participant extends Property {
     }
 
     /**
-     * Parse participant properties from a list of text lines
-     */
-    private void parseParticipantFromLines(List<String> textLines, int parseMode) throws ParseException {
-        for (String line : textLines) {
-            String trimmed = line.trim();
-            if (trimmed.isEmpty()) continue;
-
-            if (trimmed.startsWith("UID:")) {
-                uid = trimmed.substring(4).trim();
-            } else if (trimmed.startsWith("PARTICIPANT-TYPE:")) {
-                participantType = trimmed.substring(17).trim();
-            } else if (trimmed.startsWith("CALENDAR-ADDRESS")) {
-                try {
-                    calendarAddress = new CalendarAddress(line);
-                } catch (ParseException e) {
-                    // Handle parse error - could log or ignore
-                }
-            } else if (trimmed.startsWith("STRUCTURED-DATA:")) {
-                structuredData = trimmed.substring(16).trim();
-            } else if (trimmed.startsWith("NAME:")) {
-                name = trimmed.substring(5).trim();
-            } else if (trimmed.startsWith("DESCRIPTION:")) {
-                description = trimmed.substring(12).trim();
-            }
-            // Ignore other properties for now
-        }
-    }
-
-    /**
      * Parse a single participant line
      */
     private void parseParticipantLine(String line, int parseMode) {

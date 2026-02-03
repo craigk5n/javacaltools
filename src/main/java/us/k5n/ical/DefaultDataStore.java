@@ -23,8 +23,6 @@ package us.k5n.ical;
 import java.util.ArrayList;
 import java.util.List;
 
-import us.k5n.ical.Constants;
-
 /**
  * A simple implementation of the DataStore interface. This is the default
  * implementation used by IcalParser class.

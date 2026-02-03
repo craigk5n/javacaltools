@@ -61,138 +61,136 @@ public class CSVParser extends CalendarParser {
 	public boolean parse(Reader reader) throws IOException {
 		int nerrors = 0;
 
-		CSVReader csv = new CSVReader(reader);
-		String[] headers;
-		try {
-			headers = csv.readNext();
-		} catch (CsvValidationException e) {
-			this.reportParseError(new ParseError(0,
-					"Error parsing 1st line as header"));
-			return true;
-		}
-		if (headers == null) {
-			this.reportParseError(new ParseError(0,
-					"Error parsing 1st line as header"));
-			return true;
-		}
-		// for ( int i = 0; i < headers.length; i++ ) {
-		// System.out.println ( "header#" + i + ": " + headers[i] );
-		// }
-		if (this.scanHeaderForColumnLocations) {
-			for (int i = 0; i < headers.length; i++) {
-				String h = headers[i];
-				if (h.equalsIgnoreCase(this.titleName))
-					this.titleColumn = i;
-				else if (h.equalsIgnoreCase(this.descriptionName))
-					this.descriptionColumn = i;
-				else if (h.equalsIgnoreCase(this.startDateName))
-					this.startDateColumn = i;
-				else if (h.equalsIgnoreCase(this.startTimeName))
-					this.startTimeColumn = i;
-				else if (h.equalsIgnoreCase(this.endDataName))
-					this.endDateColumn = i;
-				else if (h.equalsIgnoreCase(this.endTimeName))
-					this.endTimeColumn = i;
-				else if (h.equalsIgnoreCase(this.locationName))
-					this.locationColumn = i;
-				else if (h.equalsIgnoreCase(this.allDayName))
-					this.allDayColumn = i;
-				else {
-					// Ignore this column
-				}
-			}
-			// Make sure we have at least title and date/time
-			if (this.titleColumn < 0) {
-				this.reportParseError(new ParseError(0, "Could not find '"
-						+ this.titleName + "' in CSV header"));
-				nerrors++;
-			}
-			if (this.startDateColumn < 0) {
-				this.reportParseError(new ParseError(0, "Could not find '"
-						+ this.startDateName + "' in CSV header"));
-				nerrors++;
-			}
-			if (this.startTimeColumn < 0) {
-				this.reportParseError(new ParseError(0, "Could not find '"
-						+ this.startTimeName + "' in CSV header"));
-				nerrors++;
-			}
-			if (nerrors > 0)
+		try (CSVReader csv = new CSVReader(reader)) {
+			String[] headers;
+			try {
+				headers = csv.readNext();
+			} catch (CsvValidationException e) {
+				this.reportParseError(new ParseError(0,
+						"Error parsing 1st line as header"));
 				return true;
-		}
-
-		int recNum = 1;
-		String[] record;
-		try {
-			while ((record = csv.readNext()) != null) {
-				String title = "Untitled", description = null, location = null;
-				Date startDate = null, endDate = null;
-				boolean allDay = false;
-				boolean valid = true;
-				String rawRecord = String.join(",", record);
-				if (this.titleColumn >= 0 && this.titleColumn < record.length)
-					title = record[this.titleColumn];
-				if (this.allDayColumn >= 0 && this.allDayColumn < record.length) {
-					String allDayStr = record[this.allDayColumn];
-					if (this.booleanFalseValue.equalsIgnoreCase(allDayStr))
-						allDay = false;
-					else if (this.booleanTrueValue.equalsIgnoreCase(allDayStr))
-						allDay = true;
-					else {
-						// This is an error, but we may still be able to parse it
-					}
-				}
-				if (this.startDateColumn >= 0 && this.startDateColumn < record.length) {
-					String dateStr = record[this.startDateColumn];
-					String timeStr = null;
-					if (this.startTimeColumn >= 0 && this.startTimeColumn < record.length)
-						timeStr = record[this.startTimeColumn];
-					try {
-						startDate = parseDateTime("DTSTART", dateStr, allDay ? null
-								: timeStr);
-					} catch (ParseException e1) {
-						this.reportParseError(new ParseError(recNum++,
-								"Invalid start date '" + dateStr + "'", rawRecord));
-						valid = false;
-					}
-				}
-				if (this.endDateColumn >= 0 && this.endDateColumn < record.length) {
-					String dateStr = record[this.endDateColumn];
-					String timeStr = null;
-					if (this.endTimeColumn >= 0 && this.endTimeColumn < record.length)
-						timeStr = record[this.endTimeColumn];
-					try {
-						endDate = parseDateTime("DTEND", dateStr, allDay ? null : timeStr);
-					} catch (ParseException e1) {
-						this.reportParseError(new ParseError(recNum++,
-								"Invalid end date '" + dateStr + "'", rawRecord));
-						valid = false;
-					}
-				}
-				if (this.locationColumn >= 0 && this.locationColumn < record.length) {
-					location = record[this.locationColumn];
-				}
-				if (this.descriptionColumn >= 0 && this.descriptionColumn < record.length) {
-					description = record[this.descriptionColumn];
-				}
-				Event event = new Event(title, description, startDate);
-				if (endDate != null) {
-					event.setEndDate(endDate);
-				}
-				if (startDate != null) {
-					event.setStartDate(startDate);
-				}
-				// Add event to all DataStore objects
-				for (int i = 0; i < super.numDataStores(); i++) {
-					DataStore ds = super.getDataStoreAt(i);
-					ds.storeEvent(event);
-				}
-				recNum++;
 			}
-		} catch (CsvValidationException e) {
-			this.reportParseError(new ParseError(recNum,
-					"Error parsing CSV record: " + e.getMessage()));
-			return true;
+			if (headers == null) {
+				this.reportParseError(new ParseError(0,
+						"Error parsing 1st line as header"));
+				return true;
+			}
+			// for ( int i = 0; i < headers.length; i++ ) {
+			// System.out.println ( "header#" + i + ": " + headers[i] );
+			// }
+			if (this.scanHeaderForColumnLocations) {
+				for (int i = 0; i < headers.length; i++) {
+					String h = headers[i];
+					if (h.equalsIgnoreCase(this.titleName))
+						this.titleColumn = i;
+					else if (h.equalsIgnoreCase(this.descriptionName))
+						this.descriptionColumn = i;
+					else if (h.equalsIgnoreCase(this.startDateName))
+						this.startDateColumn = i;
+					else if (h.equalsIgnoreCase(this.startTimeName))
+						this.startTimeColumn = i;
+					else if (h.equalsIgnoreCase(this.endDataName))
+						this.endDateColumn = i;
+					else if (h.equalsIgnoreCase(this.endTimeName))
+						this.endTimeColumn = i;
+					else if (h.equalsIgnoreCase(this.locationName))
+						this.locationColumn = i;
+					else if (h.equalsIgnoreCase(this.allDayName))
+						this.allDayColumn = i;
+					else {
+						// Ignore this column
+					}
+				}
+				// Make sure we have at least title and date/time
+				if (this.titleColumn < 0) {
+					this.reportParseError(new ParseError(0, "Could not find '"
+							+ this.titleName + "' in CSV header"));
+					nerrors++;
+				}
+				if (this.startDateColumn < 0) {
+					this.reportParseError(new ParseError(0, "Could not find '"
+							+ this.startDateName + "' in CSV header"));
+					nerrors++;
+				}
+				if (this.startTimeColumn < 0) {
+					this.reportParseError(new ParseError(0, "Could not find '"
+							+ this.startTimeName + "' in CSV header"));
+					nerrors++;
+				}
+				if (nerrors > 0)
+					return true;
+			}
+
+			int recNum = 1;
+			String[] record;
+			try {
+				while ((record = csv.readNext()) != null) {
+					String title = "Untitled", description = null;
+					Date startDate = null, endDate = null;
+					boolean allDay = false;
+					String rawRecord = String.join(",", record);
+					if (this.titleColumn >= 0 && this.titleColumn < record.length)
+						title = record[this.titleColumn];
+					if (this.allDayColumn >= 0 && this.allDayColumn < record.length) {
+						String allDayStr = record[this.allDayColumn];
+						if (this.booleanFalseValue.equalsIgnoreCase(allDayStr))
+							allDay = false;
+						else if (this.booleanTrueValue.equalsIgnoreCase(allDayStr))
+							allDay = true;
+						else {
+							// This is an error, but we may still be able to parse it
+						}
+					}
+					if (this.startDateColumn >= 0 && this.startDateColumn < record.length) {
+						String dateStr = record[this.startDateColumn];
+						String timeStr = null;
+						if (this.startTimeColumn >= 0 && this.startTimeColumn < record.length)
+							timeStr = record[this.startTimeColumn];
+						try {
+							startDate = parseDateTime("DTSTART", dateStr, allDay ? null
+									: timeStr);
+						} catch (ParseException e1) {
+							this.reportParseError(new ParseError(recNum++,
+									"Invalid start date '" + dateStr + "'", rawRecord));
+						}
+					}
+					if (this.endDateColumn >= 0 && this.endDateColumn < record.length) {
+						String dateStr = record[this.endDateColumn];
+						String timeStr = null;
+						if (this.endTimeColumn >= 0 && this.endTimeColumn < record.length)
+							timeStr = record[this.endTimeColumn];
+						try {
+							endDate = parseDateTime("DTEND", dateStr, allDay ? null : timeStr);
+						} catch (ParseException e1) {
+							this.reportParseError(new ParseError(recNum++,
+									"Invalid end date '" + dateStr + "'", rawRecord));
+						}
+					}
+					if (this.locationColumn >= 0 && this.locationColumn < record.length) {
+						// location parsed but not yet used by Event
+					}
+					if (this.descriptionColumn >= 0 && this.descriptionColumn < record.length) {
+						description = record[this.descriptionColumn];
+					}
+					Event event = new Event(title, description, startDate);
+					if (endDate != null) {
+						event.setEndDate(endDate);
+					}
+					if (startDate != null) {
+						event.setStartDate(startDate);
+					}
+					// Add event to all DataStore objects
+					for (int i = 0; i < super.numDataStores(); i++) {
+						DataStore ds = super.getDataStoreAt(i);
+						ds.storeEvent(event);
+					}
+					recNum++;
+				}
+			} catch (CsvValidationException e) {
+				this.reportParseError(new ParseError(recNum,
+						"Error parsing CSV record: " + e.getMessage()));
+				return true;
+			}
 		}
 		return false;
 	}
