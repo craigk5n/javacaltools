@@ -238,20 +238,4 @@ This library includes bundled code from the Google RFC 2445 project. See [LICENS
 
 ## Changelog
 
-### Version 2.0.1
-
-- Reorganized test suite by RFC and component (core/components, core/properties, core/rfc5545, extensions/rfc7986, extensions/rfc9073, extensions/rfc9074, infrastructure, integration, performance, compatibility)
-- Removed duplicate tests; consolidated from 716 to 694 tests across 67 classes
-- Source code cleanups: removed unused imports and dead code
-- Updated maven-enforcer-plugin to 3.6.2 and versions-maven-plugin to 2.21.0
-
-### Version 2.0.0
-
-- Java 17+ requirement
-- RFC 9073 support (PARTICIPANT, VLOCATION, VRESOURCE, STYLED-DESCRIPTION)
-- RFC 9074 support (PROXIMITY, ACKNOWLEDGED in VALARM)
-- RFC 7986 VCALENDAR properties (NAME, DESCRIPTION, UID, URL, LAST-MODIFIED)
-- RFC 5546 iTIP support with METHOD validation
-- Improved text escaping per RFC 5545
-- Comprehensive test coverage
-- Performance improvements for large files
+See [CHANGELOG.md](CHANGELOG.md) for a detailed history of changes.
